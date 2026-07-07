@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لو-غارو</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* تنسيقات خاصة بالصفحة الرئيسية */
+    .container {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    h1 {
+      font-size: 38px;
+      color: crimson;
+      text-shadow: 0 0 20px red, 0 0 40px darkred;
+      letter-spacing: 4px;
+      font-weight: 900;
+    }
+    .sub {
+      color: #ccc;
+      font-size: 14px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #222;
+      padding-bottom: 10px;
+    }
+    .footer-actions {
+      max-width: 500px;
+      width: 100%;
+    }
+    .download-count {
+      color: #aaa;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 5px;
+    }
+    /* زر عن اللعبة يظهر في المنتصف */
+    .btn-about {
+      background: transparent;
+      border: 1px solid crimson;
+      color: #ccc;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: auto;
+      margin: 10px auto 0;
+      display: inline-block;
+    }
+    .btn-about:hover {
+      background: crimson;
+      color: #fff;
+      box-shadow: 0 0 20px crimson;
+    }
+    /* مودال عن اللعبة */
+    .about-modal-content {
+      max-width: 500px;
+      text-align: right;
+      line-height: 1.8;
+    }
+    .about-modal-content h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .about-modal-content p {
+      color: #ddd;
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
+    .about-modal-content .highlight {
+      color: crimson;
+      font-weight: bold;
+    }
+    .about-modal-content .btn-close-about {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>loup garou</h1>
+    <div class="sub">مرحباً بك في عالم القرويين والذئاب</div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="window.location.href='host.html'">👑 أنا الراوي</button>
+      <button class="btn btn-primary" onclick="window.location.href='player.html'">🎭 أنا اللاعب</button>
+    </div>
+    <!-- زر عن اللعبة -->
+    <button class="btn-about" id="aboutBtn">📖 عن اللعبة</button>
+  </div>
+
+  <div class="footer-actions">
+    <button class="btn btn-suggest" id="suggestBtn">💬 اقتراحات للمطور</button>
+    <button class="btn btn-install" id="installBtn">📲 تحميل التطبيق (APK)</button>
+    <div class="download-count" id="downloadCounter">عدد مرات التحميل: 0</div>
+  </div>
+
+  <!-- مودال الاقتراحات -->
+  <div class="modal" id="suggestModal">
+    <div class="modal-content">
+      <h3>📢 شارك فكرتك</h3>
+      <p>ساعدنا في تطوير اللعبة بأفكارك الجديدة!</p>
+      <input type="text" id="suggestName" placeholder="اسمك (اختياري)" />
+      <textarea id="suggestMessage" placeholder="اكتب اقتراحك هنا..."></textarea>
+      <button class="btn btn-primary" id="sendSuggest">🚀 إرسال</button>
+      <button class="btn" id="closeSuggest" style="margin-top:8px;">إلغاء</button>
+    </div>
+  </div>
+
+  <!-- مودال عن اللعبة -->
+  <div class="modal" id="aboutModal">
+    <div class="modal-content about-modal-content">
+      <h3 style="color:crimson;">📖 ما هي لعبة لو-غارو؟</h3>
+      <p>
+        <span class="highlight">لو-غارو</span> هي نسخة رقمية ذكية من لعبة الورق الشهيرة <span class="highlight">"القرويون والذئاب"</span> (Werewolf / Loup-Garou).
+      </p>
+      <p>
+        بدلاً من توزيع البطاقات الورقية التقليدية، يقوم هذا التطبيق بتوزيع الأدوار <span class="highlight">عشوائياً</span> على جميع اللاعبين، مما يضمن <span class="highlight">الخصوصية التامة</span> لكل لاعب، حيث لا يمكن لأي شخص معرفة دور الآخر إلا إذا كشف عنه الراوي في الوقت المناسب.
+      </p>
+      <p>
+        <span class="highlight">الراوي</span> هو اللاعب الوحيد الذي يمتلك الصلاحية المطلقة في إدارة اللعبة، حيث يمكنه <span class="highlight">قتل</span> أو <span class="highlight">استذئاب</span> أي لاعب وفقاً لتطورات اللعبة، وهذا يمنع الغش ويجعل التجربة أكثر نزاهة ومتعة.
+      </p>
+      <p>
+        الهدف من هذه اللعبة هو توفير تجربة سلسة وعادلة لجميع اللاعبين، مع الحفاظ على السرية التامة ومنع أي محاولة للغش، لتكون بديلاً مثالياً للأوراق التقليدية.
+      </p>
+      <button class="btn btn-danger btn-close-about" id="closeAboutBtn">إغلاق</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      sendSuggestion,
+      incrementDownloadCount,
+      getDownloadCount
+    } from "./logic.js";
+
+    // ===== الاقتراحات =====
+    const suggestModal = document.getElementById("suggestModal");
+    document.getElementById("suggestBtn").addEventListener("click", () => {
+      suggestModal.style.display = "flex";
+    });
+    document.getElementById("closeSuggest").addEventListener("click", () => {
+      suggestModal.style.display = "none";
+    });
+    window.addEventListener("click", (e) => {
+      if (e.target === suggestModal) suggestModal.style.display = "none";
+    });
+
+    document.getElementById("sendSuggest").addEventListener("click", async () => {
+      const name = document.getElementById("suggestName").value.trim();
+      const message = document.getElementById("suggestMessage").value.trim();
+      if (!message) {
+        alert("الرجاء كتابة رسالة!");
+        return;
+      }
+      try {
+        await sendSuggestion(name, message, "الصفحة الرئيسية");
+        alert("✅ شكراً لك! تم إرسال اقتراحك.");
+        document.getElementById("suggestMessage").value = "";
+        suggestModal.style.display = "none";
+      } catch (err) {
+        alert("❌ خطأ: " + err.message);
+      }
+    });
+
+    // ===== عن اللعبة =====
+    const aboutModal = document.getElementById("aboutModal");
+    document.getElementById("aboutBtn").addEventListener("click", () => {
+      aboutModal.style.display = "flex";
+    });
+    document.getElementById("closeAboutBtn").addEventListener("click", () => {
+      aboutModal.style.display = "none";
+    });
+    window.addEventListener("click", (e) => {
+      if (e.target === aboutModal) aboutModal.style.display = "none";
+    });
+
+    // ===== عداد التحميلات =====
+    async function updateCounter() {
+      const count = await getDownloadCount();
+      document.getElementById("downloadCounter").textContent = "عدد مرات التحميل: " + count;
+    }
+    updateCounter();
+
+    document.getElementById("installBtn").addEventListener("click", async () => {
+      const apkUrl = "https://example.com/your-app.apk"; // استبدل بالرابط الحقيقي
+      try {
+        await incrementDownloadCount();
+        await updateCounter();
+      } catch (e) {
+        console.error(e);
+      }
+      window.open(apkUrl, "_blank");
+    });
+  </script>
+</body>
+</html>
