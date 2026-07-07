@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>loup garou</title>
+  <title>Loup Garou</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* تنسيقات خاصة بالصفحة الرئيسية */
     .container {
       text-align: center;
       padding: 40px 20px;
@@ -36,7 +35,6 @@
       text-align: center;
       margin-top: 5px;
     }
-    /* زر عن اللعبة يظهر في المنتصف */
     .btn-about {
       background: transparent;
       border: 1px solid crimson;
@@ -56,7 +54,6 @@
       color: #fff;
       box-shadow: 0 0 20px crimson;
     }
-    /* مودال عن اللعبة */
     .about-modal-content {
       max-width: 500px;
       text-align: right;
@@ -88,7 +85,6 @@
       <button class="btn btn-primary" onclick="window.location.href='host.html'">👑 أنا الراوي</button>
       <button class="btn btn-primary" onclick="window.location.href='player.html'">🎭 أنا اللاعب</button>
     </div>
-    <!-- زر عن اللعبة -->
     <button class="btn-about" id="aboutBtn">📖 عن اللعبة</button>
   </div>
 
@@ -113,9 +109,9 @@
   <!-- مودال عن اللعبة -->
   <div class="modal" id="aboutModal">
     <div class="modal-content about-modal-content">
-      <h3 style="color:crimson;">📖 ما هي لعبة لو-غارو؟</h3>
+      <h3 style="color:crimson;">📖 ما هي لعبة Loup Garou؟</h3>
       <p>
-        <span class="highlight">لو-غارو</span> هي نسخة رقمية ذكية من لعبة الورق الشهيرة <span class="highlight">"القرويون والذئاب"</span> (Werewolf / Loup-Garou).
+        <span class="highlight">Loup Garou</span> هي نسخة رقمية ذكية من لعبة الورق الشهيرة <span class="highlight">"القرويون والذئاب"</span> (Werewolf / Loup Garou).
       </p>
       <p>
         بدلاً من توزيع البطاقات الورقية التقليدية، يقوم هذا التطبيق بتوزيع الأدوار <span class="highlight">عشوائياً</span> على جميع اللاعبين، مما يضمن <span class="highlight">الخصوصية التامة</span> لكل لاعب، حيث لا يمكن لأي شخص معرفة دور الآخر إلا إذا كشف عنه الراوي في الوقت المناسب.
@@ -186,7 +182,7 @@
     updateCounter();
 
     document.getElementById("installBtn").addEventListener("click", async () => {
-      const apkUrl = "https://example.com/your-app.apk"; // استبدل بالرابط الحقيقي
+      const apkUrl = "https://drive.google.com/uc?export=download&id=1_dxPBCn_Kevum1bd3SN7t5uejyFP0KHs"; // ✅ رابط التحميل المباشر
       try {
         await incrementDownloadCount();
         await updateCounter();
