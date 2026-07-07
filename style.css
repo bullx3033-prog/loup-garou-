@@ -1,0 +1,385 @@
+/* ===== التصميم الأساسي (أسود/أحمر) ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Cinzel', serif;
+  background: #000;
+  background-image: radial-gradient(circle at 20% 30%, #1a0a0a 0%, #000000 100%);
+  color: #f0e0c0;
+  min-height: 100vh;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* ===== الحاوية الرئيسية ===== */
+.container {
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+  background: #111;
+  border: 2px solid crimson;
+  border-radius: 16px;
+  padding: 25px 20px;
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
+}
+
+h2 {
+  font-size: 28px;
+  color: crimson;
+  text-shadow: 0 0 10px red, 0 0 20px darkred;
+  text-align: center;
+  border-bottom: 2px solid #222;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
+/* ===== الأزرار ===== */
+.btn {
+  padding: 14px 20px;
+  border-radius: 10px;
+  border: none;
+  background: #2c2c2c;
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+}
+.btn:hover {
+  background: #3a3a3a;
+  box-shadow: 0 0 15px crimson;
+  transform: scale(1.02);
+}
+
+.btn-primary {
+  background: #2c2c2c;
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #3a3a3a;
+}
+
+.btn-danger {
+  background: #a10d0d;
+  color: #fff;
+}
+.btn-danger:hover {
+  background: #8b0000;
+  box-shadow: 0 0 25px #8b0000;
+}
+
+.btn-install {
+  background: #a10d0d;
+  color: #fff;
+  font-size: 18px;
+}
+.btn-install:hover {
+  background: #8b0000;
+  box-shadow: 0 0 25px #8b0000;
+}
+
+.btn-suggest {
+  background: #2c2c2c;
+  color: #fff;
+}
+.btn-suggest:hover {
+  background: #3a3a3a;
+}
+
+/* ===== مجموعات الأزرار (لترتيب الصفحة) ===== */
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 15px;
+  max-width: 500px;
+  width: 100%;
+}
+
+/* ===== حقول الإدخال ===== */
+input,
+textarea {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #555;
+  background: #1a1a1a;
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+}
+input:focus,
+textarea:focus {
+  border-color: crimson;
+  outline: none;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+}
+
+/* ===== بطاقات اللاعبين (في تحكم الراوي) ===== */
+#players {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-bottom: 100px;
+}
+
+.player-card {
+  background: #111;
+  border: 1px solid crimson;
+  border-radius: 12px;
+  padding: 15px 18px;
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.15);
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.player-card:hover {
+  border-color: #ff4444;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+}
+
+.player-card .info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 2;
+  min-width: 150px;
+}
+.player-card .avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid crimson;
+  object-fit: cover;
+  background: #0d0805;
+}
+.player-card .details .name {
+  font-size: 22px;
+  color: #f2f2f2;
+  font-weight: 900;
+}
+.player-card .details .role {
+  font-size: 14px;
+  color: #ccc;
+}
+.player-card .details .role strong {
+  color: #fff;
+}
+
+.player-card .actions {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  justify-content: flex-end;
+  min-width: 160px;
+}
+.player-card .actions button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #2c2c2c;
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  flex: 1;
+  min-width: 70px;
+  text-align: center;
+}
+.player-card .actions button:hover {
+  background: #3a3a3a;
+  box-shadow: 0 0 15px crimson;
+}
+.player-card .actions .kill {
+  background: #6b1a1a;
+  color: #fff;
+}
+.player-card .actions .kill:hover {
+  background: #8b0000;
+  box-shadow: 0 0 25px #8b0000;
+}
+.player-card .actions .infect {
+  background: #1a4a1a;
+  color: #fff;
+}
+.player-card .actions .infect:hover {
+  background: #2e7d32;
+  box-shadow: 0 0 25px #2e7d32;
+}
+
+.player-card.dead {
+  opacity: 0.6;
+  background: #1a1a1a;
+  border-color: #444;
+}
+.player-card.dead .name {
+  color: #888;
+}
+.player-card.dead .avatar {
+  border-color: #555;
+  filter: grayscale(1);
+}
+
+/* ===== نافذة منبثقة (مودال) ===== */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: #111;
+  border: 2px solid crimson;
+  border-radius: 16px;
+  padding: 30px 25px;
+  max-width: 450px;
+  width: 90%;
+  color: #fff;
+  box-shadow: 0 0 50px rgba(255, 0, 0, 0.3);
+}
+.modal-content h3 {
+  color: crimson;
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px red;
+}
+.modal-content p {
+  color: #ccc;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+/* ===== صفحة اللاعب (دوره) ===== */
+#roleBox {
+  background: #111;
+  border: 1px solid crimson;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+}
+#roleBox .role-name {
+  font-size: 22px;
+  color: crimson;
+  margin: 10px 0;
+  text-shadow: 0 0 10px red;
+}
+#roleBox .role-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin: 10px auto;
+}
+#roleBox .role-image-wrapper img.role-img {
+  width: 100%;
+  border-radius: 12px;
+  border: 2px solid crimson;
+}
+#roleBox .role-image-wrapper img.blood-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+#skull {
+  font-size: 80px;
+  color: #8b0000;
+}
+#death-text {
+  color: #e74c3c;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* ===== أدوات مساعدة ===== */
+.hidden {
+  display: none !important;
+}
+.text-center {
+  text-align: center;
+}
+.mt-10 {
+  margin-top: 10px;
+}
+.mb-10 {
+  margin-bottom: 10px;
+}
+.flex {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ===== التجاوب مع الهواتف ===== */
+@media (max-width: 480px) {
+  .container {
+    padding: 15px;
+  }
+  h2 {
+    font-size: 24px;
+  }
+  .player-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 15px;
+  }
+  .player-card .info {
+    min-width: unset;
+  }
+  .player-card .actions {
+    min-width: unset;
+    justify-content: stretch;
+    margin-top: 8px;
+  }
+  .player-card .actions button {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+  .player-card .avatar {
+    width: 50px;
+    height: 50px;
+  }
+  .player-card .details .name {
+    font-size: 18px;
+  }
+}
+@media (max-width: 380px) {
+  .player-card .actions {
+    flex-direction: column;
+  }
+  .player-card .actions button {
+    width: 100%;
+  }
+}
