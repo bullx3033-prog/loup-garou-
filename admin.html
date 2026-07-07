@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة تحكم المطور</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Cinzel', serif;
+      background: #000;
+      background-image: radial-gradient(circle at 20% 30%, #1a0a0a 0%, #000000 100%);
+      color: #f0e0c0;
+      min-height: 100vh;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .container {
+      max-width: 700px;
+      width: 100%;
+      margin: 0 auto;
+      background: #111;
+      border: 2px solid crimson;
+      border-radius: 16px;
+      padding: 25px 20px;
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
+    }
+    h2 {
+      font-size: 28px;
+      color: crimson;
+      text-shadow: 0 0 10px red, 0 0 20px darkred;
+      text-align: center;
+      border-bottom: 2px solid #222;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+    .section {
+      background: #1a1a1a;
+      border: 1px solid crimson;
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 20px;
+    }
+    .section-title {
+      color: crimson;
+      font-size: 18px;
+      margin-bottom: 10px;
+      display: block;
+      text-shadow: 0 0 8px red;
+    }
+    .btn {
+      padding: 14px 20px;
+      border-radius: 10px;
+      border: none;
+      background: #2c2c2c;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      text-align: center;
+      font-size: 16px;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+    }
+    .btn:hover {
+      background: #3a3a3a;
+      box-shadow: 0 0 15px crimson;
+      transform: scale(1.02);
+    }
+    .btn-primary {
+      background: #2c2c2c;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #3a3a3a;
+    }
+    .btn-danger {
+      background: #a10d0d;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background: #8b0000;
+      box-shadow: 0 0 25px #8b0000;
+    }
+    .btn-success {
+      background: #1a4a1a;
+      color: #fff;
+    }
+    .btn-success:hover {
+      background: #2e7d32;
+      box-shadow: 0 0 25px #2e7d32;
+    }
+    input,
+    textarea {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #1a1a1a;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+    }
+    input:focus,
+    textarea:focus {
+      border-color: crimson;
+      outline: none;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+    }
+    .hidden {
+      display: none !important;
+    }
+    .flex {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .flex .btn {
+      flex: 1;
+    }
+    .role-item {
+      background: #1a1a1a;
+      border: 1px solid crimson;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .role-item .info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+    .role-item .info img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid crimson;
+      object-fit: cover;
+    }
+    .role-item .info span {
+      color: #f0e0c0;
+      font-size: 16px;
+    }
+    .role-item .actions {
+      display: flex;
+      gap: 6px;
+    }
+    .role-item .actions button {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: #2c2c2c;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .role-item .actions button:hover {
+      background: #3a3a3a;
+      box-shadow: 0 0 10px crimson;
+    }
+    .role-item .actions .edit:hover {
+      background: #b8860b;
+      color: #000;
+    }
+    .role-item .actions .delete:hover {
+      background: #8b0000;
+      color: #fff;
+    }
+    .suggestion-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .suggestion-card .name {
+      color: crimson;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .suggestion-card .msg {
+      color: #ccc;
+      font-size: 14px;
+      margin: 5px 0;
+    }
+    .suggestion-card .meta {
+      color: #777;
+      font-size: 12px;
+    }
+    .suggestion-card .actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+    }
+    .suggestion-card .actions button {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: none;
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .suggestion-card .actions .del-single {
+      background: #6b1a1a;
+      color: #fff;
+    }
+    .suggestion-card .actions .del-single:hover {
+      background: #8b0000;
+      box-shadow: 0 0 15px #8b0000;
+    }
+    .login-box {
+      background: #111;
+      border: 2px solid crimson;
+      border-radius: 16px;
+      padding: 40px 30px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      margin: auto;
+    }
+    .login-box h2 {
+      color: crimson;
+      text-shadow: 0 0 10px red;
+      margin-bottom: 20px;
+    }
+    .login-box input {
+      text-align: center;
+    }
+    .login-box .btn {
+      margin-top: 10px;
+    }
+    .login-error {
+      color: #e74c3c;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .cred-toggle {
+      background: transparent;
+      border: 1px solid crimson;
+      color: #ccc;
+      padding: 8px 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      transition: 0.3s;
+      width: auto;
+    }
+    .cred-toggle:hover {
+      background: crimson;
+      color: #fff;
+      box-shadow: 0 0 20px crimson;
+    }
+    .cred-box {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 10px;
+    }
+    .cred-box input {
+      margin: 5px 0;
+    }
+    .cred-box .btn {
+      margin-top: 8px;
+    }
+    .count-badge {
+      background: #2c2c2c;
+      padding: 4px 14px;
+      border-radius: 30px;
+      border: 1px solid crimson;
+      color: #ccc;
+      font-size: 14px;
+      display: inline-block;
+    }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 480px) {
+      .container {
+        padding: 15px;
+      }
+      h2 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loginScreen" style="display:flex; justify-content:center; align-items:center; min-height:100vh; width:100%;">
+    <div class="login-box">
+      <h2>🔒 دخول المطور</h2>
+      <input type="text" id="loginUser" placeholder="اسم المستخدم" />
+      <input type="password" id="loginPass" placeholder="كلمة السر" />
+      <button class="btn btn-primary" id="loginBtn">دخول</button>
+      <p class="login-error" id="loginError"></p>
+    </div>
+  </div>
+
+  <div id="mainContent" style="display:none; width:100%;">
+    <div class="container">
+      <h2>👑 لوحة تحكم المطور</h2>
+
+      <!-- قسم تغيير بيانات الدخول -->
+      <div class="section">
+        <button class="cred-toggle" id="toggleCredBtn">🔑 تغيير بيانات الدخول</button>
+        <div class="cred-box hidden" id="credBox">
+          <input type="text" id="newUsername" placeholder="اسم المستخدم الجديد" />
+          <input type="password" id="newPassword" placeholder="كلمة السر الجديدة" />
+          <button class="btn btn-success" id="updateCredBtn">💾 تحديث</button>
+          <p id="updateCredMsg" style="color:#7a4e2d; font-size:13px; margin-top:5px;"></p>
+        </div>
+      </div>
+
+      <!-- قسم إدارة الأدوار -->
+      <div class="section">
+        <span class="section-title">🃏 إدارة الأدوار</span>
+        <div class="toolbar">
+          <span class="count-badge" id="rolesCounter">عدد الأدوار: 0</span>
+          <button class="btn btn-primary" id="addRoleBtn" style="width:auto; padding:8px 16px;">➕ إضافة</button>
+        </div>
+        <div id="rolesList"></div>
+      </div>
+
+      <!-- قسم اقتراحات اللاعبين -->
+      <div class="section">
+        <span class="section-title">📬 اقتراحات اللاعبين</span>
+        <div class="toolbar">
+          <span class="count-badge" id="suggestCounter">عدد الاقتراحات: 0</span>
+          <button class="btn btn-danger" id="deleteAllSuggestBtn" style="width:auto; padding:8px 16px;">🗑️ حذف الكل</button>
+        </div>
+        <div id="suggestionsList"></div>
+      </div>
+    </div>
+
+    <!-- مودال إضافة / تعديل الدور -->
+    <div class="modal" id="roleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; justify-content:center; align-items:center;">
+      <div style="background:#111; border:2px solid crimson; border-radius:16px; padding:30px 25px; max-width:450px; width:90%; color:#fff;">
+        <h3 id="roleModalTitle" style="color:crimson; margin-bottom:15px;">➕ إضافة دور</h3>
+        <input type="text" id="roleNameInput" placeholder="اسم الدور" />
+        <input type="file" id="roleImageInput" accept="image/*" />
+        <div id="imagePreviewContainer" style="margin-top:10px;"></div>
+        <input type="hidden" id="editingRoleId" value="" />
+        <button class="btn btn-success" id="saveRoleBtn" style="margin-top:10px;">💾 حفظ</button>
+        <button class="btn" id="closeRoleModal" style="margin-top:8px;">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // ===== استيرادات Firebase =====
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import {
+      getDatabase, ref, set, push, update, remove, get, onValue, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCTcosTbOvgZTo8y4KuUcLtc6vCUXkG17o",
+      authDomain: "bull-46ddf.firebaseapp.com",
+      databaseURL: "https://bull-46ddf-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "bull-46ddf",
+      storageBucket: "bull-46ddf.firebasestorage.app",
+      messagingSenderId: "24129031258",
+      appId: "1:24129031258:web:001c21f4284dc96bc09c63",
+      measurementId: "G-KXS3HWH7PX"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const IMGBB_API_KEY = "552ab56b92a08f22f57b49363a60a9fd";
+
+    // ===== عناصر الصفحة =====
+    const loginScreen = document.getElementById('loginScreen');
+    const mainContent = document.getElementById('mainContent');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
+
+    const toggleCredBtn = document.getElementById('toggleCredBtn');
+    const credBox = document.getElementById('credBox');
+    const newUsername = document.getElementById('newUsername');
+    const newPassword = document.getElementById('newPassword');
+    const updateCredBtn = document.getElementById('updateCredBtn');
+    const updateCredMsg = document.getElementById('updateCredMsg');
+
+    const rolesList = document.getElementById('rolesList');
+    const rolesCounter = document.getElementById('rolesCounter');
+    const addRoleBtn = document.getElementById('addRoleBtn');
+    const roleModal = document.getElementById('roleModal');
+    const roleModalTitle = document.getElementById('roleModalTitle');
+    const roleNameInput = document.getElementById('roleNameInput');
+    const roleImageInput = document.getElementById('roleImageInput');
+    const imagePreview = document.getElementById('imagePreviewContainer');
+    const editingRoleId = document.getElementById('editingRoleId');
+    const saveRoleBtn = document.getElementById('saveRoleBtn');
+    const closeRoleModal = document.getElementById('closeRoleModal');
+
+    const suggestionsList = document.getElementById('suggestionsList');
+    const suggestCounter = document.getElementById('suggestCounter');
+    const deleteAllSuggestBtn = document.getElementById('deleteAllSuggestBtn');
+
+    // ===== تهيئة بيانات الدخول الافتراضية =====
+    async function seedCredentials() {
+      const snap = await get(ref(db, 'admin_credentials'));
+      if (!snap.exists()) {
+        await set(ref(db, 'admin_credentials'), { username: 'admin', password: 'admin123' });
+      }
+    }
+    await seedCredentials();
+
+    // ===== تسجيل الدخول =====
+    if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+      loginScreen.style.display = 'none';
+      mainContent.style.display = 'block';
+      initAdmin();
+    }
+
+    loginBtn.addEventListener('click', async () => {
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value.trim();
+      const creds = await get(ref(db, 'admin_credentials')).then(s => s.val());
+      if (creds && user === creds.username && pass === creds.password) {
+        sessionStorage.setItem('adminLoggedIn', 'true');
+        loginScreen.style.display = 'none';
+        mainContent.style.display = 'block';
+        loginError.textContent = '';
+        initAdmin();
+      } else {
+        loginError.textContent = 'اسم المستخدم أو كلمة السر غير صحيحة!';
+      }
+    });
+
+    // ===== إظهار / إخفاء حقول تغيير بيانات الدخول =====
+    toggleCredBtn.addEventListener('click', () => {
+      credBox.classList.toggle('hidden');
+      // تفريغ الحقول عند الفتح
+      newUsername.value = '';
+      newPassword.value = '';
+      updateCredMsg.textContent = '';
+    });
+
+    // ===== تحديث بيانات الدخول =====
+    updateCredBtn.addEventListener('click', async () => {
+      const user = newUsername.value.trim();
+      const pass = newPassword.value.trim();
+      if (!user || !pass) {
+        updateCredMsg.textContent = '⚠️ الرجاء ملء جميع الحقول.';
+        updateCredMsg.style.color = '#e74c3c';
+        return;
+      }
+      try {
+        await set(ref(db, 'admin_credentials'), { username: user, password: pass });
+        updateCredMsg.textContent = '✅ تم التحديث بنجاح!';
+        updateCredMsg.style.color = '#2ecc71';
+        // تفريغ الحقول بعد التحديث
+        newUsername.value = '';
+        newPassword.value = '';
+      } catch (err) {
+        updateCredMsg.textContent = '❌ خطأ: ' + err.message;
+        updateCredMsg.style.color = '#e74c3c';
+      }
+    });
+
+    // ===== منطق إدارة الأدوار =====
+    let rolesData = {};
+
+    function initAdmin() {
+      // تحميل الأدوار
+      onValue(ref(db, 'global_roles'), (snap) => {
+        rolesData = snap.val() || {};
+        renderRoles();
+        rolesCounter.textContent = 'عدد الأدوار: ' + Object.keys(rolesData).length;
+      });
+
+      // تحميل الاقتراحات
+      onValue(ref(db, 'suggestions'), (snap) => {
+        const data = snap.val();
+        renderSuggestions(data);
+        const count = data ? Object.keys(data).length : 0;
+        suggestCounter.textContent = 'عدد الاقتراحات: ' + count;
+      });
+
+      function renderRoles() {
+        rolesList.innerHTML = '';
+        const entries = Object.entries(rolesData);
+        if (entries.length === 0) {
+          rolesList.innerHTML = '<p style="color:#777; text-align:center;">لا توجد أدوار</p>';
+          return;
+        }
+        entries.forEach(([id, role]) => {
+          const div = document.createElement('div');
+          div.className = 'role-item';
+          div.innerHTML = `
+            <div class="info">
+              ${role.imageUrl ? `<img src="${role.imageUrl}" />` : ''}
+              <span>${role.name}</span>
+            </div>
+            <div class="actions">
+              <button class="edit" onclick="editRole('${id}')">✏️</button>
+              <button class="delete" onclick="deleteRole('${id}')">🗑️</button>
+            </div>
+          `;
+          rolesList.appendChild(div);
+        });
+      }
+
+      window.editRole = (id) => {
+        const role = rolesData[id];
+        if (!role) return;
+        roleModalTitle.textContent = '✏️ تعديل الدور';
+        roleNameInput.value = role.name;
+        editingRoleId.value = id;
+        imagePreview.innerHTML = role.imageUrl ? `<img src="${role.imageUrl}" style="max-width:100%; max-height:150px; border-radius:10px;" />` : '';
+        roleImageInput.value = '';
+        roleModal.style.display = 'flex';
+      };
+
+      window.deleteRole = async (id) => {
+        if (!confirm(`حذف دور "${rolesData[id]?.name}"؟`)) return;
+        await remove(ref(db, `global_roles/${id}`));
+      };
+
+      addRoleBtn.addEventListener('click', () => {
+        roleModalTitle.textContent = '➕ إضافة دور جديد';
+        roleNameInput.value = '';
+        editingRoleId.value = '';
+        imagePreview.innerHTML = '';
+        roleImageInput.value = '';
+        roleModal.style.display = 'flex';
+      });
+
+      closeRoleModal.addEventListener('click', () => {
+        roleModal.style.display = 'none';
+      });
+
+      roleImageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            imagePreview.innerHTML = `<img src="${ev.target.result}" style="max-width:100%; max-height:150px; border-radius:10px;" />`;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      saveRoleBtn.addEventListener('click', async () => {
+        const name = roleNameInput.value.trim();
+        const editId = editingRoleId.value;
+        const file = roleImageInput.files[0];
+        if (!name) {
+          alert('الرجاء إدخال اسم الدور.');
+          return;
+        }
+        try {
+          let imageUrl = '';
+          if (file) {
+            const reader = new FileReader();
+            const base64 = await new Promise((resolve) => {
+              reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+              reader.readAsDataURL(file);
+            });
+            const formData = new FormData();
+            formData.append('key', IMGBB_API_KEY);
+            formData.append('image', base64);
+            const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
+            const json = await res.json();
+            if (!json.success) throw new Error('فشل رفع الصورة');
+            imageUrl = json.data.url;
+          } else if (editId && rolesData[editId]?.imageUrl) {
+            imageUrl = rolesData[editId].imageUrl;
+          }
+          if (editId) {
+            await update(ref(db, `global_roles/${editId}`), { name, imageUrl });
+          } else {
+            await push(ref(db, 'global_roles'), { name, imageUrl });
+          }
+          roleModal.style.display = 'none';
+          roleNameInput.value = '';
+          roleImageInput.value = '';
+          imagePreview.innerHTML = '';
+          editingRoleId.value = '';
+        } catch (err) {
+          alert('❌ خطأ: ' + err.message);
+        }
+      });
+    }
+
+    // ===== عرض الاقتراحات =====
+    function renderSuggestions(data) {
+      suggestionsList.innerHTML = '';
+      if (!data) {
+        suggestionsList.innerHTML = '<p style="color:#777; text-align:center;">لا توجد اقتراحات</p>';
+        return;
+      }
+      const entries = Object.entries(data).reverse();
+      entries.forEach(([key, sugg]) => {
+        const card = document.createElement('div');
+        card.className = 'suggestion-card';
+        const date = sugg.timestamp ? new Date(sugg.timestamp).toLocaleString('ar-EG') : 'وقت غير معروف';
+        card.innerHTML = `
+          <div class="name">👤 ${sugg.playerName || 'مجهول'}</div>
+          <div class="msg">💬 ${sugg.message}</div>
+          <div class="meta">📍 ${sugg.roomId || 'غير معروفة'} | 🕒 ${date}</div>
+          <div class="actions">
+            <button class="del-single" onclick="deleteSuggestion('${key}')">🗑️ حذف</button>
+          </div>
+        `;
+        suggestionsList.appendChild(card);
+      });
+    }
+
+    window.deleteSuggestion = async (key) => {
+      if (!confirm('حذف هذا الاقتراح؟')) return;
+      await remove(ref(db, `suggestions/${key}`));
+    };
+
+    deleteAllSuggestBtn.addEventListener('click', async () => {
+      if (!confirm('⚠️ حذف جميع الاقتراحات نهائياً؟')) return;
+      await remove(ref(db, 'suggestions'));
+    });
+
+    // ===== نافذة الاقتراحات (إغلاق عند النقر خارجها) =====
+    window.addEventListener('click', (e) => {
+      if (e.target === roleModal) roleModal.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
