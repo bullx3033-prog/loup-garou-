@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوب-غارو - تحكم الراوي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .info-box {
+      background: #111;
+      border: 1px solid crimson;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .info-box .code {
+      color: #fff;
+      font-size: 28px;
+      letter-spacing: 4px;
+      text-shadow: 0 0 10px red;
+    }
+    .info-box .status {
+      color: #ccc;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    .refresh-btn {
+      background: crimson;
+      border: none;
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-family: "Cinzel", serif;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-right: 10px;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+    }
+    .refresh-btn:hover {
+      background: #a10000;
+      box-shadow: 0 0 30px crimson;
+      transform: scale(1.05);
+    }
+    #exitBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      max-width: 500px;
+    }
+    .infected-badge {
+      background: #6b1a1a;
+      color: #ff6b6b;
+      padding: 2px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      border: 1px solid #ff6b6b;
+      margin-right: 10px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🐺 تحكم الراوي</h2>
+
+    <div class="info-box">
+      <div>🔑 الغرفة: <span class="code" id="roomCodeDisplay">---</span></div>
+      <div class="status" id="statusDisplay">⏳ جاري التحميل...</div>
+      <button class="refresh-btn" id="refreshBtn">🔄 تحديث</button>
+    </div>
+
+    <div id="players"></div>
+    <button class="btn btn-danger" id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
+  </div>
+
+  <script type="module">
+    import {
+      getRoomCode,
+      clearRoomCode,
+      checkRoomExpiry,
+      listenToPlayers,
+      getPlayers,
+      killPlayer,
+      infectPlayer,
+      deleteRoom
+    } from "./logic.js";
+
+    const roomCode = getRoomCode();
+    const playerContainer = document.getElementById("players");
+    const roomDisplay = document.getElementById("roomCodeDisplay");
+    const statusDisplay = document.getElementById("statusDisplay");
+    const refreshBtn = document.getElementById("refreshBtn");
+
+    if (!roomCode) {
+      roomDisplay.textContent = "⚠️ غير موجود";
+      statusDisplay.textContent = "❌ لا يوجد كود غرفة. جارٍ التوجيه...";
+      playerContainer.innerHTML =
+        '<p style="color:#e74c3c; text-align:center;">❌ لم يتم العثور على كود الغرفة. سيتم توجيهك...</p>';
+      setTimeout(() => (window.location.href = "host.html"), 2000);
+      throw new Error("No roomCode");
+    }
+
+    roomDisplay.textContent = roomCode;
+
+    const valid = await checkRoomExpiry(roomCode);
+    if (!valid) {
+      alert("⏰ انتهت صلاحية الغرفة.");
+      window.location.href = "index.html";
+      throw new Error("Expired");
+    }
+
+    window.killPlayer = (id) => {
+      killPlayer(roomCode, id);
+      fetchPlayers();
+    };
+    window.infectPlayer = (id) => {
+      infectPlayer(roomCode, id);
+      fetchPlayers();
+    };
+
+    function renderPlayers(data) {
+      playerContainer.innerHTML = "";
+      if (!data) {
+        playerContainer.innerHTML = '<p style="color:#aaa; text-align:center;">📭 لا يوجد لاعبون في هذه الغرفة.</p>';
+        statusDisplay.textContent = "⏳ انتظار لاعبين...";
+        return;
+      }
+      const entries = Object.entries(data);
+      if (entries.length === 0) {
+        playerContainer.innerHTML = '<p style="color:#aaa; text-align:center;">📭 لا يوجد لاعبون في هذه الغرفة.</p>';
+        statusDisplay.textContent = "⏳ انتظار لاعبين...";
+        return;
+      }
+      statusDisplay.textContent = `✅ ${entries.length} لاعب`;
+      entries.forEach(([id, player]) => {
+        const card = document.createElement("div");
+        card.className = "player-card";
+        const isDead = player.isDead;
+        if (isDead) card.classList.add("dead");
+
+        const avatarUrl = player.roleImage || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png";
+
+        const infectedBadge = player.isInfected && !isDead
+          ? `<span class="infected-badge">🐺 مستذئب</span>`
+          : "";
+
+        card.innerHTML = `
+          <div class="info">
+            <img src="${avatarUrl}" class="avatar" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
+            <div class="details">
+              <div class="name">${player.name} ${infectedBadge}</div>
+              <div class="role">الدور: <strong>${player.role || "غير معروف"}</strong></div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="kill" onclick="killPlayer('${id}')">🗡️ قتل</button>
+            <button class="infect" onclick="infectPlayer('${id}')">🐺 تحويل</button>
+          </div>
+        `;
+
+        if (isDead) {
+          const btns = card.querySelectorAll("button");
+          btns.forEach((btn) => {
+            btn.style.pointerEvents = "none";
+            btn.style.opacity = "0.4";
+          });
+        }
+
+        playerContainer.appendChild(card);
+      });
+    }
+
+    async function fetchPlayers() {
+      const data = await getPlayers(roomCode);
+      renderPlayers(data);
+    }
+
+    listenToPlayers(roomCode, (data) => {
+      renderPlayers(data);
+    });
+
+    refreshBtn.addEventListener("click", fetchPlayers);
+    setInterval(fetchPlayers, 5000);
+    await fetchPlayers();
+
+    document.getElementById("exitBtn").addEventListener("click", async () => {
+      if (!confirm("هل أنت متأكد من إنهاء الجولة؟")) return;
+      try {
+        await deleteRoom(roomCode);
+      } catch (err) {
+        console.error(err);
+        alert("⚠️ حدث خطأ، لكن سيتم توجيهك.");
+      }
+      clearRoomCode();
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
