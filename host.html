@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوب-غارو - الراوي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .room-box {
+      background: #0d0805;
+      border: 2px solid #d4a017;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .room-box .code {
+      font-size: 32px;
+      color: #d4a017;
+      letter-spacing: 4px;
+    }
+    .section {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #5a3a22;
+      margin-top: 20px;
+    }
+    .section-title {
+      color: #d4a017;
+      font-size: 18px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .roles-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .role-toggle {
+      background: #1a0f0a;
+      padding: 8px 16px;
+      border-radius: 30px;
+      border: 2px solid #5a3a22;
+      color: #b8a08a;
+      font-family: "Cinzel", serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .role-toggle:hover {
+      border-color: #b8860b;
+      color: #f0e0c0;
+    }
+    .role-toggle.active {
+      background: #b8860b;
+      border-color: #d4a017;
+      color: #0d0805;
+      box-shadow: 0 0 20px #b8860b;
+    }
+    .players-list {
+      list-style: none;
+      padding: 0;
+    }
+    .players-list li {
+      padding: 8px 12px;
+      background: #1a0f0a;
+      border-radius: 8px;
+      border-right: 3px solid #7a4e2d;
+      color: #d4b48c;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🐺 لوب-غارو - الراوي</h2>
+
+    <div class="room-box">
+      <div>🔑 رمز الغرفة</div>
+      <div class="code" id="codeDisplay">...</div>
+    </div>
+
+    <div class="section">
+      <span class="section-title">🃏 اختر الأدوار الإضافية</span>
+      <div class="roles-grid" id="extraRolesContainer">
+        <span style="color:#7a4e2d;">جاري التحميل...</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <span class="section-title">⚙️ إعدادات الغرفة</span>
+      <label>عدد الذئاب:</label>
+      <input type="number" id="wolvesCount" min="0" max="10" value="1" />
+      <label>عدد القرويين:</label>
+      <input type="number" id="villagersCount" min="0" max="20" value="3" />
+    </div>
+
+    <div class="section">
+      <span class="section-title">📋 اللاعبون في الغرفة</span>
+      <ul class="players-list" id="playersList"></ul>
+    </div>
+
+    <button class="btn btn-primary" id="startGameBtn" style="margin-top:20px;">⚔️ بدء اللعبة</button>
+    <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">خروج</button>
+  </div>
+
+  <script type="module">
+    import {
+      createOrGetRoom,
+      listenToPlayers,
+      listenToRoles,
+      distributeRoles,
+      deleteRoom,
+      setRoomCode,
+      clearRoomCode,
+      getRoomCode
+    } from "./logic.js";
+
+    // ===== تهيئة الغرفة =====
+    const roomCode = await createOrGetRoom();
+    document.getElementById("codeDisplay").textContent = roomCode;
+
+    // ===== قائمة اللاعبين =====
+    const playersList = document.getElementById("playersList");
+    listenToPlayers(roomCode, (data) => {
+      playersList.innerHTML = "";
+      if (!data) {
+        playersList.innerHTML = '<li style="color:#7a4e2d; text-align:center;">لا يوجد لاعبون</li>';
+        return;
+      }
+      Object.values(data).forEach((p) => {
+        const li = document.createElement("li");
+        li.textContent = p.name;
+        playersList.appendChild(li);
+      });
+    });
+
+    // ===== الأدوار الإضافية =====
+    const extraContainer = document.getElementById("extraRolesContainer");
+    let selectedExtraRoles = [];
+    listenToRoles((data) => {
+      extraContainer.innerHTML = "";
+      if (!data) {
+        extraContainer.innerHTML = '<span style="color:#7a4e2d;">لا توجد أدوار مخصصة</span>';
+        return;
+      }
+      const extras = Object.entries(data).filter(([id, r]) => r.name !== "ذئب" && r.name !== "قروي");
+      if (extras.length === 0) {
+        extraContainer.innerHTML = '<span style="color:#7a4e2d;">لا توجد أدوار مخصصة</span>';
+        return;
+      }
+      extras.forEach(([id, role]) => {
+        const btn = document.createElement("button");
+        btn.className = "role-toggle";
+        btn.textContent = role.name;
+        btn.onclick = () => {
+          btn.classList.toggle("active");
+          const index = selectedExtraRoles.findIndex((r) => r.id === id);
+          if (index === -1) {
+            selectedExtraRoles.push({ id, name: role.name, imageUrl: role.imageUrl || "" });
+          } else {
+            selectedExtraRoles.splice(index, 1);
+          }
+        };
+        extraContainer.appendChild(btn);
+      });
+    });
+
+    // ===== بدء اللعبة =====
+    document.getElementById("startGameBtn").addEventListener("click", async () => {
+      const wolvesCount = parseInt(document.getElementById("wolvesCount").value) || 0;
+      const villagersCount = parseInt(document.getElementById("villagersCount").value) || 0;
+      try {
+        const players = await distributeRoles(roomCode, wolvesCount, villagersCount, selectedExtraRoles);
+        // تأكيد حفظ roomCode
+        setRoomCode(roomCode);
+        window.location.href = "host-control.html";
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    // ===== خروج =====
+    document.getElementById("exitBtn").addEventListener("click", async () => {
+      await deleteRoom(roomCode);
+      clearRoomCode();
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
