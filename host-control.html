@@ -66,10 +66,10 @@
 </head>
 <body>
   <div class="container">
-    <h2>🐺 تحكم الراوي</h2>
+    <h2 id="controlTitle">🐺 تحكم الراوي</h2>
 
     <div class="info-box">
-      <div>🔑 الغرفة: <span class="code" id="roomCodeDisplay">---</span></div>
+      <div id="roomLabel">🔑 الغرفة: <span class="code" id="roomCodeDisplay">---</span></div>
       <div class="status" id="statusDisplay">⏳ جاري التحميل...</div>
       <button class="refresh-btn" id="refreshBtn">🔄 تحديث</button>
     </div>
@@ -80,6 +80,7 @@
   </div>
 
   <script type="module">
+    import { t, setLanguage, getCurrentLang } from './translations.js';
     import {
       getRoomCode,
       clearRoomCode,
@@ -97,6 +98,19 @@
       get
     } from "./logic.js";
 
+    function applyTranslations() {
+      document.title = t('appName') + ' - ' + t('controlTitle');
+      document.getElementById('controlTitle').textContent = `🐺 ${t('controlTitle')}`;
+      document.getElementById('refreshBtn').textContent = '🔄 ' + t('refresh');
+      document.getElementById('exitBtn').textContent = '⚰️ ' + t('endRound');
+
+      const lang = getCurrentLang();
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = lang;
+    }
+
+    applyTranslations();
+
     const roomCode = getRoomCode();
     const playerContainer = document.getElementById("players");
     const roomDisplay = document.getElementById("roomCodeDisplay");
@@ -104,25 +118,23 @@
     const refreshBtn = document.getElementById("refreshBtn");
 
     if (!roomCode) {
-      roomDisplay.textContent = "⚠️ غير موجود";
-      statusDisplay.textContent = "❌ لا يوجد كود غرفة. جارٍ التوجيه...";
+      roomDisplay.textContent = "⚠️ " + t('unknown');
+      statusDisplay.textContent = "❌ " + t('noRoomCode');
       playerContainer.innerHTML =
-        '<p style="color:#e74c3c; text-align:center;">❌ لم يتم العثور على كود الغرفة. سيتم توجيهك...</p>';
+        `<p style="color:#e74c3c; text-align:center;">❌ ${t('noRoomCode')}</p>`;
       setTimeout(() => (window.location.href = "host.html"), 2000);
       throw new Error("No roomCode");
     }
 
     roomDisplay.textContent = roomCode;
 
-    // ===== التحقق من صلاحية 24 ساعة =====
     const valid = await checkRoomExpiry(roomCode);
     if (!valid) {
-      alert("⏰ انتهت صلاحية الغرفة.");
+      alert("⏰ " + t('roomExpired'));
       window.location.href = "index.html";
       throw new Error("Expired");
     }
 
-    // ===== دوال القتل والتحويل =====
     window.killPlayer = (id) => {
       killPlayer(roomCode, id);
       fetchPlayers();
@@ -132,21 +144,20 @@
       fetchPlayers();
     };
 
-    // ===== عرض اللاعبين =====
     function renderPlayers(data) {
       playerContainer.innerHTML = "";
       if (!data) {
-        playerContainer.innerHTML = '<p style="color:#b8a08a; text-align:center;">📭 لا يوجد لاعبون في هذه الغرفة.</p>';
-        statusDisplay.textContent = "⏳ انتظار لاعبين...";
+        playerContainer.innerHTML = `<p style="color:#b8a08a; text-align:center;">📭 ${t('noPlayersInRoom')}</p>`;
+        statusDisplay.textContent = "⏳ " + t('waitingPlayers');
         return;
       }
       const entries = Object.entries(data);
       if (entries.length === 0) {
-        playerContainer.innerHTML = '<p style="color:#b8a08a; text-align:center;">📭 لا يوجد لاعبون في هذه الغرفة.</p>';
-        statusDisplay.textContent = "⏳ انتظار لاعبين...";
+        playerContainer.innerHTML = `<p style="color:#b8a08a; text-align:center;">📭 ${t('noPlayersInRoom')}</p>`;
+        statusDisplay.textContent = "⏳ " + t('waitingPlayers');
         return;
       }
-      statusDisplay.textContent = `✅ ${entries.length} لاعب`;
+      statusDisplay.textContent = `✅ ${entries.length} ${t('playersInRoom')}`;
       entries.forEach(([id, player]) => {
         const card = document.createElement("div");
         card.className = "player-card";
@@ -155,7 +166,7 @@
 
         const avatarUrl = player.roleImage || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png";
         const infectedBadge = player.isInfected && !isDead
-          ? `<span class="infected-badge">🐺 مستذئب</span>`
+          ? `<span class="infected-badge">🐺 ${t('infected')}</span>`
           : "";
 
         card.innerHTML = `
@@ -163,12 +174,12 @@
             <img src="${avatarUrl}" class="avatar" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
             <div class="details">
               <div class="name">${player.name} ${infectedBadge}</div>
-              <div class="role">الدور: <strong>${player.role || "غير معروف"}</strong></div>
+              <div class="role">${t('role')}: <strong>${player.role || t('unknown')}</strong></div>
             </div>
           </div>
           <div class="actions">
-            <button class="kill" onclick="killPlayer('${id}')">🗡️ قتل</button>
-            <button class="infect" onclick="infectPlayer('${id}')">🐺 تحويل</button>
+            <button class="kill" onclick="killPlayer('${id}')">🗡️ ${t('kill')}</button>
+            <button class="infect" onclick="infectPlayer('${id}')">🐺 ${t('infect')}</button>
           </div>
         `;
 
@@ -189,7 +200,6 @@
       renderPlayers(data);
     }
 
-    // ===== مستمع فوري =====
     listenToPlayers(roomCode, (data) => {
       renderPlayers(data);
     });
@@ -198,14 +208,13 @@
     setInterval(fetchPlayers, 5000);
     await fetchPlayers();
 
-    // ===== زر الخروج =====
     document.getElementById("exitBtn").addEventListener("click", async () => {
-      if (!confirm("هل أنت متأكد من إنهاء الجولة؟")) return;
+      if (!confirm(t('confirmEndRound'))) return;
       try {
         await deleteRoom(roomCode);
       } catch (err) {
         console.error(err);
-        alert("⚠️ حدث خطأ، لكن سيتم توجيهك.");
+        alert("⚠️ " + t('errorOccurred'));
       }
       clearRoomCode();
       window.location.href = "index.html";
