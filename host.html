@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>loup garou- الراوي</title>
+  <title>لو ڨالو - الراوي</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
@@ -72,15 +72,139 @@
       color: #d4b48c;
       margin-bottom: 5px;
     }
+
+    /* ===== قسم Discord (مبسط) ===== */
+    .discord-section {
+      background: #1a1a1a;
+      border: 1px solid #5865F2;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+    .discord-section .title {
+      color: #5865F2;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .discord-section .link-box {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: #0d0d0d;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 8px;
+      border: 1px solid #333;
+    }
+    .discord-section .link-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #ccc;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      padding: 5px;
+      min-width: 150px;
+      direction: ltr;
+    }
+    .discord-section .link-box input:focus {
+      outline: none;
+      border-color: #5865F2;
+    }
+    .discord-section .btn-discord-outline {
+      background: transparent;
+      color: #5865F2;
+      border: 1px solid #5865F2;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+    .discord-section .btn-discord-outline:hover {
+      background: #5865F2;
+      color: #fff;
+      box-shadow: 0 0 15px #5865F2;
+    }
+    .discord-section .btn-group-discord {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .discord-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    .discord-modal-content {
+      background: #111;
+      border: 1px solid #5865F2;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 400px;
+      width: 90%;
+      color: #fff;
+    }
+    .discord-modal-content h3 {
+      color: #5865F2;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .discord-modal-content input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #1a1a1a;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      direction: ltr;
+    }
+    .discord-modal-content .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .discord-modal-content .btn-row .btn {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>🐺 loup garou- الراوي</h2>
+    <h2>🐺 لو ڨالو - الراوي</h2>
 
     <div class="room-box">
       <div>🔑 رمز الغرفة</div>
       <div class="code" id="codeDisplay">...</div>
+    </div>
+
+    <!-- ===== قسم Discord (مبسط) ===== -->
+    <div class="discord-section">
+      <div class="title">🎙️ إعدادات Discord</div>
+      <div class="btn-group-discord">
+        <button class="btn-discord-outline" id="pasteDiscordBtn">📋 أضف رابط غرفة Discord</button>
+      </div>
+      <div class="link-box">
+        <input type="text" id="discordLinkInput" placeholder="رابط الغرفة الصوتية (اختياري)" readonly />
+        <button class="btn-discord-outline" id="copyDiscordBtn" style="font-size:12px; padding:6px 12px;">🔗 نسخ</button>
+      </div>
+      <p style="color:#777; font-size:12px; margin-top:5px;">💡 انسخ رابط الغرفة الصوتية من Discord والصقه هنا ليظهر للاعبين.</p>
     </div>
 
     <div class="section">
@@ -107,6 +231,18 @@
     <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">خروج</button>
   </div>
 
+  <!-- مودال Discord (لصق رابط يدوي) -->
+  <div class="discord-modal" id="discordModal">
+    <div class="discord-modal-content">
+      <h3>📋 أدخل رابط Discord</h3>
+      <input type="text" id="manualDiscordInput" placeholder="https://discord.gg/..." dir="ltr" />
+      <div class="btn-row">
+        <button class="btn btn-primary" id="saveDiscordLinkBtn">💾 حفظ</button>
+        <button class="btn" id="closeDiscordModalBtn">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
     import {
       createOrGetRoom,
@@ -116,10 +252,14 @@
       deleteRoom,
       setRoomCode,
       clearRoomCode,
-      getRoomCode
+      getRoomCode,
+      db,
+      ref,
+      update,
+      onValue,
+      get
     } from "./logic.js";
 
-    // ===== تهيئة الغرفة =====
     const roomCode = await createOrGetRoom();
     document.getElementById("codeDisplay").textContent = roomCode;
 
@@ -174,8 +314,7 @@
       const wolvesCount = parseInt(document.getElementById("wolvesCount").value) || 0;
       const villagersCount = parseInt(document.getElementById("villagersCount").value) || 0;
       try {
-        const players = await distributeRoles(roomCode, wolvesCount, villagersCount, selectedExtraRoles);
-        // تأكيد حفظ roomCode
+        await distributeRoles(roomCode, wolvesCount, villagersCount, selectedExtraRoles);
         setRoomCode(roomCode);
         window.location.href = "host-control.html";
       } catch (err) {
@@ -188,6 +327,71 @@
       await deleteRoom(roomCode);
       clearRoomCode();
       window.location.href = "index.html";
+    });
+
+    // ===== منطق Discord (يدوي فقط) =====
+    const discordLinkInput = document.getElementById("discordLinkInput");
+    const pasteDiscordBtn = document.getElementById("pasteDiscordBtn");
+    const copyDiscordBtn = document.getElementById("copyDiscordBtn");
+    const discordModal = document.getElementById("discordModal");
+    const manualDiscordInput = document.getElementById("manualDiscordInput");
+    const saveDiscordLinkBtn = document.getElementById("saveDiscordLinkBtn");
+    const closeDiscordModalBtn = document.getElementById("closeDiscordModalBtn");
+
+    // تحميل الرابط من Firebase إذا كان موجوداً
+    const discordRef = ref(db, `rooms/${roomCode}/discordLink`);
+    onValue(discordRef, (snapshot) => {
+      const link = snapshot.val();
+      if (link) {
+        discordLinkInput.value = link;
+      }
+    });
+
+    // ===== فتح مودال لصق رابط يدوي =====
+    pasteDiscordBtn.addEventListener("click", () => {
+      manualDiscordInput.value = "";
+      discordModal.style.display = "flex";
+    });
+
+    // ===== حفظ الرابط المدخل يدوياً =====
+    saveDiscordLinkBtn.addEventListener("click", async () => {
+      const link = manualDiscordInput.value.trim();
+      if (link && link.startsWith("https://")) {
+        discordLinkInput.value = link;
+        await update(ref(db, `rooms/${roomCode}`), { discordLink: link });
+        discordModal.style.display = "none";
+        alert("✅ تم حفظ رابط Discord بنجاح!");
+      } else {
+        alert("⚠️ الرجاء إدخال رابط صحيح يبدأ بـ https://");
+      }
+    });
+
+    // ===== إغلاق المودال =====
+    closeDiscordModalBtn.addEventListener("click", () => {
+      discordModal.style.display = "none";
+    });
+    window.addEventListener("click", (e) => {
+      if (e.target === discordModal) discordModal.style.display = "none";
+    });
+
+    // ===== نسخ الرابط =====
+    copyDiscordBtn.addEventListener("click", () => {
+      const link = discordLinkInput.value;
+      if (link) {
+        navigator.clipboard.writeText(link).then(() => {
+          alert("✅ تم نسخ الرابط!");
+        }).catch(() => {
+          const input = document.createElement("input");
+          input.value = link;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand("copy");
+          document.body.removeChild(input);
+          alert("✅ تم نسخ الرابط!");
+        });
+      } else {
+        alert("⚠️ لا يوجد رابط لنسخه.");
+      }
     });
   </script>
 </body>
