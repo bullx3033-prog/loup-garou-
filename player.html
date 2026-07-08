@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>loupe garou- لاعب</title>
+  <title>لو ڨالو - لاعب</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
@@ -55,11 +55,67 @@
       object-fit: contain;
       pointer-events: none;
     }
+
+    .discord-player-section {
+      background: #1a1a1a;
+      border: 1px solid #5865F2;
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+    .discord-player-section .title {
+      color: #5865F2;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .discord-player-section .link-box {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: #0d0d0d;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 8px;
+      border: 1px solid #333;
+    }
+    .discord-player-section .link-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #ccc;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      padding: 5px;
+      min-width: 120px;
+      direction: ltr;
+    }
+    .discord-player-section .link-box input:focus {
+      outline: none;
+    }
+    .discord-player-section .btn-discord-join {
+      background: #5865F2;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+    .discord-player-section .btn-discord-join:hover {
+      background: #4752C4;
+      box-shadow: 0 0 15px #5865F2;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>🐺 loup garou</h2>
+    <h2 id="playerTitle">🐺 لو ڨالو</h2>
 
     <div id="joinForm">
       <input type="text" id="playerName" placeholder="اسمك" />
@@ -72,6 +128,15 @@
       <button class="btn btn-danger" id="leaveBtn" style="margin-top:15px;">مغادرة</button>
     </div>
 
+    <div id="discordPlayerSection" class="discord-player-section hidden">
+      <div class="title" id="discordTitle">🎙️ غرفة الصوت في Discord</div>
+      <div class="link-box">
+        <input type="text" id="discordPlayerLink" placeholder="لا يوجد رابط بعد..." readonly />
+        <button class="btn-discord-join" id="joinDiscordBtn">🎙️ انضم</button>
+      </div>
+      <p style="color:#777; font-size:12px; margin-top:5px;" id="discordHint">💡 انضم إلى الغرفة الصوتية للتواصل مع اللاعبين أثناء اللعبة.</p>
+    </div>
+
     <div id="roleBox" class="hidden"></div>
   </div>
 
@@ -79,8 +144,8 @@
 
   <div class="modal" id="suggestModal">
     <div class="modal-content">
-      <h3>📢 شارك فكرتك</h3>
-      <p>ساعدنا في تطوير اللعبة بأفكارك الجديدة!</p>
+      <h3 id="suggestTitle">📢 شارك فكرتك</h3>
+      <p id="suggestDesc">ساعدنا في تطوير اللعبة بأفكارك الجديدة!</p>
       <input type="text" id="suggestName" placeholder="اسمك (اختياري)" />
       <textarea id="suggestMessage" placeholder="اكتب اقتراحك هنا..."></textarea>
       <button class="btn btn-primary" id="sendSuggest">🚀 إرسال</button>
@@ -89,6 +154,7 @@
   </div>
 
   <script type="module">
+    import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
     import {
       getRoomCode,
       setRoomCode,
@@ -101,10 +167,36 @@
       db,
       ref,
       update,
-      remove
+      remove,
+      onValue
     } from "./logic.js";
 
-    // ===== عناصر الصفحة =====
+    function applyTranslations() {
+      document.title = t('appName') + ' - ' + t('playerTitle');
+      document.getElementById('playerTitle').textContent = `🐺 ${t('appName')}`;
+      document.getElementById('playerName').placeholder = t('yourNamePlaceholder');
+      document.getElementById('roomCodeInput').placeholder = t('roomCodePlaceholder');
+      document.getElementById('joinBtn').textContent = t('join');
+      document.getElementById('waitingText').textContent = t('waitingForGame');
+      document.getElementById('leaveBtn').textContent = t('leave');
+      document.getElementById('discordTitle').textContent = '🎙️ ' + t('discordSettings');
+      document.getElementById('discordHint').textContent = '💡 ' + t('discordHint');
+      document.getElementById('joinDiscordBtn').textContent = '🎙️ ' + t('join');
+      document.getElementById('suggestBtn').textContent = t('suggestions');
+      document.getElementById('suggestTitle').textContent = t('shareIdea');
+      document.getElementById('suggestDesc').textContent = t('shareDesc');
+      document.getElementById('suggestName').placeholder = t('yourName');
+      document.getElementById('suggestMessage').placeholder = t('yourSuggestion');
+      document.getElementById('sendSuggest').textContent = t('send');
+      document.getElementById('closeSuggest').textContent = t('cancel');
+
+      const lang = getCurrentLang();
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = lang;
+    }
+
+    applyTranslations();
+
     const nameInput = document.getElementById("playerName");
     const codeInput = document.getElementById("roomCodeInput");
     const joinBtn = document.getElementById("joinBtn");
@@ -114,37 +206,54 @@
     const leaveBtn = document.getElementById("leaveBtn");
     const waitingText = document.getElementById("waitingText");
 
+    const discordSection = document.getElementById("discordPlayerSection");
+    const discordLinkInput = document.getElementById("discordPlayerLink");
+    const joinDiscordBtn = document.getElementById("joinDiscordBtn");
+
     let playerId = localStorage.getItem("playerId");
     let roomCode = getRoomCode();
 
-    // ===== عرض البطاقة العادية =====
+    function updateDiscordLink(roomCode) {
+      const discordRef = ref(db, `rooms/${roomCode}/discordLink`);
+      onValue(discordRef, (snapshot) => {
+        const link = snapshot.val();
+        if (link) {
+          discordLinkInput.value = link;
+          discordSection.classList.remove("hidden");
+        } else {
+          discordLinkInput.value = t('noLinkYet');
+          discordSection.classList.add("hidden");
+        }
+      });
+    }
+
     function renderRoleContent(player) {
+      const roleDisplay = translateDynamicRole(player.role);
+      const roleText = t('yourRole') + ' ' + roleDisplay;
       roleBox.innerHTML = `
-        <div class="role-name">دورك هو: ${player.role}</div>
+        <div class="role-name">${roleText}</div>
         <div class="role-image-wrapper">
           <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
         </div>
         <div class="btn-group-vertical">
-          <button class="btn btn-primary" id="hideRoleBtn">🔒 إخفاء البطاقة</button>
-          <button class="btn btn-danger" id="suicideBtn">💀 انتحار (اخرج من اللعبة)</button>
+          <button class="btn btn-primary" id="hideRoleBtn">🔒 ${t('hideCard')}</button>
+          <button class="btn btn-danger" id="suicideBtn">💀 ${t('suicide')}</button>
         </div>
       `;
 
       document.getElementById("hideRoleBtn").onclick = () => {
-        roleBox.innerHTML = `<button class="btn btn-primary" id="showRoleBtn">🃏 إظهار البطاقة</button>`;
+        roleBox.innerHTML = `<button class="btn btn-primary" id="showRoleBtn">🃏 ${t('showCard')}</button>`;
         document.getElementById("showRoleBtn").onclick = () => renderRoleContent(player);
       };
 
-      // ===== زر الانتحار (يُحدث الحالة إلى ميت، ولا يحذف اللاعب) =====
       document.getElementById("suicideBtn").onclick = async () => {
-        if (!confirm("⚠️ هل أنت متأكد من رغبتك في الانتحار؟")) return;
+        if (!confirm(t('confirmSuicide'))) return;
         try {
           await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
-          // عرض شاشة الموت للاعب مع إمكانية الخروج
           roleBox.innerHTML = `
             <div id="skull">💀</div>
-            <p id="death-text">لقد انتحرت! .</p>
-            <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 الخروج</button>
+            <p id="death-text">${t('deathMessage')}</p>
+            <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
           `;
           document.getElementById("exitBtn").onclick = async () => {
             await deleteRoom(roomCode);
@@ -157,34 +266,32 @@
       };
     }
 
-    // ===== عرض البطاقة للمستذئب =====
     function renderInfectedContent(player) {
-      roleBox.innerHTML = `
-        <div class="role-name" style="color:#66bb6a;">🐺 لقد أصبحت مستذئبًا!</div>
-        <div class="role-image-wrapper">
-          <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
-          <img src="https://i.postimg.cc/MKsHYNG3/1000022868-removebg-preview.png" class="blood-overlay" />
-        </div>
-        <div class="btn-group-vertical">
-          <button class="btn btn-primary" id="hideInfectedBtn">🔒 إخفاء البطاقة</button>
-          <button class="btn btn-danger" id="suicideInfectedBtn">💀 انتحار (اخرج من اللعبة)</button>
-        </div>
+roleBox.innerHTML = `
+<div class="role-name" style="color:#66bb6a;">${t('infectedMessage')}</div>
+<div class="role-image-wrapper">
+  <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
+  <img src="https://i.postimg.cc/y8Dhy5VS/IMG-20260708-204243.png" class="blood-overlay" />
+</div>
+<div class="btn-group-vertical">
+  <button class="btn btn-primary" id="hideInfectedBtn">🔒 ${t('hideCard')}</button>
+  <button class="btn btn-danger" id="suicideInfectedBtn">💀 ${t('suicide')}</button>
+</div>
       `;
 
       document.getElementById("hideInfectedBtn").onclick = () => {
-        roleBox.innerHTML = `<button class="btn btn-primary" id="showInfectedBtn">🃏 إظهار البطاقة</button>`;
+        roleBox.innerHTML = `<button class="btn btn-primary" id="showInfectedBtn">🃏 ${t('showCard')}</button>`;
         document.getElementById("showInfectedBtn").onclick = () => renderInfectedContent(player);
       };
 
-      // زر الانتحار في حالة المستذئب (أيضاً تحديث وليس حذف)
       document.getElementById("suicideInfectedBtn").onclick = async () => {
-        if (!confirm("⚠️ هل أنت متأكد من رغبتك في الانتحار؟")) return;
+        if (!confirm(t('confirmSuicide'))) return;
         try {
           await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
           roleBox.innerHTML = `
             <div id="skull">💀</div>
-            <p id="death-text">لقد انتحرت! سيظهر لك الراوي كميت.</p>
-            <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 الخروج</button>
+            <p id="death-text">${t('deathMessage')}</p>
+            <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
           `;
           document.getElementById("exitBtn").onclick = async () => {
             await deleteRoom(roomCode);
@@ -197,7 +304,6 @@
       };
     }
 
-    // ===== التحقق من حالة اللاعب =====
     async function checkPlayerStatus() {
       if (!playerId || !roomCode) return;
       const player = await getPlayer(roomCode, playerId);
@@ -207,14 +313,15 @@
         return;
       }
 
-      // إذا كان ميتاً
+      updateDiscordLink(roomCode);
+
       if (player.isDead) {
         statusDiv.classList.add("hidden");
         roleBox.classList.remove("hidden");
         roleBox.innerHTML = `
           <div id="skull">💀</div>
-          <p id="death-text">${player.isInfected ? "لقد تم تحويلك إلى مستذئب ثم قتلك!" : "لقد تم قتلك!"}</p>
-          <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 الخروج من اللعبة</button>
+          <p id="death-text">${player.isInfected ? t('infectedDeathMessage') : t('deathMessage')}</p>
+          <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
         `;
         document.getElementById("exitBtn").onclick = async () => {
           await deleteRoom(roomCode);
@@ -224,28 +331,24 @@
         return;
       }
 
-      // إذا كان مستذئباً
       if (player.isInfected && !player.isDead) {
         statusDiv.classList.add("hidden");
         roleBox.classList.remove("hidden");
-        // تبدأ البطاقة مغلقة
-        roleBox.innerHTML = `<button class="btn btn-primary" id="showInfectedBtn">🃏 إظهار البطاقة</button>`;
+        roleBox.innerHTML = `<button class="btn btn-primary" id="showInfectedBtn">🃏 ${t('showCard')}</button>`;
         document.getElementById("showInfectedBtn").onclick = () => renderInfectedContent(player);
         return;
       }
 
-      // إذا كان لديه دور عادي
       if (player.role) {
         statusDiv.classList.add("hidden");
         roleBox.classList.remove("hidden");
-        roleBox.innerHTML = `<button class="btn btn-primary" id="showRoleBtn">🃏 إظهار البطاقة</button>`;
+        roleBox.innerHTML = `<button class="btn btn-primary" id="showRoleBtn">🃏 ${t('showCard')}</button>`;
         document.getElementById("showRoleBtn").onclick = () => renderRoleContent(player);
         return;
       }
 
-      // في انتظار البدء
       statusDiv.classList.remove("hidden");
-      waitingText.textContent = `في انتظار بدء اللعبة... (الغرفة ${roomCode})`;
+      waitingText.textContent = t('waitingForGame') + ` (${t('roomCode')} ${roomCode})`;
 
       listenToPlayers(roomCode, async (data) => {
         if (!data) return;
@@ -256,12 +359,11 @@
       });
     }
 
-    // ===== الانضمام =====
     joinBtn.addEventListener("click", async () => {
       const name = nameInput.value.trim();
       const enteredRoom = codeInput.value.trim();
       if (!name || !enteredRoom) {
-        alert("يرجى إدخال الاسم ورمز الغرفة.");
+        alert(t('fillAllFields'));
         return;
       }
       roomCode = enteredRoom;
@@ -271,20 +373,29 @@
         setRoomCode(roomCode);
         joinForm.classList.add("hidden");
         statusDiv.classList.remove("hidden");
+
+        updateDiscordLink(roomCode);
         checkPlayerStatus();
       } catch (err) {
         alert("خطأ: " + err.message);
       }
     });
 
-    // ===== مغادرة =====
     leaveBtn.onclick = async () => {
       await deleteRoom(roomCode);
       localStorage.clear();
       window.location.href = "index.html";
     };
 
-    // ===== الاقتراحات =====
+    joinDiscordBtn.addEventListener("click", () => {
+      const link = discordLinkInput.value;
+      if (link && link.startsWith("https://")) {
+        window.open(link, "_blank");
+      } else {
+        alert(t('noDiscordLink'));
+      }
+    });
+
     const modal = document.getElementById("suggestModal");
     document.getElementById("suggestBtn").addEventListener("click", () => {
       modal.style.display = "flex";
@@ -300,12 +411,12 @@
       const name = document.getElementById("suggestName").value.trim();
       const message = document.getElementById("suggestMessage").value.trim();
       if (!message) {
-        alert("الرجاء كتابة رسالة!");
+        alert(t('writeMessage'));
         return;
       }
       try {
         await sendSuggestion(name, message, roomCode || "خارج الغرفة");
-        alert("✅ شكراً لك! تم إرسال اقتراحك.");
+        alert("✅ " + t('suggestionSent'));
         document.getElementById("suggestMessage").value = "";
         modal.style.display = "none";
       } catch (err) {
@@ -313,10 +424,10 @@
       }
     });
 
-    // ===== جلسة سابقة =====
     if (playerId && roomCode) {
       joinForm.classList.add("hidden");
       statusDiv.classList.remove("hidden");
+      updateDiscordLink(roomCode);
       checkPlayerStatus();
     }
   </script>
