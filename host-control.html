@@ -3,33 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>loup garou- تحكم الراوي</title>
+  <title>لو ڨالو - تحكم الراوي</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
     .info-box {
-      background: #111;
-      border: 1px solid crimson;
+      background: #0d0805;
+      border: 1px solid #d4a017;
       border-radius: 12px;
       padding: 12px;
       margin-bottom: 20px;
       text-align: center;
     }
     .info-box .code {
-      color: #fff;
+      color: #d4a017;
       font-size: 28px;
       letter-spacing: 4px;
-      text-shadow: 0 0 10px red;
     }
     .info-box .status {
-      color: #ccc;
+      color: #b8a08a;
       font-size: 14px;
       margin-top: 5px;
     }
     .refresh-btn {
-      background: crimson;
+      background: #b8860b;
       border: none;
-      color: #fff;
+      color: #0d0805;
       padding: 8px 18px;
       border-radius: 30px;
       font-family: "Cinzel", serif;
@@ -38,11 +37,11 @@
       cursor: pointer;
       transition: 0.3s;
       margin-right: 10px;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+      box-shadow: 0 0 15px rgba(184, 134, 11, 0.3);
     }
     .refresh-btn:hover {
-      background: #a10000;
-      box-shadow: 0 0 30px crimson;
+      background: #d4a017;
+      box-shadow: 0 0 30px #d4a017;
       transform: scale(1.05);
     }
     #exitBtn {
@@ -76,6 +75,7 @@
     </div>
 
     <div id="players"></div>
+
     <button class="btn btn-danger" id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
   </div>
 
@@ -88,7 +88,13 @@
       getPlayers,
       killPlayer,
       infectPlayer,
-      deleteRoom
+      deleteRoom,
+      db,
+      ref,
+      update,
+      remove,
+      onValue,
+      get
     } from "./logic.js";
 
     const roomCode = getRoomCode();
@@ -108,6 +114,7 @@
 
     roomDisplay.textContent = roomCode;
 
+    // ===== التحقق من صلاحية 24 ساعة =====
     const valid = await checkRoomExpiry(roomCode);
     if (!valid) {
       alert("⏰ انتهت صلاحية الغرفة.");
@@ -115,6 +122,7 @@
       throw new Error("Expired");
     }
 
+    // ===== دوال القتل والتحويل =====
     window.killPlayer = (id) => {
       killPlayer(roomCode, id);
       fetchPlayers();
@@ -124,16 +132,17 @@
       fetchPlayers();
     };
 
+    // ===== عرض اللاعبين =====
     function renderPlayers(data) {
       playerContainer.innerHTML = "";
       if (!data) {
-        playerContainer.innerHTML = '<p style="color:#aaa; text-align:center;">📭 لا يوجد لاعبون في هذه الغرفة.</p>';
+        playerContainer.innerHTML = '<p style="color:#b8a08a; text-align:center;">📭 لا يوجد لاعبون في هذه الغرفة.</p>';
         statusDisplay.textContent = "⏳ انتظار لاعبين...";
         return;
       }
       const entries = Object.entries(data);
       if (entries.length === 0) {
-        playerContainer.innerHTML = '<p style="color:#aaa; text-align:center;">📭 لا يوجد لاعبون في هذه الغرفة.</p>';
+        playerContainer.innerHTML = '<p style="color:#b8a08a; text-align:center;">📭 لا يوجد لاعبون في هذه الغرفة.</p>';
         statusDisplay.textContent = "⏳ انتظار لاعبين...";
         return;
       }
@@ -145,7 +154,6 @@
         if (isDead) card.classList.add("dead");
 
         const avatarUrl = player.roleImage || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png";
-
         const infectedBadge = player.isInfected && !isDead
           ? `<span class="infected-badge">🐺 مستذئب</span>`
           : "";
@@ -181,6 +189,7 @@
       renderPlayers(data);
     }
 
+    // ===== مستمع فوري =====
     listenToPlayers(roomCode, (data) => {
       renderPlayers(data);
     });
@@ -189,6 +198,7 @@
     setInterval(fetchPlayers, 5000);
     await fetchPlayers();
 
+    // ===== زر الخروج =====
     document.getElementById("exitBtn").addEventListener("click", async () => {
       if (!confirm("هل أنت متأكد من إنهاء الجولة؟")) return;
       try {
