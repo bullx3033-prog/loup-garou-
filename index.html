@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Loup Garou</title>
+  <title>لو ڨالو</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
@@ -75,15 +75,62 @@
     .about-modal-content .btn-close-about {
       margin-top: 15px;
     }
+    .lang-flags {
+      position: fixed;
+      top: 8px;
+      left: 8px;
+      display: flex;
+      gap: 4px;
+      z-index: 999;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 4px 6px;
+      border-radius: 30px;
+      border: 1px solid #444;
+      backdrop-filter: blur(4px);
+    }
+    .lang-flags button {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: grayscale(0.6);
+      opacity: 0.7;
+      padding: 0;
+    }
+    .lang-flags button.active-flag {
+      border-color: #d4a017;
+      filter: grayscale(0);
+      opacity: 1;
+      box-shadow: 0 0 12px #d4a017;
+      transform: scale(1.1);
+    }
+    .lang-flags button:hover {
+      filter: grayscale(0);
+      opacity: 1;
+      transform: scale(1.1);
+    }
   </style>
 </head>
 <body>
+  <div class="lang-flags">
+    <button class="flag-btn" data-lang="ar" title="العربية">🇩🇿</button>
+    <button class="flag-btn" data-lang="fr" title="Français">🇫🇷</button>
+    <button class="flag-btn" data-lang="en" title="English">🇬🇧</button>
+  </div>
+
   <div class="container">
-    <h1>loup garou</h1>
-    <div class="sub">مرحباً بك في عالم القرويين والذئاب</div>
+    <h1 id="appName">🐺 لو ڨالو</h1>
+    <div class="sub" id="welcome">مرحباً بك في عالم القرويين والذئاب</div>
     <div class="btn-group">
-      <button class="btn btn-primary" onclick="window.location.href='host.html'">👑 أنا الراوي</button>
-      <button class="btn btn-primary" onclick="window.location.href='player.html'">🎭 أنا اللاعب</button>
+      <button class="btn btn-primary" id="hostBtn">👑 أنا الراوي</button>
+      <button class="btn btn-primary" id="playerBtn">🎭 أنا اللاعب</button>
     </div>
     <button class="btn-about" id="aboutBtn">📖 عن اللعبة</button>
   </div>
@@ -94,11 +141,10 @@
     <div class="download-count" id="downloadCounter">عدد مرات التحميل: 0</div>
   </div>
 
-  <!-- مودال الاقتراحات -->
   <div class="modal" id="suggestModal">
     <div class="modal-content">
-      <h3>📢 شارك فكرتك</h3>
-      <p>ساعدنا في تطوير اللعبة بأفكارك الجديدة!</p>
+      <h3 id="suggestTitle">📢 شارك فكرتك</h3>
+      <p id="suggestDesc">ساعدنا في تطوير اللعبة بأفكارك الجديدة!</p>
       <input type="text" id="suggestName" placeholder="اسمك (اختياري)" />
       <textarea id="suggestMessage" placeholder="اكتب اقتراحك هنا..."></textarea>
       <button class="btn btn-primary" id="sendSuggest">🚀 إرسال</button>
@@ -106,32 +152,79 @@
     </div>
   </div>
 
-  <!-- مودال عن اللعبة -->
   <div class="modal" id="aboutModal">
     <div class="modal-content about-modal-content">
-      <h3 style="color:crimson;">📖 ما هي لعبة Loup Garou؟</h3>
-      <p>
-        <span class="highlight">Loup Garou</span> هي نسخة رقمية ذكية من لعبة الورق الشهيرة <span class="highlight">"القرويون والذئاب"</span> (Werewolf / Loup Garou).
-      </p>
-      <p>
-        بدلاً من توزيع البطاقات الورقية التقليدية، يقوم هذا التطبيق بتوزيع الأدوار <span class="highlight">عشوائياً</span> على جميع اللاعبين، مما يضمن <span class="highlight">الخصوصية التامة</span> لكل لاعب، حيث لا يمكن لأي شخص معرفة دور الآخر إلا إذا كشف عنه الراوي في الوقت المناسب.
-      </p>
-      <p>
-        <span class="highlight">الراوي</span> هو اللاعب الوحيد الذي يمتلك الصلاحية المطلقة في إدارة اللعبة، حيث يمكنه <span class="highlight">قتل</span> أو <span class="highlight">استذئاب</span> أي لاعب وفقاً لتطورات اللعبة، وهذا يمنع الغش ويجعل التجربة أكثر نزاهة ومتعة.
-      </p>
-      <p>
-        الهدف من هذه اللعبة هو توفير تجربة سلسة وعادلة لجميع اللاعبين، مع الحفاظ على السرية التامة ومنع أي محاولة للغش، لتكون بديلاً مثالياً للأوراق التقليدية.
-      </p>
+      <h3 id="aboutTitle" style="color:crimson;">📖 ما هي لعبة لو ڨالو؟</h3>
+      <p id="aboutP1"><span class="highlight">لو ڨالو</span> هي نسخة رقمية ذكية من لعبة الورق الشهيرة <span class="highlight">"القرويون والذئاب"</span>.</p>
+      <p id="aboutP2">بدلاً من توزيع البطاقات الورقية التقليدية، يقوم هذا التطبيق بتوزيع الأدوار <span class="highlight">عشوائياً</span> على جميع اللاعبين، مما يضمن <span class="highlight">الخصوصية التامة</span> لكل لاعب.</p>
+      <p id="aboutP3"><span class="highlight">الراوي</span> هو اللاعب الوحيد الذي يمتلك الصلاحية المطلقة في إدارة اللعبة، حيث يمكنه <span class="highlight">قتل</span> أو <span class="highlight">استذئاب</span> أي لاعب.</p>
+      <p id="aboutP4">الهدف من هذه اللعبة هو توفير تجربة سلسة وعادلة لجميع اللاعبين، مع الحفاظ على السرية التامة ومنع أي محاولة للغش.</p>
       <button class="btn btn-danger btn-close-about" id="closeAboutBtn">إغلاق</button>
     </div>
   </div>
 
   <script type="module">
+    import { t, setLanguage, getCurrentLang } from './translations.js';
     import {
       sendSuggestion,
       incrementDownloadCount,
       getDownloadCount
     } from "./logic.js";
+
+    function applyTranslations() {
+      document.title = t('appName');
+      document.getElementById('appName').textContent = `🐺 ${t('appName')}`;
+      document.getElementById('welcome').textContent = t('welcome');
+      document.getElementById('hostBtn').textContent = `👑 ${t('iAmHost')}`;
+      document.getElementById('playerBtn').textContent = `🎭 ${t('iAmPlayer')}`;
+      document.getElementById('aboutBtn').textContent = `📖 ${t('aboutGame')}`;
+      document.getElementById('suggestBtn').textContent = `💬 ${t('suggestions')}`;
+      document.getElementById('installBtn').textContent = `📲 ${t('downloadApk')}`;
+      document.getElementById('suggestTitle').textContent = `📢 ${t('shareIdea')}`;
+      document.getElementById('suggestDesc').textContent = t('shareDesc');
+      document.getElementById('suggestName').placeholder = t('yourName');
+      document.getElementById('suggestMessage').placeholder = t('yourSuggestion');
+      document.getElementById('sendSuggest').textContent = `🚀 ${t('send')}`;
+      document.getElementById('closeSuggest').textContent = t('cancel');
+      document.getElementById('aboutTitle').textContent = t('aboutTitle');
+      document.getElementById('aboutP1').innerHTML = t('aboutP1');
+      document.getElementById('aboutP2').innerHTML = t('aboutP2');
+      document.getElementById('aboutP3').innerHTML = t('aboutP3');
+      document.getElementById('aboutP4').innerHTML = t('aboutP4');
+      document.getElementById('closeAboutBtn').textContent = t('close');
+
+      const counter = document.getElementById('downloadCounter');
+      const count = counter.textContent.replace(/[^0-9]/g, '');
+      counter.textContent = t('downloads') + count;
+
+      const lang = getCurrentLang();
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = lang;
+    }
+
+    // ===== أزرار الأعلام =====
+    document.querySelectorAll('.flag-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.dataset.lang;
+        setLanguage(lang);
+        document.querySelectorAll('.flag-btn').forEach(b => b.classList.remove('active-flag'));
+        btn.classList.add('active-flag');
+        applyTranslations();
+      });
+    });
+
+    // ===== أحداث الأزرار (بدلاً من onclick) =====
+    document.getElementById('hostBtn').addEventListener('click', () => {
+      window.location.href = 'host.html';
+    });
+
+    document.getElementById('playerBtn').addEventListener('click', () => {
+      window.location.href = 'player.html';
+    });
+
+    const currentLang = getCurrentLang();
+    document.querySelector(`.flag-btn[data-lang="${currentLang}"]`)?.classList.add('active-flag');
+    applyTranslations();
 
     // ===== الاقتراحات =====
     const suggestModal = document.getElementById("suggestModal");
@@ -149,12 +242,12 @@
       const name = document.getElementById("suggestName").value.trim();
       const message = document.getElementById("suggestMessage").value.trim();
       if (!message) {
-        alert("الرجاء كتابة رسالة!");
+        alert(t('writeMessage'));
         return;
       }
       try {
         await sendSuggestion(name, message, "الصفحة الرئيسية");
-        alert("✅ شكراً لك! تم إرسال اقتراحك.");
+        alert("✅ " + t('suggestionSent'));
         document.getElementById("suggestMessage").value = "";
         suggestModal.style.display = "none";
       } catch (err) {
@@ -177,12 +270,12 @@
     // ===== عداد التحميلات =====
     async function updateCounter() {
       const count = await getDownloadCount();
-      document.getElementById("downloadCounter").textContent = "عدد مرات التحميل: " + count;
+      document.getElementById("downloadCounter").textContent = t('downloads') + count;
     }
     updateCounter();
 
     document.getElementById("installBtn").addEventListener("click", async () => {
-      const apkUrl = "https://drive.google.com/file/d/1FXvPMIfk7KOXRdtBKq_oe9mfEH8bDq2U/view?usp=drivesdk"; // ✅ رابط التحميل المباشر
+      const apkUrl = "https://drive.google.com/file/d/1FXvPMIfk7KOXRdtBKq_oe9mfEH8bDq2U/view?usp=drivesdk";
       try {
         await incrementDownloadCount();
         await updateCounter();
