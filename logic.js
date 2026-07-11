@@ -125,9 +125,17 @@ async function addPlayer(roomCode, name) {
   return playerId;
 }
 
+// ===== دالة مساعدة للخلط (تم إضافتها) =====
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 // ===== توزيع الأدوار (تم التعديل الجوهري هنا) =====
 async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRoles) {
-  // استخدم الدالة المعدلة getPlayers لجلب البيانات بأمان
   const playersObj = await getPlayers(roomCode);
   const players = Object.keys(playersObj).map(key => ({ id: key, ...playersObj[key] }));
 
@@ -138,6 +146,7 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
     throw new Error(`عدد الأدوار (${totalRoles}) لا يساوي عدد اللاعبين (${players.length})`);
   }
 
+  // بناء قائمة الأدوار
   const roles = [];
   for (let i = 0; i < wolvesCount; i++) {
     roles.push({ name: "ذئب", imageUrl: "https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" });
@@ -147,21 +156,20 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
   }
   selectedRoles.forEach(r => roles.push({ name: r.name, imageUrl: r.imageUrl || "" }));
 
-  // خلط الأدوار
-  for (let i = roles.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [roles[i], roles[j]] = [roles[j], roles[i]];
-  }
+  // 🔀 خلط الأدوار (كما كان)
+  const shuffledRoles = shuffleArray(roles);
+  // 🔀 خلط اللاعبين (الجديد) لضمان توزيع عشوائي مختلف في كل مرة
+  const shuffledPlayers = shuffleArray(players);
 
-  // توزيع الأدوار على اللاعبين
-  for (let i = 0; i < players.length; i++) {
-    await update(ref(db, `rooms/${roomCode}/players/${players[i].id}`), {
-      role: roles[i].name,
-      roleImage: roles[i].imageUrl
+  // توزيع الأدوار على اللاعبين المخلوطين
+  for (let i = 0; i < shuffledPlayers.length; i++) {
+    await update(ref(db, `rooms/${roomCode}/players/${shuffledPlayers[i].id}`), {
+      role: shuffledRoles[i].name,
+      roleImage: shuffledRoles[i].imageUrl
     });
   }
   await update(ref(db, `rooms/${roomCode}`), { started: true });
-  return players;
+  return shuffledPlayers;
 }
 
 // ===== إدارة الأدوار (global_roles) =====
