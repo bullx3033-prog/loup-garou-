@@ -359,6 +359,7 @@
         <input type="text" id="roleNameAr" placeholder="الاسم بالعربية" style="margin-bottom:5px;" />
         <input type="text" id="roleNameFr" placeholder="Nom en français" style="margin-bottom:5px;" />
         <input type="text" id="roleNameEn" placeholder="Name in English" style="margin-bottom:5px;" />
+        <textarea id="roleDescription" placeholder="وصف الدور (كيف يلعب؟)" rows="4" style="margin-bottom:5px;"></textarea>
         <input type="file" id="roleImageInput" accept="image/*" />
         <div id="imagePreviewContainer" style="margin-top:10px;"></div>
         <input type="hidden" id="editingRoleId" value="" />
@@ -410,6 +411,7 @@
     const roleNameAr = document.getElementById('roleNameAr');
     const roleNameFr = document.getElementById('roleNameFr');
     const roleNameEn = document.getElementById('roleNameEn');
+    const roleDescription = document.getElementById('roleDescription'); // تم إضافته
     const roleImageInput = document.getElementById('roleImageInput');
     const imagePreview = document.getElementById('imagePreviewContainer');
     const editingRoleId = document.getElementById('editingRoleId');
@@ -439,6 +441,7 @@
       document.getElementById('roleNameAr').placeholder = t('roleName') + ' (العربية)';
       document.getElementById('roleNameFr').placeholder = t('roleName') + ' (Français)';
       document.getElementById('roleNameEn').placeholder = t('roleName') + ' (English)';
+      document.getElementById('roleDescription').placeholder = '📝 وصف الدور (كيف يلعب؟)';
       document.getElementById('saveRoleBtn').textContent = '💾 ' + t('save');
       document.getElementById('closeRoleModal').textContent = t('cancel');
 
@@ -570,6 +573,8 @@
           roleNameFr.value = '';
           roleNameEn.value = '';
         }
+        // تعبئة حقل الوصف
+        roleDescription.value = role.description || '';
         editingRoleId.value = id;
         imagePreview.innerHTML = role.imageUrl ? `<img src="${role.imageUrl}" style="max-width:100%; max-height:150px; border-radius:10px;" />` : '';
         roleImageInput.value = '';
@@ -587,6 +592,7 @@
         roleNameAr.value = '';
         roleNameFr.value = '';
         roleNameEn.value = '';
+        roleDescription.value = '';
         editingRoleId.value = '';
         imagePreview.innerHTML = '';
         roleImageInput.value = '';
@@ -612,6 +618,7 @@
         const nameAr = roleNameAr.value.trim();
         const nameFr = roleNameFr.value.trim();
         const nameEn = roleNameEn.value.trim();
+        const description = roleDescription.value.trim(); // قراءة الوصف
         const editId = editingRoleId.value;
         const file = roleImageInput.files[0];
 
@@ -645,7 +652,12 @@
             en: nameEn || nameAr
           };
 
-          const roleData = { name: nameObj, imageUrl };
+          const roleData = { 
+            name: nameObj, 
+            imageUrl,
+            description: description // حفظ الوصف
+          };
+
           if (editId) {
             await update(ref(db, `global_roles/${editId}`), roleData);
           } else {
@@ -655,6 +667,7 @@
           roleNameAr.value = '';
           roleNameFr.value = '';
           roleNameEn.value = '';
+          roleDescription.value = '';
           roleImageInput.value = '';
           imagePreview.innerHTML = '';
           editingRoleId.value = '';
