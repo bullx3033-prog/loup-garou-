@@ -44,8 +44,30 @@ function clearRoomCode() {
   localStorage.removeItem("roomCode");
 }
 
-// ===== إدارة الغرفة =====
+// ===== مسح الغرف المعلقة (التي مضى عليها أكثر من 12 ساعة) =====
+async function deleteAllStaleRooms() {
+  const roomsRef = ref(db, 'rooms');
+  const snapshot = await get(roomsRef);
+  if (!snapshot.exists()) return;
+  const rooms = snapshot.val();
+  const now = Date.now();
+  const twelveHours = 12 * 60 * 60 * 1000;
+
+  for (const [code, data] of Object.entries(rooms)) {
+    const createdAt = data.createdAt || 0;
+    // حذف إذا مضى أكثر من 12 ساعة منذ الإنشاء، أو إذا انتهت صلاحيتها
+    if (now - createdAt > twelveHours || (data.expiresAt && now > data.expiresAt)) {
+      await remove(ref(db, `rooms/${code}`));
+      console.log(`🗑️ حذفت الغرفة المعلقة: ${code}`);
+    }
+  }
+}
+
+// ===== إدارة الغرفة (صلاحية 12 ساعة) =====
 async function createOrGetRoom() {
+  // مسح الغرف المنتهية أولاً
+  await deleteAllStaleRooms();
+
   let roomCode = getRoomCode();
   if (roomCode) {
     const snap = await get(ref(db, `rooms/${roomCode}`));
@@ -54,9 +76,11 @@ async function createOrGetRoom() {
   }
   roomCode = Math.floor(100 + Math.random() * 900).toString();
   setRoomCode(roomCode);
+  const expiresAt = Date.now() + 12 * 60 * 60 * 1000; // 12 ساعة
   await set(ref(db, `rooms/${roomCode}`), {
     started: false,
-    createdAt: serverTimestamp()
+    createdAt: serverTimestamp(),
+    expiresAt: expiresAt
   });
   return roomCode;
 }
@@ -67,20 +91,20 @@ async function deleteRoom(roomCode) {
 }
 
 async function checkRoomExpiry(roomCode) {
+  // مسح الغرف المنتهية أولاً
+  await deleteAllStaleRooms();
+
   const snap = await get(ref(db, `rooms/${roomCode}`));
   if (!snap.exists()) return false;
   const data = snap.val();
-  if (data.createdAt) {
-    const now = Date.now();
-    if (now - data.createdAt > 24 * 60 * 60 * 1000) {
-      await deleteRoom(roomCode);
-      return false;
-    }
+  if (data.expiresAt && Date.now() > data.expiresAt) {
+    await deleteRoom(roomCode);
+    return false;
   }
   return true;
 }
 
-// ===== جلب اللاعبين (تم التعديل سابقاً) =====
+// ===== جلب اللاعبين =====
 function listenToPlayers(roomCode, callback) {
   const playersRef = ref(db, `rooms/${roomCode}/players`);
   onValue(playersRef, (snapshot) => {
@@ -125,7 +149,7 @@ async function addPlayer(roomCode, name) {
   return playerId;
 }
 
-// ===== دالة مساعدة للخلط (تم إضافتها) =====
+// ===== دالة مساعدة للخلط =====
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -134,7 +158,7 @@ function shuffleArray(array) {
   return array;
 }
 
-// ===== توزيع الأدوار (تم التعديل الجوهري هنا) =====
+// ===== توزيع الأدوار (مع الخلط العشوائي) =====
 async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRoles) {
   const playersObj = await getPlayers(roomCode);
   const players = Object.keys(playersObj).map(key => ({ id: key, ...playersObj[key] }));
@@ -146,7 +170,6 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
     throw new Error(`عدد الأدوار (${totalRoles}) لا يساوي عدد اللاعبين (${players.length})`);
   }
 
-  // بناء قائمة الأدوار
   const roles = [];
   for (let i = 0; i < wolvesCount; i++) {
     roles.push({ name: "ذئب", imageUrl: "https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" });
@@ -156,12 +179,9 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
   }
   selectedRoles.forEach(r => roles.push({ name: r.name, imageUrl: r.imageUrl || "" }));
 
-  // 🔀 خلط الأدوار (كما كان)
   const shuffledRoles = shuffleArray(roles);
-  // 🔀 خلط اللاعبين (الجديد) لضمان توزيع عشوائي مختلف في كل مرة
   const shuffledPlayers = shuffleArray(players);
 
-  // توزيع الأدوار على اللاعبين المخلوطين
   for (let i = 0; i < shuffledPlayers.length; i++) {
     await update(ref(db, `rooms/${roomCode}/players/${shuffledPlayers[i].id}`), {
       role: shuffledRoles[i].name,
@@ -252,7 +272,7 @@ async function getDownloadCount() {
   return snap.val()?.count || 0;
 }
 
-// ===== بيانات الاعتماد (admin_credentials) =====
+// ===== بيانات الاعتماد =====
 async function getCredentials() {
   const snap = await get(ref(db, "admin_credentials"));
   return snap.val();
@@ -293,6 +313,7 @@ export {
   createOrGetRoom,
   deleteRoom,
   checkRoomExpiry,
+  deleteAllStaleRooms,
   listenToPlayers,
   getPlayers,
   killPlayer,
