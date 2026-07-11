@@ -55,19 +55,19 @@
       object-fit: contain;
       pointer-events: none;
     }
-    /* تنسيق وصف الدور */
+    /* تنسيق وصف الدور - تم تصغير الخط وتحسين المقروئية */
     .role-description {
       background: #1a1a1a;
       border: 1px solid #555;
       border-radius: 10px;
-      padding: 12px 15px;
+      padding: 10px 12px;
       margin-top: 10px;
       color: #ccc;
-      font-size: 14px;
-      line-height: 1.6;
+      font-size: 13px; /* تم التعديل من 14px إلى 13px */
+      line-height: 1.5; /* تم التعديل من 1.6 إلى 1.5 */
       text-align: center;
       font-family: 'Cinzel', serif;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px; /* تم التعديل من 0.5px إلى 0.3px */
     }
     .role-description strong {
       color: #d4a017;
@@ -186,7 +186,7 @@
       update,
       remove,
       onValue,
-      get // استيراد get لجلب بيانات الدور من global_roles
+      get
     } from "./logic.js";
 
     function applyTranslations() {
@@ -245,12 +245,10 @@
       });
     }
 
-    // دالة لجلب وصف الدور من global_roles
     async function fetchRoleDescription(roleName) {
       try {
         const snap = await get(ref(db, 'global_roles'));
         const roles = snap.val() || {};
-        // البحث عن الدور الذي يطابق الاسم (نبحث في name.ar أو name.fr أو name.en)
         for (const key in roles) {
           const role = roles[key];
           const nameObj = role.name;
@@ -269,11 +267,9 @@
       }
     }
 
-    // دالة عرض البطاقة مع الوصف
     async function renderRoleContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const roleText = t('yourRole') + ' ' + roleDisplay;
-      // جلب الوصف من قاعدة البيانات
       const description = await fetchRoleDescription(player.role);
       
       roleBox.innerHTML = `
