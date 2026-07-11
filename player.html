@@ -55,6 +55,23 @@
       object-fit: contain;
       pointer-events: none;
     }
+    /* تنسيق وصف الدور */
+    .role-description {
+      background: #1a1a1a;
+      border: 1px solid #555;
+      border-radius: 10px;
+      padding: 12px 15px;
+      margin-top: 10px;
+      color: #ccc;
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.5px;
+    }
+    .role-description strong {
+      color: #d4a017;
+    }
 
     .discord-player-section {
       background: #1a1a1a;
@@ -168,7 +185,8 @@
       ref,
       update,
       remove,
-      onValue
+      onValue,
+      get // استيراد get لجلب بيانات الدور من global_roles
     } from "./logic.js";
 
     function applyTranslations() {
@@ -227,14 +245,43 @@
       });
     }
 
-    function renderRoleContent(player) {
+    // دالة لجلب وصف الدور من global_roles
+    async function fetchRoleDescription(roleName) {
+      try {
+        const snap = await get(ref(db, 'global_roles'));
+        const roles = snap.val() || {};
+        // البحث عن الدور الذي يطابق الاسم (نبحث في name.ar أو name.fr أو name.en)
+        for (const key in roles) {
+          const role = roles[key];
+          const nameObj = role.name;
+          if (typeof nameObj === 'object') {
+            if (nameObj.ar === roleName || nameObj.fr === roleName || nameObj.en === roleName) {
+              return role.description || '';
+            }
+          } else if (nameObj === roleName) {
+            return role.description || '';
+          }
+        }
+        return '';
+      } catch (e) {
+        console.error('خطأ في جلب وصف الدور:', e);
+        return '';
+      }
+    }
+
+    // دالة عرض البطاقة مع الوصف
+    async function renderRoleContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const roleText = t('yourRole') + ' ' + roleDisplay;
+      // جلب الوصف من قاعدة البيانات
+      const description = await fetchRoleDescription(player.role);
+      
       roleBox.innerHTML = `
         <div class="role-name">${roleText}</div>
         <div class="role-image-wrapper">
           <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
         </div>
+        ${description ? `<div class="role-description"><strong>📖 الوصف:</strong> ${description}</div>` : ''}
         <div class="btn-group-vertical">
           <button class="btn btn-primary" id="hideRoleBtn">🔒 ${t('hideCard')}</button>
           <button class="btn btn-danger" id="suicideBtn">💀 ${t('suicide')}</button>
@@ -266,17 +313,19 @@
       };
     }
 
-    function renderInfectedContent(player) {
-roleBox.innerHTML = `
-<div class="role-name" style="color:#66bb6a;">${t('infectedMessage')}</div>
-<div class="role-image-wrapper">
-  <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
-  <img src="https://i.postimg.cc/y8Dhy5VS/IMG-20260708-204243.png" class="blood-overlay" />
-</div>
-<div class="btn-group-vertical">
-  <button class="btn btn-primary" id="hideInfectedBtn">🔒 ${t('hideCard')}</button>
-  <button class="btn btn-danger" id="suicideInfectedBtn">💀 ${t('suicide')}</button>
-</div>
+    async function renderInfectedContent(player) {
+      const description = await fetchRoleDescription(player.role);
+      roleBox.innerHTML = `
+        <div class="role-name" style="color:#66bb6a;">${t('infectedMessage')}</div>
+        <div class="role-image-wrapper">
+          <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
+          <img src="https://i.postimg.cc/y8Dhy5VS/IMG-20260708-204243.png" class="blood-overlay" />
+        </div>
+        ${description ? `<div class="role-description"><strong>📖 الوصف:</strong> ${description}</div>` : ''}
+        <div class="btn-group-vertical">
+          <button class="btn btn-primary" id="hideInfectedBtn">🔒 ${t('hideCard')}</button>
+          <button class="btn btn-danger" id="suicideInfectedBtn">💀 ${t('suicide')}</button>
+        </div>
       `;
 
       document.getElementById("hideInfectedBtn").onclick = () => {
@@ -290,7 +339,7 @@ roleBox.innerHTML = `
           await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
           roleBox.innerHTML = `
             <div id="skull">💀</div>
-            <p id="death-text">${t('deathMessage')}</p>
+            <p id="death-text">${t('infectedDeathMessage')}</p>
             <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
           `;
           document.getElementById("exitBtn").onclick = async () => {
