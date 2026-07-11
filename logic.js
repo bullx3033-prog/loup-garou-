@@ -80,18 +80,26 @@ async function checkRoomExpiry(roomCode) {
   return true;
 }
 
-// ===== جلب اللاعبين =====
+// ===== جلب اللاعبين (تم التعديل سابقاً) =====
 function listenToPlayers(roomCode, callback) {
   const playersRef = ref(db, `rooms/${roomCode}/players`);
   onValue(playersRef, (snapshot) => {
     const data = snapshot.val();
-    callback(data);
+    callback(data || {});
+  }, (error) => {
+    console.error("خطأ في الاستماع للاعبين:", error);
+    callback({});
   });
 }
 
 async function getPlayers(roomCode) {
-  const snap = await get(ref(db, `rooms/${roomCode}/players`));
-  return snap.val();
+  try {
+    const snap = await get(ref(db, `rooms/${roomCode}/players`));
+    return snap.val() || {};
+  } catch (error) {
+    console.error("خطأ في جلب اللاعبين:", error);
+    return {};
+  }
 }
 
 // ===== دوال القتل والتحويل =====
@@ -117,18 +125,19 @@ async function addPlayer(roomCode, name) {
   return playerId;
 }
 
-// ===== توزيع الأدوار =====
+// ===== توزيع الأدوار (تم التعديل الجوهري هنا) =====
 async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRoles) {
-  const playersSnap = await get(ref(db, `rooms/${roomCode}/players`));
-  if (!playersSnap.exists()) throw new Error("لا يوجد لاعبين");
-  const players = [];
-  playersSnap.forEach(child => players.push({ id: child.key, ...child.val() }));
-  
+  // استخدم الدالة المعدلة getPlayers لجلب البيانات بأمان
+  const playersObj = await getPlayers(roomCode);
+  const players = Object.keys(playersObj).map(key => ({ id: key, ...playersObj[key] }));
+
+  if (players.length === 0) throw new Error("لا يوجد لاعبين");
+
   const totalRoles = wolvesCount + villagersCount + selectedRoles.length;
   if (players.length !== totalRoles) {
     throw new Error(`عدد الأدوار (${totalRoles}) لا يساوي عدد اللاعبين (${players.length})`);
   }
-  
+
   const roles = [];
   for (let i = 0; i < wolvesCount; i++) {
     roles.push({ name: "ذئب", imageUrl: "https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" });
@@ -137,13 +146,14 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
     roles.push({ name: "قروي", imageUrl: "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" });
   }
   selectedRoles.forEach(r => roles.push({ name: r.name, imageUrl: r.imageUrl || "" }));
-  
-  // خلط
+
+  // خلط الأدوار
   for (let i = roles.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [roles[i], roles[j]] = [roles[j], roles[i]];
   }
-  
+
+  // توزيع الأدوار على اللاعبين
   for (let i = 0; i < players.length; i++) {
     await update(ref(db, `rooms/${roomCode}/players/${players[i].id}`), {
       role: roles[i].name,
