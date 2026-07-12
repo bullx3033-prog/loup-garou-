@@ -3,94 +3,151 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لو ڨارو - تحكم الراوي</title>
+  <title>لو ڨارو - الراوي</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
   <style>
-    :root { --bg: #0f0f0f; --panel: #1a1a1a; --gold: #d4a017; --danger: #a10d0d; }
-    body { font-family: 'Cinzel', serif; background: var(--bg); color: #f0e0c0; margin: 0; padding: 20px; display: flex; justify-content: center; }
-    .container { max-width: 500px; width: 100%; }
-    
-    .info-box { background: #0d0805; border: 1px solid var(--gold); border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 20px; }
-    .info-box .code { color: var(--gold); font-size: 28px; font-weight: bold; letter-spacing: 4px; }
-    
-    .player-card { background: var(--panel); border: 1px solid #333; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
-    .avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover; }
-    
-    .actions { display: flex; gap: 8px; }
-    button { padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Cinzel', serif; font-weight: bold; }
-    .btn-kill { background: var(--danger); color: white; }
-    .btn-infect { background: #1a4a1a; color: white; }
-    
-    #exitBtn { width: 100%; padding: 15px; background: var(--danger); color: white; margin-top: 20px; border-radius: 12px; }
+    /* أنماط الراوي الأصلية */
+    .section { background: #1a1a1a; border: 1px solid crimson; border-radius: 12px; padding: 15px; margin-top: 20px; }
+    .section-title { color: crimson; font-size: 18px; margin-bottom: 10px; display: block; text-shadow: 0 0 8px red; }
+    .btn { padding: 14px 20px; border-radius: 10px; border: none; background: #2c2c2c; color: #fff; font-family: 'Cinzel', serif; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; text-align: center; font-size: 16px; box-shadow: 0 0 10px rgba(255, 0, 0, 0.1); }
+    .btn:hover { background: #3a3a3a; box-shadow: 0 0 15px crimson; transform: scale(1.02); }
+    .btn-primary { background: #2c2c2c; color: #fff; }
+    .btn-danger { background: #a10d0d; color: #fff; }
+    .btn-success { background: #1a4a1a; color: #fff; }
+    input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: 1px solid #555; background: #1a1a1a; color: #fff; font-family: 'Cinzel', serif; font-size: 16px; }
+    .counter-group { display: flex; gap: 20px; flex-wrap: wrap; margin: 10px 0; justify-content: center; }
+    .counter-item { background: #1a1a1a; border: 1px solid #555; border-radius: 10px; padding: 10px 15px; text-align: center; flex: 1; min-width: 100px; }
+    .counter-item input { width: 60px; text-align: center; padding: 6px; margin: 0 auto; display: block; background: #111; border: 1px solid #555; border-radius: 6px; color: #fff; font-size: 18px; font-family: 'Cinzel', serif; }
+    .player-list { margin-top: 10px; }
+    .player-item { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .start-btn-wrapper { margin-top: 15px; }
+    .start-btn-wrapper .btn { font-size: 20px; padding: 16px; }
+
+    /* التعديلات المطلوبة: الصور الدائرية 6 في السطر */
+    .roles-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 10px; }
+    .role-item { cursor: pointer; transition: 0.3s; }
+    .role-item img { width: 100%; aspect-ratio: 1/1; border-radius: 50%; border: 2px solid #555; object-fit: cover; }
+    .role-item.selected img { border-color: #d4a017; box-shadow: 0 0 10px #d4a017; transform: scale(1.05); }
+    @media (max-width: 600px) { .roles-grid { grid-template-columns: repeat(6, 1fr); } }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2 style="color:crimson; text-align:center;">🐺 تحكم الراوي</h2>
+    <h2 id="hostTitle">🐺 لو ڨارو - الراوي</h2>
 
-    <div class="info-box">
-      <div id="roomLabel">🔑 الغرفة: <span class="code" id="roomCodeDisplay">---</span></div>
-      <div class="status" id="statusDisplay">⏳ جاري التحميل...</div>
-      <button id="refreshBtn" style="margin-top:10px; background:#333; color:#fff;">🔄 تحديث</button>
+    <!-- تم حذف قسم الديسكورد بالكامل -->
+
+    <div class="section">
+      <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية</span>
+      <div id="rolesGrid" class="roles-grid"></div>
     </div>
 
-    <div id="players"></div>
+    <div class="section">
+      <span class="section-title" id="roomSettingsTitle">⚙️ إعدادات الغرفة</span>
+      <div class="counter-group">
+        <div class="counter-item">
+          <label for="wolvesCount">🐺 عدد الذئاب</label>
+          <input type="number" id="wolvesCount" value="2" min="1" max="10" />
+        </div>
+        <div class="counter-item">
+          <label for="villagersCount">👨‍🌾 عدد القرويين</label>
+          <input type="number" id="villagersCount" value="3" min="1" max="20" />
+        </div>
+      </div>
+    </div>
 
-    <button id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
+    <div class="section">
+      <span class="section-title" id="playersTitle">👥 اللاعبون في الغرفة</span>
+      <div id="playersList" class="player-list">
+        <p style="color:#777; text-align:center;">لا يوجد لاعبون بعد</p>
+      </div>
+      <div class="flex" style="margin-top:10px;">
+        <button class="btn btn-danger" id="exitBtn">🚪 خروج</button>
+        <button class="btn btn-primary" id="refreshBtn">🔄 تحديث</button>
+      </div>
+    </div>
+
+    <div class="start-btn-wrapper">
+      <button class="btn btn-success" id="startGameBtn">🚀 بدء اللعبة</button>
+    </div>
   </div>
 
   <script type="module">
-    import { t, getCurrentLang } from './translations.js';
-    import { getRoomCode, clearRoomCode, checkRoomExpiry, listenToPlayers, getPlayers, killPlayer, infectPlayer, deleteRoom, db, ref } from "./logic.js";
+    import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
+    import { getRoomCode, setRoomCode, clearRoomCode, createOrGetRoom, deleteRoom, checkRoomExpiry, listenToPlayers, getPlayers, addPlayer, distributeRoles, listenToRoles, db, ref, update, remove, get, onValue } from "./logic.js";
+
+    function applyTranslations() {
+      document.title = t('appName') + ' - ' + t('hostTitle');
+      document.getElementById('hostTitle').textContent = `🐺 ${t('appName')} - ${t('hostTitle')}`;
+      document.getElementById('extraRolesTitle').textContent = '🃏 ' + t('chooseExtraRoles');
+      document.getElementById('roomSettingsTitle').textContent = '⚙️ ' + t('roomSettings');
+      document.getElementById('playersTitle').textContent = '👥 ' + t('playersInRoom');
+      document.getElementById('exitBtn').textContent = '🚪 ' + t('exit');
+      document.getElementById('refreshBtn').textContent = '🔄 ' + t('refresh');
+      document.getElementById('startGameBtn').textContent = '🚀 ' + t('startGame');
+      const lang = getCurrentLang();
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = lang;
+    }
+    applyTranslations();
 
     const roomCode = getRoomCode();
-    const playerContainer = document.getElementById("players");
-    const roomDisplay = document.getElementById("roomCodeDisplay");
-    const statusDisplay = document.getElementById("statusDisplay");
-    
-    if (!roomCode) { window.location.href = "host.html"; }
-    roomDisplay.textContent = roomCode;
+    if (!roomCode) { await createOrGetRoom(); location.reload(); }
+    const valid = await checkRoomExpiry(roomCode);
+    if (!valid) { alert('انتهت صلاحية الغرفة'); window.location.href = 'index.html'; }
 
-    window.killPlayer = (id) => { killPlayer(roomCode, id); };
-    window.infectPlayer = (id) => { infectPlayer(roomCode, id); };
+    const rolesGrid = document.getElementById('rolesGrid');
+    const playersList = document.getElementById('playersList');
+    const wolvesInput = document.getElementById('wolvesCount');
+    const villagersInput = document.getElementById('villagersCount');
+    const startBtn = document.getElementById('startGameBtn');
+    const exitBtn = document.getElementById('exitBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    let selectedRoles = [];
 
-    function renderPlayers(data) {
-      playerContainer.innerHTML = "";
-      if (!data) { statusDisplay.textContent = "⏳ انتظار..."; return; }
-      const entries = Object.entries(data);
-      statusDisplay.textContent = `✅ ${entries.length} لاعب في الغرفة`;
-      
-      entries.forEach(([id, player]) => {
-        const card = document.createElement("div");
-        card.className = "player-card";
-        if (player.isDead) card.style.opacity = "0.5";
-        
-        card.innerHTML = `
-          <div style="display:flex; align-items:center; gap:10px;">
-            <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="avatar" />
-            <div>
-              <div style="font-weight:bold;">${player.name}</div>
-              <div style="font-size:12px; color:#888;">${player.role || '---'}</div>
-            </div>
-          </div>
-          <div class="actions">
-            <button class="btn-kill" onclick="killPlayer('${id}')">🗡️</button>
-            <button class="btn-infect" onclick="infectPlayer('${id}')">🐺</button>
-          </div>
-        `;
-        playerContainer.appendChild(card);
+    async function loadRoles() {
+      const snap = await get(ref(db, 'global_roles'));
+      const data = snap.val() || {};
+      rolesGrid.innerHTML = '';
+      Object.entries(data).forEach(([id, role]) => {
+        const div = document.createElement('div');
+        div.className = 'role-item';
+        div.innerHTML = `<img src="${role.imageUrl || 'https://via.placeholder.com/100'}" />`;
+        div.onclick = () => {
+          div.classList.toggle('selected');
+          if (div.classList.contains('selected')) selectedRoles.push(role);
+          else selectedRoles = selectedRoles.filter(r => r.name !== role.name);
+        };
+        rolesGrid.appendChild(div);
       });
     }
 
-    async function fetchPlayers() { const data = await getPlayers(roomCode); renderPlayers(data); }
-    listenToPlayers(roomCode, renderPlayers);
-    document.getElementById("refreshBtn").addEventListener("click", fetchPlayers);
-    document.getElementById("exitBtn").addEventListener("click", async () => {
-      if (!confirm('إنهاء الجولة؟')) return;
-      await deleteRoom(roomCode);
-      clearRoomCode();
-      window.location.href = "index.html";
+    listenToPlayers(roomCode, (data) => {
+      if (!data) { playersList.innerHTML = `<p style="color:#777; text-align:center;">لا يوجد لاعبون</p>`; return; }
+      playersList.innerHTML = Object.values(data).map(p => `
+        <div class="player-item">
+          <span class="name">👤 ${p.name}</span>
+          <span class="badge">${p.role ? translateDynamicRole(p.role) : '⏳'}</span>
+        </div>
+      `).join('');
     });
+
+    startBtn.addEventListener('click', async () => {
+      const wolves = parseInt(wolvesInput.value) || 0;
+      const villagers = parseInt(villagersInput.value) || 0;
+      try {
+        await distributeRoles(roomCode, wolves, villagers, selectedRoles);
+        window.location.href = 'control.html';
+      } catch (err) { alert('خطأ: ' + err.message); }
+    });
+
+    exitBtn.addEventListener('click', async () => {
+      if (confirm('تأكيد الخروج؟')) { await deleteRoom(roomCode); clearRoomCode(); window.location.href = 'index.html'; }
+    });
+
+    refreshBtn.addEventListener('click', loadRoles);
+    loadRoles();
   </script>
 </body>
 </html>
