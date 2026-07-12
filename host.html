@@ -111,7 +111,7 @@
       flex: 1;
     }
 
-    /* ===== شبكة الأدوار المصغرة: 6 دوائر في السطر ===== */
+    /* ===== شبكة الأدوار المصغرة (6 دوائر في السطر) ===== */
     .role-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -120,7 +120,7 @@
       justify-items: center;
     }
     .role-circle {
-      width: 60px; /* تم التصغير من 70px إلى 60px */
+      width: 60px;
       height: 60px;
       border-radius: 50%;
       border: 3px solid #555;
@@ -182,41 +182,54 @@
       display: flex;
     }
 
-    /* تنسيق العدادات */
+    /* ===== دوائر عدادات الذئاب والقرويين (الجديدة) ===== */
     .counter-group {
       display: flex;
-      gap: 20px;
+      gap: 30px;
       flex-wrap: wrap;
       margin: 10px 0;
       justify-content: center;
     }
-    .counter-item {
+    .role-counter-circle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid #555;
       background: #1a1a1a;
-      border: 1px solid #555;
-      border-radius: 10px;
-      padding: 10px 15px;
-      text-align: center;
-      flex: 1;
-      min-width: 100px;
+      padding: 10px;
+      transition: 0.3s;
     }
-    .counter-item label {
-      display: block;
-      color: #ccc;
-      font-size: 14px;
+    .role-counter-circle:hover {
+      border-color: crimson;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+    }
+    .role-counter-circle img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #333;
       margin-bottom: 5px;
     }
-    .counter-item input {
-      width: 60px;
+    .role-counter-circle input {
+      width: 50px;
       text-align: center;
-      padding: 6px;
-      margin: 0 auto;
-      display: block;
       background: #111;
       border: 1px solid #555;
       border-radius: 6px;
       color: #fff;
-      font-size: 18px;
+      font-size: 16px;
+      padding: 4px;
       font-family: 'Cinzel', serif;
+    }
+    .role-counter-circle input:focus {
+      border-color: crimson;
+      outline: none;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
     }
 
     /* قائمة اللاعبين */
@@ -254,7 +267,7 @@
       padding: 16px;
     }
 
-    /* ===== استجابة للشاشات الصغيرة: الحفاظ على 6 أعمدة مع تصغير الحجم ===== */
+    /* ===== استجابة للشاشات الصغيرة ===== */
     @media (max-width: 600px) {
       .role-grid {
         grid-template-columns: repeat(6, 1fr);
@@ -276,9 +289,21 @@
         top: -4px;
         right: -4px;
       }
+      .role-counter-circle {
+        width: 90px;
+        height: 90px;
+        padding: 8px;
+      }
+      .role-counter-circle img {
+        width: 40px;
+        height: 40px;
+      }
+      .role-counter-circle input {
+        width: 40px;
+        font-size: 14px;
+      }
       .counter-group {
-        flex-direction: column;
-        align-items: center;
+        gap: 20px;
       }
     }
     @media (max-width: 400px) {
@@ -292,7 +317,24 @@
         border-width: 2px;
       }
       .role-circle .role-name-tooltip {
-        display: none; /* إخفاء التلميحات في الشاشات الصغيرة جداً لتوفير المساحة */
+        display: none;
+      }
+      .role-counter-circle {
+        width: 80px;
+        height: 80px;
+        padding: 6px;
+      }
+      .role-counter-circle img {
+        width: 35px;
+        height: 35px;
+      }
+      .role-counter-circle input {
+        width: 35px;
+        font-size: 12px;
+        padding: 2px;
+      }
+      .counter-group {
+        gap: 15px;
       }
     }
   </style>
@@ -318,16 +360,18 @@
       <p style="color:#777; font-size:12px; margin-top:10px; text-align:center;">اضغط على الصورة لتحديد الدور (يظهر علامة ✔️)</p>
     </div>
 
-    <!-- ===== إعدادات عدد الذئاب والقرويين ===== -->
+    <!-- ===== إعدادات عدد الذئاب والقرويين (دائرتان مع صور) ===== -->
     <div class="section">
       <span class="section-title" id="roomSettingsTitle">⚙️ إعدادات الغرفة</span>
       <div class="counter-group">
-        <div class="counter-item">
-          <label for="wolvesCount">🐺 عدد الذئاب</label>
+        <!-- دائرة الذئاب -->
+        <div class="role-counter-circle">
+          <img src="https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" alt="ذئب" />
           <input type="number" id="wolvesCount" value="2" min="1" max="10" />
         </div>
-        <div class="counter-item">
-          <label for="villagersCount">👨‍🌾 عدد القرويين</label>
+        <!-- دائرة القرويين -->
+        <div class="role-counter-circle">
+          <img src="https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" alt="قروي" />
           <input type="number" id="villagersCount" value="3" min="1" max="20" />
         </div>
       </div>
@@ -421,7 +465,7 @@
     let selectedRoles = {};
     let allRoles = [];
 
-    // ===== تحميل الأدوار من Firebase =====
+    // ===== تحميل الأدوار من Firebase (مع استبعاد الذئب والقروي) =====
     async function loadRoles() {
       try {
         console.log('🔍 جاري تحميل الأدوار من Firebase...');
@@ -429,14 +473,21 @@
         const data = snap.val() || {};
         allRoles = Object.values(data);
         console.log(`✅ تم تحميل ${allRoles.length} دور`);
-        
-        if (allRoles.length === 0) {
-          rolesLoading.textContent = '📭 لا توجد أدوار مخصصة';
+
+        // استبعاد الذئب والقروي من الأدوار الإضافية
+        const excludedRoles = ["ذئب", "قروي"];
+        const filteredRoles = allRoles.filter(role => {
+          const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
+          return !excludedRoles.includes(nameAr);
+        });
+
+        if (filteredRoles.length === 0) {
+          rolesLoading.textContent = '📭 لا توجد أدوار مخصصة (باستثناء الذئب والقروي)';
           rolesLoading.classList.remove('hidden');
           rolesGrid.classList.add('hidden');
           return;
         }
-        renderRolesGrid(allRoles);
+        renderRolesGrid(filteredRoles);
         rolesLoading.classList.add('hidden');
         rolesGrid.classList.remove('hidden');
       } catch (e) {
