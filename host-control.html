@@ -6,9 +6,8 @@
   <title>لو ڨارو - تحكم الراوي</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <style>
-    /* ===== إخفاء أي عناصر ديسكورد ===== */
+    /* ===== جميع الأنماط السابقة ===== */
     *[class*="discord"], *[id*="discord"] { display: none !important; }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Cinzel', serif;
@@ -112,7 +111,6 @@
       display: inline-block;
     }
 
-    /* ===== حاوية اللاعبين ===== */
     #players {
       display: flex;
       flex-direction: column;
@@ -120,7 +118,6 @@
       padding-bottom: 80px;
     }
 
-    /* ===== البطاقة الجديدة (رفيعة جداً) ===== */
     .player-card {
       background: #1a1a1a;
       border: 1px solid #333;
@@ -142,8 +139,6 @@
       border-color: #555;
       background: #111;
     }
-
-    /* ===== الجهة اليمنى (صورة + اسم + دور) ===== */
     .player-card .info {
       display: flex;
       align-items: center;
@@ -182,7 +177,6 @@
       color: #fff;
     }
 
-    /* ===== الجهة اليسرى (أزرار صغيرة) ===== */
     .player-card .actions {
       display: flex;
       gap: 4px;
@@ -203,14 +197,14 @@
       height: 24px;
       line-height: 1;
     }
-    .player-card .actions button:hover {
+    .player-card .actions button:hover:not(:disabled) {
       transform: scale(1.05);
     }
     .player-card .actions .kill {
       background: #6b1a1a;
       color: #fff;
     }
-    .player-card .actions .kill:hover {
+    .player-card .actions .kill:hover:not(:disabled) {
       background: #8b0000;
       box-shadow: 0 0 12px #8b0000;
     }
@@ -218,61 +212,33 @@
       background: #1a4a1a;
       color: #fff;
     }
-    .player-card .actions .infect:hover {
+    .player-card .actions .infect:hover:not(:disabled) {
       background: #2e7d32;
       box-shadow: 0 0 12px #2e7d32;
+    }
+    .player-card .actions button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none !important;
     }
     .player-card.dead .actions button {
       opacity: 0.3;
       pointer-events: none;
     }
 
-    /* ===== التجاوب للشاشات الصغيرة ===== */
     @media (max-width: 500px) {
-      .player-card {
-        height: auto;
-        min-height: 44px;
-        padding: 6px 8px;
-        flex-wrap: wrap;
-        gap: 4px;
-      }
-      .player-card .info {
-        flex: 1 1 100%;
-      }
-      .player-card .actions {
-        flex: 1 1 100%;
-        justify-content: flex-start;
-        gap: 8px;
-      }
-      .player-card .actions button {
-        flex: 1;
-        text-align: center;
-        font-size: 12px;
-        height: 30px;
-        padding: 4px 10px;
-      }
-      .player-card .avatar {
-        width: 24px;
-        height: 24px;
-      }
-      .player-card .details .name {
-        font-size: 13px;
-      }
-      .player-card .details .role {
-        font-size: 10px;
-      }
+      .player-card { height: auto; min-height: 44px; padding: 6px 8px; flex-wrap: wrap; gap: 4px; }
+      .player-card .info { flex: 1 1 100%; }
+      .player-card .actions { flex: 1 1 100%; justify-content: flex-start; gap: 8px; }
+      .player-card .actions button { flex: 1; text-align: center; font-size: 12px; height: 30px; padding: 4px 10px; }
+      .player-card .avatar { width: 24px; height: 24px; }
+      .player-card .details .name { font-size: 13px; }
+      .player-card .details .role { font-size: 10px; }
     }
     @media (max-width: 380px) {
-      .player-card .avatar {
-        width: 20px;
-        height: 20px;
-      }
-      .player-card .details .name {
-        font-size: 12px;
-      }
-      .player-card .details .role {
-        font-size: 9px;
-      }
+      .player-card .avatar { width: 20px; height: 20px; }
+      .player-card .details .name { font-size: 12px; }
+      .player-card .details .role { font-size: 9px; }
     }
   </style>
 </head>
@@ -347,9 +313,15 @@
       killPlayer(roomCode, id);
       fetchPlayers();
     };
-    window.infectPlayer = (id) => {
-      infectPlayer(roomCode, id);
-      fetchPlayers();
+
+    // ===== دالة التحويل مع التأكيد =====
+    window.infectPlayer = (id, playerName) => {
+      // عرض رسالة تأكيد
+      const confirmMessage = `⚠️ هل أنت متأكد من تحويل "${playerName || 'هذا اللاعب'}" إلى مستذئب؟\nهذا الإجراء لا يمكن التراجع عنه!`;
+      if (confirm(confirmMessage)) {
+        infectPlayer(roomCode, id);
+        fetchPlayers();
+      }
     };
 
     // ===== عرض اللاعبين =====
@@ -362,6 +334,9 @@
       }
       const entries = Object.entries(data);
       statusDisplay.textContent = `✅ ${entries.length} ${t('playersInRoom')}`;
+
+      // التحقق من وجود لاعب مصاب حي
+      const infectedPlayer = entries.find(([id, p]) => p.isInfected && !p.isDead);
 
       entries.forEach(([id, player]) => {
         const card = document.createElement("div");
@@ -383,10 +358,35 @@
             </div>
           </div>
           <div class="actions">
-            <button class="kill" onclick="killPlayer('${id}')">🗡️ ${t('kill')}</button>
-            <button class="infect" onclick="infectPlayer('${id}')">🐺 ${t('infect')}</button>
+            <button class="kill" data-id="${id}">🗡️ ${t('kill')}</button>
+            <button class="infect" data-id="${id}">🐺 ${t('infect')}</button>
           </div>
         `;
+
+        const killBtn = card.querySelector('.kill');
+        const infectBtn = card.querySelector('.infect');
+
+        // ===== زر القتل =====
+        killBtn.addEventListener('click', () => {
+          window.killPlayer(id);
+        });
+
+        // ===== زر التحويل مع التأكيد =====
+        infectBtn.addEventListener('click', () => {
+          window.infectPlayer(id, player.name);
+        });
+
+        // ===== تعطيل زر التحويل إذا كان هناك لاعب مصاب بالفعل =====
+        if (infectedPlayer && infectedPlayer[0] !== id) {
+          infectBtn.disabled = true;
+        }
+        if (player.isInfected && !player.isDead) {
+          infectBtn.disabled = true;
+        }
+        if (player.isDead) {
+          killBtn.disabled = true;
+          infectBtn.disabled = true;
+        }
 
         playerContainer.appendChild(card);
       });
@@ -397,7 +397,6 @@
       renderPlayers(data);
     }
 
-    // ===== استماع للتغييرات =====
     listenToPlayers(roomCode, (data) => {
       renderPlayers(data);
     });
@@ -406,7 +405,6 @@
     setInterval(fetchPlayers, 5000);
     await fetchPlayers();
 
-    // ===== زر الخروج =====
     document.getElementById("exitBtn").addEventListener("click", async () => {
       if (!confirm(t('confirmEndRound'))) return;
       try {
