@@ -575,7 +575,6 @@
           roleNameFr.value = '';
           roleNameEn.value = '';
         }
-        // تعبئة حقل الوصف (بغض النظر عن صيغته)
         if (typeof role.description === 'object' && role.description !== null) {
           roleDescription.value = role.description.ar || role.description.fr || role.description.en || '';
         } else {
@@ -658,7 +657,6 @@
             en: nameEn || nameAr
           };
 
-          // حفظ الوصف كنص عادي (وليس كائن) لتجنب المشاكل
           const roleData = { name: nameObj, imageUrl, description };
 
           if (editId) {
@@ -690,7 +688,8 @@
       entries.forEach(([key, sugg]) => {
         const card = document.createElement('div');
         card.className = 'suggestion-card';
-        const date = sugg.timestamp ? new Date(sugg.timestamp).toLocaleString('ar-EG') : 'وقت غير معروف';
+        // ===== التعديل هنا: استخدام en-US للأرقام الإنجليزية =====
+        const date = sugg.timestamp ? new Date(sugg.timestamp).toLocaleString('en-US') : 'وقت غير معروف';
         card.innerHTML = `
           <div class="name">👤 ${sugg.playerName || 'مجهول'}</div>
           <div class="msg">💬 ${sugg.message}</div>
