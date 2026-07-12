@@ -41,20 +41,26 @@ function clearRoomCode() {
   localStorage.removeItem("roomCode");
 }
 
-// ===== تهيئة الأدوار الأساسية ككائنات =====
+// ===== تهيئة الأدوار الأساسية (مع وصف متعدد اللغات) =====
 async function seedBaseRoles() {
   const rolesRef = ref(db, 'global_roles');
   const snap = await get(rolesRef);
   if (snap.exists()) {
-    // تحقق من أن الأدوار الأساسية موجودة بالصيغة الصحيحة، وإن لم تكن، أصلحها
+    // تحديث الأدوار القديمة إذا كانت مخزنة كنصوص
     const roles = snap.val();
     let needUpdate = false;
     for (const key in roles) {
       const role = roles[key];
+      // تحويل الاسم إلى كائن إذا كان نصاً
       if (role.name && typeof role.name === 'string') {
-        // تحويل النص إلى كائن
         const oldName = role.name;
         roles[key].name = { ar: oldName, fr: oldName, en: oldName };
+        needUpdate = true;
+      }
+      // تحويل الوصف إلى كائن إذا كان نصاً
+      if (role.description && typeof role.description === 'string') {
+        const oldDesc = role.description;
+        roles[key].description = { ar: oldDesc, fr: oldDesc, en: oldDesc };
         needUpdate = true;
       }
     }
@@ -65,17 +71,25 @@ async function seedBaseRoles() {
     return;
   }
 
-  // إنشاء الأدوار الأساسية ككائنات
+  // إنشاء الأدوار الأساسية
   const baseRoles = [
     {
       name: { ar: "ذئب", fr: "Loup", en: "Wolf" },
       imageUrl: "https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg",
-      description: "يحاول المستأنبون قتل جميع القرويين دون أن يتم كشفهم. يجتمع كل ليلة مع المستأنبين الآخرين لاتخاذ قرار بشأن ضحيتهم. يفوز إذا تم القضاء على القرية بأكملها."
+      description: {
+        ar: "يحاول المستأنبون قتل جميع القرويين دون أن يتم كشفهم. يجتمع كل ليلة مع المستأنبين الآخرين لاتخاذ قرار بشأن ضحيتهم. يفوز إذا تم القضاء على القرية بأكملها.",
+        fr: "Les loups-garous tentent de tuer tous les villageois sans être démasqués. Chaque nuit, ils se réunissent pour choisir leur victime. Ils gagnent s'ils éliminent tout le village.",
+        en: "The werewolves try to kill all the villagers without being exposed. Every night they meet to choose their victim. They win if they eliminate the entire village."
+      }
     },
     {
       name: { ar: "قروي", fr: "Villageois", en: "Villager" },
       imageUrl: "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png",
-      description: "عادي، ليس لديه قدرات خاصة، مهمته التعاون مع القرويين الآخرين لاكتشاف المستأنبين والقضاء عليهم قبل أن يفنوا القرية."
+      description: {
+        ar: "عادي، ليس لديه قدرات خاصة، مهمته التعاون مع القرويين الآخرين لاكتشاف المستأنبين والقضاء عليهم قبل أن يفنوا القرية.",
+        fr: "Ordinaire, sans pouvoirs spéciaux. Sa mission est de coopérer avec les autres villageois pour démasquer les loups-garous et les éliminer avant qu'ils ne détruisent le village.",
+        en: "Ordinary, no special powers. His mission is to cooperate with other villagers to uncover the werewolves and eliminate them before they destroy the village."
+      }
     }
   ];
 
@@ -85,7 +99,6 @@ async function seedBaseRoles() {
   console.log('✅ تم إنشاء الأدوار الأساسية في Firebase');
 }
 
-// تنفيذ التهيئة
 await seedBaseRoles();
 
 // ===== إدارة الغرف =====
@@ -195,16 +208,18 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
   const rolesSnap = await get(ref(db, 'global_roles'));
   const allRoles = Object.values(rolesSnap.val() || {});
   
-  // البحث عن ذئب وقروي
   const wolf = allRoles.find(r => r.name?.ar === "ذئب");
   const villager = allRoles.find(r => r.name?.ar === "قروي");
   if (!wolf) throw new Error("دور 'ذئب' غير موجود");
   if (!villager) throw new Error("دور 'قروي' غير موجود");
 
-  // بناء قائمة الأدوار المطلوبة
   const roles = [];
-  for (let i = 0; i < wolvesCount; i++) roles.push({ name: wolf.name, imageUrl: wolf.imageUrl, description: wolf.description || '' });
-  for (let i = 0; i < villagersCount; i++) roles.push({ name: villager.name, imageUrl: villager.imageUrl, description: villager.description || '' });
+  for (let i = 0; i < wolvesCount; i++) {
+    roles.push({ name: wolf.name, imageUrl: wolf.imageUrl, description: wolf.description || '' });
+  }
+  for (let i = 0; i < villagersCount; i++) {
+    roles.push({ name: villager.name, imageUrl: villager.imageUrl, description: villager.description || '' });
+  }
   
   selectedRoles.forEach(sel => {
     const found = allRoles.find(r => r.name?.ar === sel.name || r.name?.en === sel.name || r.name?.fr === sel.name);
@@ -219,9 +234,8 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
   const shuffledPlayers = shuffleArray(players);
 
   for (let i = 0; i < shuffledPlayers.length; i++) {
-    // تخزين الاسم ككائن وليس نصاً
     await update(ref(db, `rooms/${roomCode}/players/${shuffledPlayers[i].id}`), {
-      role: shuffledRoles[i].name, // كائن {ar, fr, en}
+      role: shuffledRoles[i].name,
       roleImage: shuffledRoles[i].imageUrl
     });
   }
@@ -229,19 +243,20 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
   return shuffledPlayers;
 }
 
-// ===== باقي الدوال (إدارة الأدوار، الاقتراحات، الإحصائيات) =====
+// ===== إدارة الأدوار (مع دعم الوصف متعدد اللغات) =====
 function listenToRoles(callback) {
   onValue(ref(db, "global_roles"), (snap) => callback(snap.val()));
 }
 
-async function addRole(name, imageUrl) {
+// دوال الإضافة والتحديث تدعم الآن وصفاً متعدد اللغات
+async function addRole(nameObj, imageUrl, descriptionObj) {
   const newRef = push(ref(db, "global_roles"));
-  await set(newRef, { name, imageUrl });
+  await set(newRef, { name: nameObj, imageUrl, description: descriptionObj });
   return newRef.key;
 }
 
-async function updateRole(roleId, name, imageUrl) {
-  await update(ref(db, `global_roles/${roleId}`), { name, imageUrl });
+async function updateRole(roleId, nameObj, imageUrl, descriptionObj) {
+  await update(ref(db, `global_roles/${roleId}`), { name: nameObj, imageUrl, description: descriptionObj });
 }
 
 async function deleteRole(roleId) {
@@ -263,6 +278,7 @@ async function uploadImageToImgBB(file) {
   return json.data.url;
 }
 
+// ===== نظام الاقتراحات =====
 async function sendSuggestion(playerName, message, roomId) {
   await push(ref(db, "suggestions"), {
     playerName: playerName || "لاعب مجهول",
@@ -284,6 +300,7 @@ async function deleteAllSuggestions() {
   await remove(ref(db, "suggestions"));
 }
 
+// ===== إحصائيات =====
 async function incrementDownloadCount() {
   await runTransaction(ref(db, "stats/downloadCount"), (current) => {
     if (current === null) return { count: 1 };
@@ -296,6 +313,7 @@ async function getDownloadCount() {
   return snap.val()?.count || 0;
 }
 
+// ===== بيانات الاعتماد =====
 async function getCredentials() {
   const snap = await get(ref(db, "admin_credentials"));
   return snap.val();
@@ -315,6 +333,7 @@ async function getPlayer(roomCode, playerId) {
   return snap.val();
 }
 
+// ===== تصدير كل شيء =====
 export {
   db, ref, update, remove, get, set, push, onValue, serverTimestamp, runTransaction, child,
   getRoomCode, setRoomCode, clearRoomCode,
