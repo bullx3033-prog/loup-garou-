@@ -49,7 +49,6 @@ async function deleteAllStaleRooms() {
 
 // ===== إدارة الغرفة (مع المسح التلقائي) =====
 async function createOrGetRoom() {
-  // مسح الغرف المنتهية قبل إنشاء أو استرجاع غرفة
   await deleteAllStaleRooms();
 
   let roomCode = getRoomCode();
@@ -73,7 +72,6 @@ async function deleteRoom(roomCode) {
 }
 
 async function checkRoomExpiry(roomCode) {
-  // مسح الغرف المنتهية قبل التحقق من الصلاحية
   await deleteAllStaleRooms();
 
   const snap = await get(ref(db, `rooms/${roomCode}`));
@@ -109,7 +107,7 @@ async function addPlayer(roomCode, name) {
   return newRef.key;
 }
 
-// ===== دالة خلط عشوائية (فعالة) =====
+// ===== دالة خلط عشوائية =====
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -118,21 +116,45 @@ function shuffleArray(array) {
   return array;
 }
 
-// ===== توزيع الأدوار (مع خلط مزدوج للاعبين والأدوار) =====
+// ===== توزيع الأدوار (مع التحقق الصارم من التطابق) =====
 async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRoles) {
   // 1. جلب اللاعبين
   const playersObj = await getPlayers(roomCode);
   const players = Object.keys(playersObj).map(key => ({ id: key, ...playersObj[key] }));
   if (players.length === 0) throw new Error("لا يوجد لاعبين");
 
-  // 2. جلب جميع الأدوار من Firebase
+  // 2. حساب عدد الأدوار المطلوبة
+  const totalRoles = wolvesCount + villagersCount + selectedRoles.length;
+  
+  // 3. التحقق الصارم من التطابق
+  if (players.length !== totalRoles) {
+    throw new Error(`عدد الأدوار (${totalRoles}) لا يساوي عدد اللاعبين (${players.length})`);
+  }
+
+  // 4. جلب جميع الأدوار من Firebase
   const rolesSnap = await get(ref(db, 'global_roles'));
   const allRoles = Object.values(rolesSnap.val() || {});
   const wolfRole = allRoles.find(r => r.name?.ar === "ذئب" || r.name === "ذئب");
   const villagerRole = allRoles.find(r => r.name?.ar === "قروي" || r.name === "قروي");
 
-  // 3. بناء قائمة الأدوار
+  // 5. بناء قائمة الأدوار (بدون حلقات while)
   const roles = [];
+  
+  // إضافة الذئاب
+  for (let i = 0; i < wolvesCount; i++) {
+    roles.push({ 
+      name: wolfRole?.name || "ذئب", 
+      imageUrl: wolfRole?.imageUrl || "https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" 
+    });
+  }
+  
+  // إضافة القرويين
+  for (let i = 0; i < villagersCount; i++) {
+    roles.push({ 
+      name: villagerRole?.name || "قروي", 
+      imageUrl: villagerRole?.imageUrl || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" 
+    });
+  }
   
   // إضافة الأدوار الإضافية المختارة
   selectedRoles.forEach(r => {
@@ -143,36 +165,16 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
     });
   });
 
-  // إضافة الذئاب والقرويين لتكملة العدد
-  let wolvesLeft = wolvesCount;
-  let villagersLeft = villagersCount;
-  
-  while (roles.length < players.length && wolvesLeft > 0) {
-    roles.push({ 
-      name: wolfRole?.name || "ذئب", 
-      imageUrl: wolfRole?.imageUrl || "https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" 
-    });
-    wolvesLeft--;
-  }
-  
-  while (roles.length < players.length && villagersLeft > 0) {
-    roles.push({ 
-      name: villagerRole?.name || "قروي", 
-      imageUrl: villagerRole?.imageUrl || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" 
-    });
-    villagersLeft--;
-  }
-
-  // 4. التحقق من تطابق العدد
+  // 6. التحقق النهائي (للتأكد من أن العدد متطابق)
   if (players.length !== roles.length) {
     throw new Error(`عدد الأدوار الكلي (${roles.length}) لا يساوي عدد اللاعبين (${players.length})`);
   }
 
-  // 5. خلط الأدوار واللاعبين بشكل منفصل لضمان عشوائية تامة
+  // 7. خلط الأدوار واللاعبين بشكل منفصل
   const shuffledRoles = shuffleArray([...roles]);
   const shuffledPlayers = shuffleArray([...players]);
 
-  // 6. توزيع الأدوار على اللاعبين
+  // 8. توزيع الأدوار على اللاعبين
   for (let i = 0; i < shuffledPlayers.length; i++) {
     await update(ref(db, `rooms/${roomCode}/players/${shuffledPlayers[i].id}`), {
       role: shuffledRoles[i].name,
@@ -180,7 +182,7 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
     });
   }
   
-  // 7. تحديث حالة الغرفة
+  // 9. تحديث حالة الغرفة
   await update(ref(db, `rooms/${roomCode}`), { started: true });
   return shuffledPlayers;
 }
