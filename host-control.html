@@ -1,437 +1,227 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لو ڨارو - الراوي</title>
+  <title>لو ڨارو - تحكم الراوي</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ===== أنماط خاصة بالراوي (تتجاوز style.css) ===== */
-    .section {
-      background: #1a1a1a;
-      border: 1px solid crimson;
+    .info-box {
+      background: #0d0805;
+      border: 1px solid #d4a017;
       border-radius: 12px;
-      padding: 15px;
-      margin-top: 20px;
-    }
-    .section-title {
-      color: crimson;
-      font-size: 18px;
-      margin-bottom: 10px;
-      display: block;
-      text-shadow: 0 0 8px red;
-    }
-    .btn {
-      padding: 14px 20px;
-      border-radius: 10px;
-      border: none;
-      background: #2c2c2c;
-      color: #fff;
-      font-family: 'Cinzel', serif;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
       text-align: center;
-      font-size: 16px;
-      box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
     }
-    .btn:hover {
-      background: #3a3a3a;
-      box-shadow: 0 0 15px crimson;
-      transform: scale(1.02);
+    .info-box .code {
+      color: #d4a017;
+      font-size: 28px;
+      letter-spacing: 4px;
     }
-    .btn-primary {
-      background: #2c2c2c;
-      color: #fff;
+    .info-box .status {
+      color: #b8a08a;
+      font-size: 14px;
+      margin-top: 5px;
     }
-    .btn-primary:hover {
-      background: #3a3a3a;
-    }
-    .btn-danger {
-      background: #a10d0d;
-      color: #fff;
-    }
-    .btn-danger:hover {
-      background: #8b0000;
-      box-shadow: 0 0 25px #8b0000;
-    }
-    .btn-success {
-      background: #1a4a1a;
-      color: #fff;
-    }
-    .btn-success:hover {
-      background: #2e7d32;
-      box-shadow: 0 0 25px #2e7d32;
-    }
-    input, select {
-      width: 100%;
-      padding: 14px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 1px solid #555;
-      background: #1a1a1a;
-      color: #fff;
-      font-family: 'Cinzel', serif;
-      font-size: 16px;
-    }
-    input:focus, select:focus {
-      border-color: crimson;
-      outline: none;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
-    }
-    .hidden { display: none !important; }
-    .flex { display: flex; gap: 10px; flex-wrap: wrap; }
-    .flex .btn { flex: 1; }
-
-    /* ===== شبكة الأدوار المصغرة (دوائر) ===== */
-    .role-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
-      margin-top: 10px;
-      justify-items: center;
-    }
-    .role-circle {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      border: 3px solid #555;
-      overflow: hidden;
+    .refresh-btn {
+      background: #b8860b;
+      border: none;
+      color: #0d0805;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-family: "Cinzel", serif;
+      font-weight: bold;
+      font-size: 14px;
       cursor: pointer;
       transition: 0.3s;
-      background: #1a1a1a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
+      margin-right: 10px;
+      box-shadow: 0 0 15px rgba(184, 134, 11, 0.3);
     }
-    .role-circle img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .role-circle.selected {
-      border-color: #d4a017;
-      box-shadow: 0 0 20px #d4a017;
+    .refresh-btn:hover {
+      background: #d4a017;
+      box-shadow: 0 0 30px #d4a017;
       transform: scale(1.05);
     }
-    .role-circle .role-name-tooltip {
-      position: absolute;
-      bottom: -25px;
+    #exitBtn {
+      position: fixed;
+      bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: #111;
-      color: #ccc;
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 10px;
-      white-space: nowrap;
-      opacity: 0;
-      transition: 0.3s;
-      pointer-events: none;
-      font-family: 'Cinzel', serif;
+      width: 95%;
+      max-width: 500px;
     }
-    .role-circle:hover .role-name-tooltip {
-      opacity: 1;
-    }
-    .role-circle .check-mark {
-      position: absolute;
-      top: -6px;
-      right: -6px;
-      background: #d4a017;
-      color: #000;
-      border-radius: 50%;
-      width: 22px;
-      height: 22px;
-      font-size: 14px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      border: 2px solid #000;
-    }
-    .role-circle.selected .check-mark {
-      display: flex;
-    }
-
-    /* تنسيق العدادات */
-    .counter-group {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin: 10px 0;
-      justify-content: center;
-    }
-    .counter-item {
-      background: #1a1a1a;
-      border: 1px solid #555;
-      border-radius: 10px;
-      padding: 10px 15px;
-      text-align: center;
-      flex: 1;
-      min-width: 100px;
-    }
-    .counter-item label {
-      display: block;
-      color: #ccc;
-      font-size: 14px;
-      margin-bottom: 5px;
-    }
-    .counter-item input {
-      width: 60px;
-      text-align: center;
-      padding: 6px;
-      margin: 0 auto;
-      display: block;
-      background: #111;
-      border: 1px solid #555;
-      border-radius: 6px;
-      color: #fff;
-      font-size: 18px;
-      font-family: 'Cinzel', serif;
-    }
-
-    /* قائمة اللاعبين */
-    .player-list { margin-top: 10px; }
-    .player-item {
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 8px;
-      padding: 8px 12px;
-      margin-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .player-item .name { color: #f0e0c0; font-size: 16px; }
-    .player-item .badge {
-      background: #2c2c2c;
-      padding: 2px 10px;
+    .infected-badge {
+      background: #6b1a1a;
+      color: #ff6b6b;
+      padding: 2px 12px;
       border-radius: 20px;
-      font-size: 12px;
-      color: #ccc;
-    }
-
-    /* زر بدء اللعبة */
-    .start-btn-wrapper { margin-top: 15px; }
-    .start-btn-wrapper .btn { font-size: 20px; padding: 16px; }
-
-    @media (max-width: 600px) {
-      .role-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
-      .role-circle { width: 60px; height: 60px; }
-      .counter-group { flex-direction: column; align-items: center; }
-    }
-    @media (max-width: 400px) {
-      .role-grid { grid-template-columns: repeat(3, 1fr); }
-      .role-circle { width: 55px; height: 55px; }
+      font-size: 14px;
+      border: 1px solid #ff6b6b;
+      margin-right: 10px;
+      display: inline-block;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2 id="hostTitle">🐺 لو ڨارو - الراوي</h2>
+    <h2 id="controlTitle">🐺 تحكم الراوي</h2>
 
-    <!-- ===== اختيار الأدوار الإضافية (شبكة دوائر) ===== -->
-    <div class="section">
-      <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية</span>
-      <div id="rolesGridContainer">
-        <div id="rolesLoading" style="color:#777; text-align:center;">جاري التحميل...</div>
-        <div id="rolesGrid" class="role-grid hidden"></div>
-      </div>
-      <p style="color:#777; font-size:12px; margin-top:10px; text-align:center;">اضغط على الصورة لتحديد الدور (يظهر علامة ✔️)</p>
+    <div class="info-box">
+      <div id="roomLabel">🔑 الغرفة: <span class="code" id="roomCodeDisplay">---</span></div>
+      <div class="status" id="statusDisplay">⏳ جاري التحميل...</div>
+      <button class="refresh-btn" id="refreshBtn">🔄 تحديث</button>
     </div>
 
-    <!-- ===== إعدادات عدد الذئاب والقرويين ===== -->
-    <div class="section">
-      <span class="section-title" id="roomSettingsTitle">⚙️ إعدادات الغرفة</span>
-      <div class="counter-group">
-        <div class="counter-item">
-          <label for="wolvesCount">🐺 عدد الذئاب</label>
-          <input type="number" id="wolvesCount" value="2" min="1" max="10" />
-        </div>
-        <div class="counter-item">
-          <label for="villagersCount">👨‍🌾 عدد القرويين</label>
-          <input type="number" id="villagersCount" value="3" min="1" max="20" />
-        </div>
-      </div>
-    </div>
+    <div id="players"></div>
 
-    <!-- ===== قائمة اللاعبين ===== -->
-    <div class="section">
-      <span class="section-title" id="playersTitle">👥 اللاعبون في الغرفة</span>
-      <div id="playersList" class="player-list">
-        <p style="color:#777; text-align:center;">لا يوجد لاعبون بعد</p>
-      </div>
-      <div class="flex" style="margin-top:10px;">
-        <button class="btn btn-danger" id="exitBtn">🚪 خروج</button>
-        <button class="btn btn-primary" id="refreshBtn">🔄 تحديث</button>
-      </div>
-    </div>
-
-    <!-- ===== زر بدء اللعبة ===== -->
-    <div class="start-btn-wrapper">
-      <button class="btn btn-success" id="startGameBtn">🚀 بدء اللعبة</button>
-    </div>
+    <button class="btn btn-danger" id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
   </div>
 
   <script type="module">
     import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
     import {
-      getRoomCode, setRoomCode, clearRoomCode,
-      createOrGetRoom, deleteRoom, checkRoomExpiry,
-      listenToPlayers, getPlayers, addPlayer,
-      distributeRoles,
-      db, ref, update, remove, get, onValue
+      getRoomCode,
+      clearRoomCode,
+      checkRoomExpiry,
+      listenToPlayers,
+      getPlayers,
+      killPlayer,
+      infectPlayer,
+      deleteRoom,
+      db,
+      ref,
+      update,
+      remove,
+      onValue,
+      get
     } from "./logic.js";
 
-    // ===== ترجمة =====
     function applyTranslations() {
-      document.title = t('appName') + ' - ' + t('hostTitle');
-      document.getElementById('hostTitle').textContent = `🐺 ${t('appName')} - ${t('hostTitle')}`;
-      document.getElementById('extraRolesTitle').textContent = '🃏 ' + t('chooseExtraRoles');
-      document.getElementById('roomSettingsTitle').textContent = '⚙️ ' + t('roomSettings');
-      document.getElementById('playersTitle').textContent = '👥 ' + t('playersInRoom');
-      document.getElementById('exitBtn').textContent = '🚪 ' + t('exit');
+      document.title = t('appName') + ' - ' + t('controlTitle');
+      document.getElementById('controlTitle').textContent = `🐺 ${t('controlTitle')}`;
       document.getElementById('refreshBtn').textContent = '🔄 ' + t('refresh');
-      document.getElementById('startGameBtn').textContent = '🚀 ' + t('startGame');
+      document.getElementById('exitBtn').textContent = '⚰️ ' + t('endRound');
+
       const lang = getCurrentLang();
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = lang;
     }
+
     applyTranslations();
 
-    // ===== متغيرات =====
     const roomCode = getRoomCode();
+    const playerContainer = document.getElementById("players");
+    const roomDisplay = document.getElementById("roomCodeDisplay");
+    const statusDisplay = document.getElementById("statusDisplay");
+    const refreshBtn = document.getElementById("refreshBtn");
+
     if (!roomCode) {
-      alert('لا يوجد كود غرفة، سيتم إنشاء واحدة جديدة');
-      await createOrGetRoom();
-      location.reload();
+      roomDisplay.textContent = "⚠️ " + t('unknown');
+      statusDisplay.textContent = "❌ " + t('noRoomCode');
+      playerContainer.innerHTML =
+        `<p style="color:#e74c3c; text-align:center;">❌ ${t('noRoomCode')}</p>`;
+      setTimeout(() => (window.location.href = "host.html"), 2000);
+      throw new Error("No roomCode");
     }
+
+    roomDisplay.textContent = roomCode;
+
     const valid = await checkRoomExpiry(roomCode);
     if (!valid) {
-      alert('انتهت صلاحية الغرفة');
-      window.location.href = 'index.html';
+      alert("⏰ " + t('roomExpired'));
+      window.location.href = "index.html";
+      throw new Error("Expired");
     }
 
-    // ===== مراجع العناصر =====
-    const rolesGrid = document.getElementById('rolesGrid');
-    const rolesLoading = document.getElementById('rolesLoading');
-    const playersList = document.getElementById('playersList');
-    const wolvesInput = document.getElementById('wolvesCount');
-    const villagersInput = document.getElementById('villagersCount');
-    const startBtn = document.getElementById('startGameBtn');
-    const exitBtn = document.getElementById('exitBtn');
-    const refreshBtn = document.getElementById('refreshBtn');
+    window.killPlayer = (id) => {
+      killPlayer(roomCode, id);
+      fetchPlayers();
+    };
+    window.infectPlayer = (id) => {
+      infectPlayer(roomCode, id);
+      fetchPlayers();
+    };
 
-    let selectedRoles = {};
-    let allRoles = [];
-
-    // ===== تحميل الأدوار من Firebase =====
-    async function loadRoles() {
-      try {
-        console.log('🔍 جاري تحميل الأدوار من Firebase...');
-        const snap = await get(ref(db, 'global_roles'));
-        const data = snap.val() || {};
-        allRoles = Object.values(data);
-        console.log(`✅ تم تحميل ${allRoles.length} دور`);
-        
-        if (allRoles.length === 0) {
-          rolesLoading.textContent = '📭 لا توجد أدوار مخصصة';
-          rolesLoading.classList.remove('hidden');
-          rolesGrid.classList.add('hidden');
-          return;
-        }
-        renderRolesGrid(allRoles);
-        rolesLoading.classList.add('hidden');
-        rolesGrid.classList.remove('hidden');
-      } catch (e) {
-        console.error('❌ خطأ في تحميل الأدوار:', e);
-        rolesLoading.textContent = '❌ خطأ في تحميل الأدوار';
-      }
-    }
-
-    function renderRolesGrid(roles) {
-      rolesGrid.innerHTML = '';
-      roles.forEach((role, index) => {
-        const circle = document.createElement('div');
-        circle.className = 'role-circle';
-        const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
-        const imageUrl = role.imageUrl || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
-        circle.dataset.index = index;
-        circle.dataset.name = nameAr;
-        circle.dataset.image = imageUrl;
-
-        circle.innerHTML = `
-          <img src="${imageUrl}" alt="${nameAr}" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
-          <span class="role-name-tooltip">${nameAr}</span>
-          <span class="check-mark">✔️</span>
-        `;
-
-        circle.addEventListener('click', () => {
-          const isSelected = circle.classList.toggle('selected');
-          if (isSelected) {
-            selectedRoles[index] = { name: nameAr, imageUrl };
-          } else {
-            delete selectedRoles[index];
-          }
-        });
-
-        rolesGrid.appendChild(circle);
-      });
-    }
-
-    // ===== جلب اللاعبين وعرضهم =====
-    function renderPlayers(playersData) {
-      if (!playersData || Object.keys(playersData).length === 0) {
-        playersList.innerHTML = `<p style="color:#777; text-align:center;">${t('noPlayers')}</p>`;
+    function renderPlayers(data) {
+      playerContainer.innerHTML = "";
+      if (!data) {
+        playerContainer.innerHTML = `<p style="color:#b8a08a; text-align:center;">📭 ${t('noPlayersInRoom')}</p>`;
+        statusDisplay.textContent = "⏳ " + t('waitingPlayers');
         return;
       }
-      let html = '';
-      Object.values(playersData).forEach(p => {
-        html += `
-          <div class="player-item">
-            <span class="name">👤 ${p.name}</span>
-            <span class="badge">${p.role ? t('role') + ': ' + translateDynamicRole(p.role) : t('waiting')}</span>
+      const entries = Object.entries(data);
+      if (entries.length === 0) {
+        playerContainer.innerHTML = `<p style="color:#b8a08a; text-align:center;">📭 ${t('noPlayersInRoom')}</p>`;
+        statusDisplay.textContent = "⏳ " + t('waitingPlayers');
+        return;
+      }
+      statusDisplay.textContent = `✅ ${entries.length} ${t('playersInRoom')}`;
+      entries.forEach(([id, player]) => {
+        const card = document.createElement("div");
+        card.className = "player-card";
+        const isDead = player.isDead;
+        if (isDead) card.classList.add("dead");
+
+        const avatarUrl = player.roleImage || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png";
+        const infectedBadge = player.isInfected && !isDead
+          ? `<span class="infected-badge">🐺 ${t('infected')}</span>`
+          : "";
+
+        // عرض اسم الدور باستخدام translateDynamicRole للتعامل مع النصوص والكائنات
+        const roleDisplay = translateDynamicRole(player.role) || t('unknown');
+
+        card.innerHTML = `
+          <div class="info">
+            <img src="${avatarUrl}" class="avatar" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
+            <div class="details">
+              <div class="name">${player.name} ${infectedBadge}</div>
+              <div class="role">${t('role')}: <strong>${roleDisplay}</strong></div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="kill" onclick="killPlayer('${id}')">🗡️ ${t('kill')}</button>
+            <button class="infect" onclick="infectPlayer('${id}')">🐺 ${t('infect')}</button>
           </div>
         `;
+
+        if (isDead) {
+          const btns = card.querySelectorAll("button");
+          btns.forEach((btn) => {
+            btn.style.pointerEvents = "none";
+            btn.style.opacity = "0.4";
+          });
+        }
+
+        playerContainer.appendChild(card);
       });
-      playersList.innerHTML = html;
     }
 
-    listenToPlayers(roomCode, (data) => { renderPlayers(data); });
+    async function fetchPlayers() {
+      const data = await getPlayers(roomCode);
+      renderPlayers(data);
+    }
 
-    // ===== بدء اللعبة =====
-    startBtn.addEventListener('click', async () => {
-      const wolves = parseInt(wolvesInput.value) || 2;
-      const villagers = parseInt(villagersInput.value) || 3;
-      const selected = Object.values(selectedRoles);
-      if (wolves < 1) { alert('يجب أن يكون عدد الذئاب 1 على الأقل'); return; }
-      if (villagers < 1) { alert('يجب أن يكون عدد القرويين 1 على الأقل'); return; }
+    listenToPlayers(roomCode, (data) => {
+      renderPlayers(data);
+    });
+
+    refreshBtn.addEventListener("click", fetchPlayers);
+    setInterval(fetchPlayers, 5000);
+    await fetchPlayers();
+
+    document.getElementById("exitBtn").addEventListener("click", async () => {
+      if (!confirm(t('confirmEndRound'))) return;
       try {
-        await distributeRoles(roomCode, wolves, villagers, selected);
-        alert('✅ تم توزيع الأدوار بنجاح!');
-        window.location.href = 'control.html';
-      } catch (err) {
-        alert('❌ خطأ: ' + err.message);
-      }
-    });
-
-    // ===== خروج =====
-    exitBtn.addEventListener('click', async () => {
-      if (confirm('هل أنت متأكد من الخروج؟ سيتم حذف الغرفة.')) {
         await deleteRoom(roomCode);
-        clearRoomCode();
-        window.location.href = 'index.html';
+      } catch (err) {
+        console.error(err);
+        alert("⚠️ " + t('errorOccurred'));
       }
+      clearRoomCode();
+      window.location.href = "index.html";
     });
-
-    // ===== تحديث =====
-    refreshBtn.addEventListener('click', loadRoles);
-
-    await loadRoles();
-    console.log('🚪 كود الغرفة:', roomCode);
   </script>
 </body>
 </html>
