@@ -7,85 +7,71 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    .section { background: #1a1a1a; border: 1px solid crimson; border-radius: 12px; padding: 15px; margin-top: 20px; }
-    .section-title { color: crimson; font-size: 18px; margin-bottom: 15px; display: block; text-align: center; text-shadow: 0 0 8px red; }
+    /* تحسينات التصميم الاحترافي */
+    .section { background: #111; border: 1px solid #333; border-radius: 20px; padding: 25px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .section-title { color: #d4a017; font-size: 18px; margin-bottom: 20px; display: block; text-align: center; letter-spacing: 2px; }
     
-    /* شبكة الصور الدائرية */
+    /* شبكة الصور الدائرية (6 في السطر) */
     .roles-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 10px; }
-    .role-item { text-align: center; cursor: pointer; transition: 0.3s; }
-    .role-item img { width: 100%; aspect-ratio: 1/1; border-radius: 50%; border: 3px solid #555; object-fit: cover; }
-    .role-item.selected img { border-color: #d4a017; box-shadow: 0 0 15px #d4a017; }
-    .role-name { font-size: 11px; margin-top: 5px; color: #f0e0c0; }
+    .role-item { text-align: center; cursor: pointer; transition: 0.3s; padding: 5px; }
+    .role-item img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #555; object-fit: cover; transition: 0.3s; }
+    .role-item.selected img { border-color: #d4a017; box-shadow: 0 0 10px #d4a017; transform: scale(1.1); }
+    .role-name { font-size: 10px; margin-top: 6px; color: #aaa; white-space: nowrap; }
 
-    .counter-group { display: flex; gap: 20px; justify-content: center; }
+    /* تحسين الأزرار والخانات */
+    .counter-group { display: flex; gap: 30px; justify-content: center; }
     .counter-item { text-align: center; }
-    .counter-item input { width: 70px; text-align: center; padding: 8px; background: #111; border: 1px solid #555; border-radius: 6px; color: #fff; font-size: 18px; font-family: 'Cinzel', serif; }
+    .counter-item label { display: block; margin-bottom: 8px; color: #888; font-size: 12px; }
+    .counter-item input { width: 60px; text-align: center; padding: 8px; background: #000; border: 1px solid #444; color: #d4a017; border-radius: 8px; font-size: 16px; font-weight: bold; }
     
-    .player-item { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-    .player-item .name { color: #f0e0c0; font-size: 16px; }
-    .player-item .badge { background: #2c2c2c; padding: 2px 10px; border-radius: 20px; font-size: 12px; color: #ccc; }
-
-    @media (max-width: 600px) { .roles-grid { grid-template-columns: repeat(3, 1fr); } }
+    .btn { padding: 14px 20px; border-radius: 10px; border: 1px solid #444; background: #1a1a1a; color: #fff; cursor: pointer; transition: 0.3s; font-family: 'Cinzel', serif; }
+    .btn-success { background: #1a4a1a; border-color: #2e7d32; width: 100%; font-size: 18px; }
+    .btn-success:hover { background: #2e7d32; }
+    
+    .player-item { background: #1a1a1a; border: 1px solid #333; padding: 12px 15px; margin-bottom: 8px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+    
+    /* استجابة الشاشات الصغيرة */
+    @media (max-width: 600px) { .roles-grid { grid-template-columns: repeat(4, 1fr); } }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2 id="hostTitle">🐺 لو ڨارو - الراوي</h2>
+    <h2 id="hostTitle" style="color:#d4a017;">🐺 الراوي</h2>
 
-    <!-- قسم الأدوار (صور دائرية) -->
     <div class="section">
-      <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية</span>
+      <span class="section-title" id="extraRolesTitle">🃏 الأدوار الإضافية</span>
       <div id="rolesGrid" class="roles-grid"></div>
     </div>
 
-    <!-- إعدادات عدد الذئاب والقرويين -->
     <div class="section">
       <span class="section-title" id="roomSettingsTitle">⚙️ إعدادات الغرفة</span>
       <div class="counter-group">
         <div class="counter-item">
-          <label for="wolvesCount">🐺 عدد الذئاب</label>
-          <input type="number" id="wolvesCount" value="2" min="1" max="10" />
+          <label>🐺 الذئاب</label>
+          <input type="number" id="wolvesCount" value="2" min="1" />
         </div>
         <div class="counter-item">
-          <label for="villagersCount">👨‍🌾 عدد القرويين</label>
-          <input type="number" id="villagersCount" value="3" min="1" max="20" />
+          <label>👨‍🌾 القرويين</label>
+          <input type="number" id="villagersCount" value="3" min="1" />
         </div>
       </div>
     </div>
 
-    <!-- قائمة اللاعبين -->
     <div class="section">
-      <span class="section-title" id="playersTitle">👥 اللاعبون في الغرفة</span>
-      <div id="playersList" class="player-list">
-        <p style="color:#777; text-align:center;">لا يوجد لاعبون بعد</p>
-      </div>
-      <div class="flex" style="margin-top:15px; gap: 10px;">
-        <button class="btn btn-danger" id="exitBtn">🚪 خروج</button>
-        <button class="btn btn-primary" id="refreshBtn">🔄 تحديث</button>
+      <span class="section-title" id="playersTitle">👥 اللاعبون</span>
+      <div id="playersList" class="player-list"></div>
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <button class="btn" id="exitBtn" style="flex:1;">🚪 خروج</button>
+        <button class="btn" id="refreshBtn" style="flex:1;">🔄 تحديث</button>
       </div>
     </div>
 
-    <button class="btn btn-success" id="startGameBtn" style="margin-top:20px; padding:16px; font-size:20px;">🚀 بدء اللعبة</button>
+    <button class="btn btn-success" id="startGameBtn" style="margin-top:20px;">🚀 بدء اللعبة</button>
   </div>
 
   <script type="module">
     import { t, translateDynamicRole } from './translations.js';
-    import {
-      getRoomCode, createOrGetRoom, deleteRoom, clearRoomCode, checkRoomExpiry, 
-      listenToPlayers, distributeRoles, db, ref, get
-    } from "./logic.js";
-
-    // الترجمة
-    function applyTranslations() {
-      document.getElementById('hostTitle').textContent = `🐺 ${t('hostTitle')}`;
-      document.getElementById('extraRolesTitle').textContent = '🃏 ' + t('chooseExtraRoles');
-      document.getElementById('roomSettingsTitle').textContent = '⚙️ ' + t('roomSettings');
-      document.getElementById('playersTitle').textContent = '👥 ' + t('playersInRoom');
-      document.getElementById('exitBtn').textContent = '🚪 ' + t('exit');
-      document.getElementById('refreshBtn').textContent = '🔄 ' + t('refresh');
-      document.getElementById('startGameBtn').textContent = '🚀 ' + t('startGame');
-    }
-    applyTranslations();
+    import { getRoomCode, createOrGetRoom, deleteRoom, clearRoomCode, listenToPlayers, distributeRoles, db, ref, get } from "./logic.js";
 
     const roomCode = getRoomCode();
     if (!roomCode) { await createOrGetRoom(); location.reload(); }
@@ -94,7 +80,6 @@
     const playersList = document.getElementById('playersList');
     let selectedRoles = [];
 
-    // تحميل الأدوار
     async function loadRoles() {
       const snap = await get(ref(db, 'global_roles'));
       const roles = snap.val() || {};
@@ -115,23 +100,21 @@
       });
     }
 
-    // عرض اللاعبين
     function renderPlayers(playersData) {
       if (!playersData || Object.keys(playersData).length === 0) {
-        playersList.innerHTML = `<p style="color:#777; text-align:center;">${t('noPlayers')}</p>`;
+        playersList.innerHTML = `<p style="text-align:center; color:#555;">لا يوجد لاعبون</p>`;
         return;
       }
       playersList.innerHTML = Object.values(playersData).map(p => `
         <div class="player-item">
           <span class="name">👤 ${p.name}</span>
-          <span class="badge">${p.role ? t('role') + ': ' + translateDynamicRole(p.role) : t('waiting')}</span>
+          <span class="badge" style="color:#d4a017;">${p.role ? '✅ جاهز' : '⏳ انتظار'}</span>
         </div>
       `).join('');
     }
 
     listenToPlayers(roomCode, renderPlayers);
 
-    // بدء اللعبة
     document.getElementById('startGameBtn').onclick = async () => {
       const wolves = parseInt(document.getElementById('wolvesCount').value);
       const villagers = parseInt(document.getElementById('villagersCount').value);
