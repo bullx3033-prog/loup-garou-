@@ -71,62 +71,6 @@
     .role-description strong {
       color: #d4a017;
     }
-
-    .discord-player-section {
-      background: #1a1a1a;
-      border: 1px solid #5865F2;
-      border-radius: 12px;
-      padding: 15px;
-      margin-top: 15px;
-    }
-    .discord-player-section .title {
-      color: #5865F2;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .discord-player-section .link-box {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-      background: #0d0d0d;
-      padding: 10px;
-      border-radius: 8px;
-      margin-top: 8px;
-      border: 1px solid #333;
-    }
-    .discord-player-section .link-box input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: #ccc;
-      font-family: 'Cinzel', serif;
-      font-size: 13px;
-      padding: 5px;
-      min-width: 120px;
-      direction: ltr;
-    }
-    .discord-player-section .link-box input:focus {
-      outline: none;
-    }
-    .discord-player-section .btn-discord-join {
-      background: #5865F2;
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-family: 'Cinzel', serif;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-      font-size: 14px;
-    }
-    .discord-player-section .btn-discord-join:hover {
-      background: #4752C4;
-      box-shadow: 0 0 15px #5865F2;
-    }
   </style>
 </head>
 <body>
@@ -142,15 +86,6 @@
     <div id="status" class="hidden" style="color: #ccc; margin: 20px 0; text-align:center;">
       <span id="waitingText">في انتظار بدء اللعبة...</span>
       <button class="btn btn-danger" id="leaveBtn" style="margin-top:15px;">مغادرة</button>
-    </div>
-
-    <div id="discordPlayerSection" class="discord-player-section hidden">
-      <div class="title" id="discordTitle">🎙️ غرفة الصوت في Discord</div>
-      <div class="link-box">
-        <input type="text" id="discordPlayerLink" placeholder="لا يوجد رابط بعد..." readonly />
-        <button class="btn-discord-join" id="joinDiscordBtn">🎙️ انضم</button>
-      </div>
-      <p style="color:#777; font-size:12px; margin-top:5px;" id="discordHint">💡 انضم إلى الغرفة الصوتية للتواصل مع اللاعبين أثناء اللعبة.</p>
     </div>
 
     <div id="roleBox" class="hidden"></div>
@@ -196,9 +131,6 @@
       document.getElementById('joinBtn').textContent = t('join');
       document.getElementById('waitingText').textContent = t('waitingForGame');
       document.getElementById('leaveBtn').textContent = t('leave');
-      document.getElementById('discordTitle').textContent = '🎙️ ' + t('discordSettings');
-      document.getElementById('discordHint').textContent = '💡 ' + t('discordHint');
-      document.getElementById('joinDiscordBtn').textContent = '🎙️ ' + t('join');
       document.getElementById('suggestBtn').textContent = t('suggestions');
       document.getElementById('suggestTitle').textContent = t('shareIdea');
       document.getElementById('suggestDesc').textContent = t('shareDesc');
@@ -223,26 +155,8 @@
     const leaveBtn = document.getElementById("leaveBtn");
     const waitingText = document.getElementById("waitingText");
 
-    const discordSection = document.getElementById("discordPlayerSection");
-    const discordLinkInput = document.getElementById("discordPlayerLink");
-    const joinDiscordBtn = document.getElementById("joinDiscordBtn");
-
     let playerId = localStorage.getItem("playerId");
     let roomCode = getRoomCode();
-
-    function updateDiscordLink(roomCode) {
-      const discordRef = ref(db, `rooms/${roomCode}/discordLink`);
-      onValue(discordRef, (snapshot) => {
-        const link = snapshot.val();
-        if (link) {
-          discordLinkInput.value = link;
-          discordSection.classList.remove("hidden");
-        } else {
-          discordLinkInput.value = t('noLinkYet');
-          discordSection.classList.add("hidden");
-        }
-      });
-    }
 
     // ===== دالة جلب وصف الدور (ذكية وتتعامل مع كل الصيغ) =====
     async function fetchRoleDescription(roleNameInput) {
@@ -269,13 +183,10 @@
           }
           if (match) {
             const desc = role.description;
-            // حالة 1: الوصف نص عادي
             if (typeof desc === 'string') return desc;
-            // حالة 2: الوصف كائن (مثل {ar, fr, en})
             if (typeof desc === 'object' && desc !== null) {
               return desc.ar || desc.fr || desc.en || '';
             }
-            // حالة 3: أي شيء آخر (مثل undefined, null)
             return '';
           }
         }
@@ -380,8 +291,6 @@
         return;
       }
 
-      updateDiscordLink(roomCode);
-
       if (player.isDead) {
         statusDiv.classList.add("hidden");
         roleBox.classList.remove("hidden");
@@ -441,8 +350,6 @@
         setRoomCode(roomCode);
         joinForm.classList.add("hidden");
         statusDiv.classList.remove("hidden");
-
-        updateDiscordLink(roomCode);
         checkPlayerStatus();
       } catch (err) {
         alert("خطأ: " + err.message);
@@ -454,15 +361,6 @@
       localStorage.clear();
       window.location.href = "index.html";
     };
-
-    joinDiscordBtn.addEventListener("click", () => {
-      const link = discordLinkInput.value;
-      if (link && link.startsWith("https://")) {
-        window.open(link, "_blank");
-      } else {
-        alert(t('noDiscordLink'));
-      }
-    });
 
     // ===== نظام الاقتراحات =====
     const modal = document.getElementById("suggestModal");
@@ -497,7 +395,6 @@
     if (playerId && roomCode) {
       joinForm.classList.add("hidden");
       statusDiv.classList.remove("hidden");
-      updateDiscordLink(roomCode);
       checkPlayerStatus();
     }
   </script>
