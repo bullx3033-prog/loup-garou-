@@ -56,8 +56,12 @@
     }
     .about-modal-content {
       max-width: 500px;
+      width: 95%;
+      max-height: 80vh;
+      overflow-y: auto;
       text-align: right;
       line-height: 1.8;
+      padding: 25px 20px;
     }
     .about-modal-content h3 {
       text-align: center;
@@ -98,6 +102,21 @@
       margin-top: 15px;
       text-align: center;
       font-style: italic;
+    }
+    /* تخصيص شريط التمرير */
+    .about-modal-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .about-modal-content::-webkit-scrollbar-track {
+      background: #1a1a1a;
+      border-radius: 10px;
+    }
+    .about-modal-content::-webkit-scrollbar-thumb {
+      background: #d4a017;
+      border-radius: 10px;
+    }
+    .about-modal-content::-webkit-scrollbar-thumb:hover {
+      background: #b8860b;
     }
     .lang-flags {
       position: fixed;
