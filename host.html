@@ -7,25 +7,56 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ===== أنماط خاصة بالراوي ===== */
+    /* ===== الأنماط العامة ===== */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      background: #0a0a0a;
+      font-family: 'Cinzel', serif;
+      color: #f0e0c0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 10px;
+      margin: 0;
+    }
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: #111;
+      border: 2px solid crimson;
+      border-radius: 16px;
+      padding: 20px 15px;
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
+    }
+    h2 {
+      font-size: 26px;
+      color: crimson;
+      text-shadow: 0 0 10px red, 0 0 20px darkred;
+      text-align: center;
+      border-bottom: 2px solid #222;
+      padding-bottom: 10px;
+      margin-bottom: 18px;
+      letter-spacing: 2px;
+    }
     .section {
       background: #1a1a1a;
-      border: 1px solid crimson;
+      border: 1px solid #333;
       border-radius: 12px;
-      padding: 15px;
-      margin-top: 20px;
+      padding: 14px;
+      margin-top: 16px;
     }
     .section-title {
       color: crimson;
-      font-size: 18px;
-      margin-bottom: 10px;
+      font-size: 16px;
+      margin-bottom: 8px;
       display: block;
       text-shadow: 0 0 8px red;
     }
-
-    /* ===== أزرار محسّنة وصغيرة ===== */
+    /* ===== أزرار محسّنة صغيرة ===== */
     .btn {
-      padding: 8px 16px;
+      padding: 6px 14px;
       border-radius: 30px;
       border: none;
       background: #2c2c2c;
@@ -34,19 +65,19 @@
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-size: 13px;
-      box-shadow: 0 0 8px rgba(255, 0, 0, 0.1);
-      letter-spacing: 0.5px;
+      font-size: 12px;
+      box-shadow: 0 0 6px rgba(255, 0, 0, 0.1);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 4px;
       white-space: nowrap;
+      line-height: 1.2;
     }
     .btn:hover {
       background: #3a3a3a;
-      box-shadow: 0 0 18px crimson;
-      transform: translateY(-2px);
+      box-shadow: 0 0 14px crimson;
+      transform: translateY(-1px);
     }
     .btn-primary {
       background: #2c2c2c;
@@ -61,7 +92,7 @@
     }
     .btn-danger:hover {
       background: #8b0000;
-      box-shadow: 0 0 25px #8b0000;
+      box-shadow: 0 0 20px #8b0000;
     }
     .btn-success {
       background: #1a4a1a;
@@ -69,31 +100,34 @@
     }
     .btn-success:hover {
       background: #2e7d32;
-      box-shadow: 0 0 25px #2e7d32;
+      box-shadow: 0 0 20px #2e7d32;
     }
     .btn-sm {
-      padding: 6px 14px;
-      font-size: 12px;
+      padding: 4px 12px;
+      font-size: 11px;
     }
-
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
     .flex-buttons {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
       align-items: center;
-      justify-content: flex-start;
     }
     .flex-buttons .btn {
       flex: 0 1 auto;
     }
 
+    /* ===== حقول الإدخال ===== */
     input, select {
       width: 100%;
-      padding: 10px 14px;
-      margin: 8px 0;
+      padding: 8px 12px;
+      margin: 4px 0;
       border-radius: 8px;
       border: 1px solid #555;
-      background: #1a1a1a;
+      background: #0d0d0d;
       color: #fff;
       font-family: 'Cinzel', serif;
       font-size: 14px;
@@ -101,34 +135,28 @@
     input:focus, select:focus {
       border-color: crimson;
       outline: none;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+      box-shadow: 0 0 12px rgba(255, 0, 0, 0.2);
     }
-    .hidden {
-      display: none !important;
-    }
-
-    /* ===== عدادات الذئاب والقرويين ===== */
     .counter-group {
       display: flex;
-      gap: 20px;
+      gap: 12px;
       flex-wrap: wrap;
-      margin: 10px 0;
       justify-content: center;
     }
     .counter-item {
-      background: #1a1a1a;
-      border: 1px solid #555;
-      border-radius: 10px;
-      padding: 8px 15px;
+      background: #0d0d0d;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 6px 12px;
       text-align: center;
       flex: 1;
-      min-width: 80px;
+      min-width: 70px;
     }
     .counter-item label {
       display: block;
       color: #ccc;
-      font-size: 13px;
-      margin-bottom: 4px;
+      font-size: 12px;
+      margin-bottom: 2px;
     }
     .counter-item input {
       width: 50px;
@@ -146,60 +174,59 @@
 
     /* ===== قائمة اللاعبين ===== */
     .player-list {
-      margin-top: 10px;
+      margin-top: 8px;
     }
     .player-item {
-      background: #1a1a1a;
+      background: #0d0d0d;
       border: 1px solid #333;
-      border-radius: 8px;
-      padding: 6px 12px;
-      margin-bottom: 5px;
+      border-radius: 6px;
+      padding: 4px 10px;
+      margin-bottom: 4px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     .player-item .name {
       color: #f0e0c0;
-      font-size: 15px;
+      font-size: 14px;
     }
     .player-item .badge {
       background: #2c2c2c;
-      padding: 2px 10px;
+      padding: 2px 8px;
       border-radius: 20px;
-      font-size: 11px;
+      font-size: 10px;
       color: #ccc;
     }
 
     .start-btn-wrapper {
-      margin-top: 20px;
+      margin-top: 18px;
       text-align: center;
     }
     .start-btn-wrapper .btn {
-      font-size: 18px;
-      padding: 12px 30px;
-      width: auto;
-      min-width: 180px;
+      font-size: 16px;
+      padding: 10px 24px;
+      min-width: 140px;
     }
 
-    /* ===== دوائر الأدوار الإضافية - 6 في صف واحد بحجم صغير ===== */
+    /* ===== دوائر الأدوار ===== */
     .roles-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
-      margin: 15px 0;
-      max-width: 100%;
+      gap: 8px;
+      margin: 10px 0;
     }
     .role-circle-wrapper {
       position: relative;
       aspect-ratio: 1/1;
+      width: 100%;
       max-width: 100%;
     }
     .role-circle {
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      border: 3px solid #555;
-      background: #111;
+      border: 2px solid #555;
+      background: #0d0d0d;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -210,54 +237,55 @@
     }
     .role-circle:hover {
       border-color: crimson;
-      box-shadow: 0 0 18px rgba(255, 0, 0, 0.3);
-      transform: scale(1.05);
+      box-shadow: 0 0 14px rgba(255, 0, 0, 0.3);
+      transform: scale(1.04);
     }
     .role-circle img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
     .role-circle .placeholder {
-      font-size: 24px;
+      font-size: 22px;
       color: #555;
       font-weight: 900;
     }
     .role-circle .remove-btn {
       position: absolute;
-      top: 2px;
-      right: 2px;
+      top: 1px;
+      right: 1px;
       background: #a10d0d;
       color: #fff;
       border: none;
       border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      font-size: 11px;
+      width: 16px;
+      height: 16px;
+      font-size: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: 0.3s;
       z-index: 2;
-      line-height: 1;
       padding: 0;
+      line-height: 1;
     }
     .role-circle .remove-btn:hover {
       background: #8b0000;
-      box-shadow: 0 0 15px #8b0000;
-      transform: scale(1.15);
+      box-shadow: 0 0 12px #8b0000;
+      transform: scale(1.1);
     }
     .role-circle .role-name-label {
       position: absolute;
-      bottom: 2px;
+      bottom: 1px;
       left: 0;
       right: 0;
-      background: rgba(0,0,0,0.75);
+      background: rgba(0,0,0,0.7);
       color: #fff;
-      font-size: 9px;
+      font-size: 8px;
       text-align: center;
-      padding: 2px 0;
+      padding: 1px 0;
       font-family: 'Cinzel', serif;
       white-space: nowrap;
       overflow: hidden;
@@ -265,7 +293,7 @@
       border-radius: 0 0 50% 50% / 0 0 100% 100%;
     }
 
-    /* القائمة المنسدلة المنبثقة */
+    /* ===== القائمة المنسدلة ===== */
     .role-select-dropdown {
       position: absolute;
       top: 105%;
@@ -273,78 +301,98 @@
       right: 0;
       background: #1a1a1a;
       border: 1px solid crimson;
-      border-radius: 8px;
-      max-height: 130px;
+      border-radius: 6px;
+      max-height: 110px;
       overflow-y: auto;
       z-index: 10;
       display: none;
-      padding: 4px 0;
-      min-width: 120px;
+      padding: 3px 0;
+      min-width: 80px;
     }
     .role-select-dropdown.show {
       display: block;
     }
     .role-select-dropdown .option {
-      padding: 5px 8px;
+      padding: 4px 8px;
       cursor: pointer;
       color: #ccc;
-      font-size: 11px;
+      font-size: 10px;
       transition: 0.2s;
       font-family: 'Cinzel', serif;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
     .role-select-dropdown .option:hover {
       background: #2c2c2c;
       color: #fff;
     }
     .role-select-dropdown .option img {
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       object-fit: cover;
       border: 1px solid #555;
     }
 
     /* ===== تحسين التجاوب ===== */
-    @media (max-width: 500px) {
+    @media (max-width: 480px) {
       .roles-grid {
         grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+        gap: 6px;
       }
       .role-circle .role-name-label {
-        font-size: 8px;
+        font-size: 7px;
       }
       .role-circle .placeholder {
         font-size: 18px;
       }
-      .counter-group {
-        flex-direction: column;
-        align-items: center;
+      .role-circle .remove-btn {
+        width: 14px;
+        height: 14px;
+        font-size: 9px;
       }
-      .start-btn-wrapper .btn {
-        width: 100%;
-        min-width: unset;
-        font-size: 16px;
+      .counter-group {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .counter-item {
+        min-width: 60px;
+        padding: 4px 8px;
+      }
+      .counter-item input {
+        width: 40px;
+        font-size: 14px;
       }
       .flex-buttons .btn {
         flex: 1;
         justify-content: center;
-        font-size: 11px;
-        padding: 6px 10px;
+        font-size: 10px;
+        padding: 4px 8px;
+      }
+      .start-btn-wrapper .btn {
+        font-size: 14px;
+        padding: 8px 16px;
+        min-width: 120px;
+        width: 100%;
+      }
+      .container {
+        padding: 12px 10px;
+      }
+      h2 {
+        font-size: 22px;
+      }
+      .section {
+        padding: 10px;
       }
     }
-
-    @media (max-width: 380px) {
+    @media (max-width: 360px) {
       .roles-grid {
         grid-template-columns: repeat(3, 1fr);
-        gap: 5px;
+        gap: 4px;
       }
-      .role-circle .remove-btn {
-        width: 16px;
-        height: 16px;
-        font-size: 10px;
+      .role-circle .role-name-label {
+        font-size: 6px;
       }
     }
   </style>
@@ -355,9 +403,9 @@
 
     <!-- ===== اختيار الأدوار الإضافية (دوائر) ===== -->
     <div class="section">
-      <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية (حد أقصى 6)</span>
+      <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية</span>
       <div class="roles-grid" id="rolesGrid"></div>
-      <p style="color:#777; font-size:11px; margin-top:5px;">انقر على دائرة فارغة لاختيار دور، واضغط ✕ لإزالته.</p>
+      <p style="color:#777; font-size:10px; margin-top:4px;">انقر على دائرة فارغة لاختيار دور، واضغط ✕ لإزالته.</p>
     </div>
 
     <!-- ===== إعدادات عدد الذئاب والقرويين ===== -->
@@ -365,11 +413,11 @@
       <span class="section-title" id="roomSettingsTitle">⚙️ إعدادات الغرفة</span>
       <div class="counter-group">
         <div class="counter-item">
-          <label for="wolvesCount">🐺 عدد الذئاب</label>
+          <label for="wolvesCount">🐺 ذئاب</label>
           <input type="number" id="wolvesCount" value="2" min="1" max="10" />
         </div>
         <div class="counter-item">
-          <label for="villagersCount">👨‍🌾 عدد القرويين</label>
+          <label for="villagersCount">👨‍🌾 قرويون</label>
           <input type="number" id="villagersCount" value="3" min="1" max="20" />
         </div>
       </div>
@@ -377,11 +425,11 @@
 
     <!-- ===== قائمة اللاعبين ===== -->
     <div class="section">
-      <span class="section-title" id="playersTitle">👥 اللاعبون في الغرفة</span>
+      <span class="section-title" id="playersTitle">👥 اللاعبون</span>
       <div id="playersList" class="player-list">
-        <p style="color:#777; text-align:center;">لا يوجد لاعبون بعد</p>
+        <p style="color:#777; text-align:center; font-size:13px;">لا يوجد لاعبون بعد</p>
       </div>
-      <div class="flex-buttons" style="margin-top:10px;">
+      <div class="flex-buttons" style="margin-top:8px;">
         <button class="btn btn-danger btn-sm" id="exitBtn">🚪 خروج</button>
         <button class="btn btn-primary btn-sm" id="refreshBtn">🔄 تحديث</button>
       </div>
@@ -447,7 +495,7 @@
     const exitBtn = document.getElementById('exitBtn');
     const refreshBtn = document.getElementById('refreshBtn');
 
-    // ===== أدوار افتراضية (في حال كانت قاعدة البيانات فارغة) =====
+    // ===== أدوار افتراضية مع صور مضمونة =====
     const DEFAULT_ROLES = [
       { name: { ar: 'ذئب', fr: 'Loup', en: 'Wolf' }, imageUrl: 'https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg' },
       { name: { ar: 'قروي', fr: 'Villageois', en: 'Villager' }, imageUrl: 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png' },
@@ -470,7 +518,6 @@
           description: role.description || ''
         }));
 
-        // إذا كانت قاعدة البيانات فارغة، استخدم الأدوار الافتراضية
         if (firebaseRoles.length === 0) {
           allRoles = DEFAULT_ROLES;
         } else {
@@ -480,7 +527,7 @@
         document.querySelectorAll('.role-select-dropdown').forEach(drop => populateDropdown(drop));
       } catch (e) {
         console.error(e);
-        allRoles = DEFAULT_ROLES; // استخدم الافتراضية في حالة الخطأ
+        allRoles = DEFAULT_ROLES;
         document.querySelectorAll('.role-select-dropdown').forEach(drop => populateDropdown(drop));
       }
     }
@@ -543,12 +590,10 @@
 
         populateDropdown(dropdown);
 
-        // ===== حدث النقر على الدائرة =====
+        // ===== حدث النقر =====
         circle.addEventListener('click', (e) => {
           const idx = parseInt(circle.dataset.index);
-          // فقط إذا كانت فارغة نفتح القائمة
           if (selectedRoles[idx] === null) {
-            // أغلق القوائم الأخرى
             document.querySelectorAll('.role-select-dropdown.show').forEach(d => d.classList.remove('show'));
             dropdown.classList.toggle('show');
           }
@@ -561,7 +606,7 @@
           }
         });
 
-        // ===== اختيار خيار من القائمة =====
+        // ===== اختيار خيار =====
         dropdown.addEventListener('click', (e) => {
           const option = e.target.closest('.option');
           if (!option) return;
@@ -574,7 +619,7 @@
 
         // ===== زر الإزالة =====
         removeBtn.addEventListener('click', (e) => {
-          e.stopPropagation(); // منع فتح القائمة عند الضغط على إزالة
+          e.stopPropagation();
           const idx = parseInt(removeBtn.dataset.index);
           selectedRoles[idx] = null;
           updateCircle(idx);
@@ -619,7 +664,7 @@
     // ===== جلب اللاعبين وعرضهم =====
     function renderPlayers(playersData) {
       if (!playersData || Object.keys(playersData).length === 0) {
-        playersList.innerHTML = `<p style="color:#777; text-align:center;">${t('noPlayers')}</p>`;
+        playersList.innerHTML = `<p style="color:#777; text-align:center; font-size:13px;">${t('noPlayers')}</p>`;
         return;
       }
       let html = '';
@@ -674,7 +719,6 @@
     // ===== تحديث =====
     refreshBtn.addEventListener('click', () => {
       loadRoles().then(() => {
-        // إعادة تعيين الدوائر المختارة (لأن الأدوار تغيرت)
         selectedRoles = new Array(MAX_ROLES).fill(null);
         for (let i = 0; i < MAX_ROLES; i++) updateCircle(i);
       });
