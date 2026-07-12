@@ -22,6 +22,22 @@
       display: block;
       text-shadow: 0 0 8px red;
     }
+    .room-code-display {
+      background: #0d0805;
+      border: 1px solid #d4a017;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 24px;
+      color: #d4a017;
+      letter-spacing: 4px;
+    }
+    .room-code-display span {
+      color: #f0e0c0;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
     .btn {
       padding: 14px 20px;
       border-radius: 10px;
@@ -267,6 +283,11 @@
   <div class="container">
     <h2 id="hostTitle">🐺 لو ڨارو - الراوي</h2>
 
+    <!-- ===== عرض رقم الغرفة ===== -->
+    <div class="room-code-display" id="roomCodeDisplay">
+      <span>🔑 رمز الغرفة:</span> <span id="roomCodeValue">---</span>
+    </div>
+
     <!-- ===== تم حذف قسم الديسكورد بالكامل ===== -->
 
     <!-- ===== اختيار الأدوار الإضافية (شبكة دوائر) ===== -->
@@ -364,6 +385,9 @@
       alert('انتهت صلاحية الغرفة');
       window.location.href = 'index.html';
     }
+
+    // ===== عرض رقم الغرفة =====
+    document.getElementById('roomCodeValue').textContent = roomCode;
 
     // ===== مراجع العناصر =====
     const rolesGrid = document.getElementById('rolesGrid');
