@@ -22,9 +22,10 @@
       display: block;
       text-shadow: 0 0 8px red;
     }
-    /* ===== أزرار محسّنة ===== */
+
+    /* ===== أزرار محسّنة وصغيرة ===== */
     .btn {
-      padding: 10px 18px;
+      padding: 8px 16px;
       border-radius: 30px;
       border: none;
       background: #2c2c2c;
@@ -33,13 +34,14 @@
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-size: 14px;
+      font-size: 13px;
       box-shadow: 0 0 8px rgba(255, 0, 0, 0.1);
       letter-spacing: 0.5px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
+      white-space: nowrap;
     }
     .btn:hover {
       background: #3a3a3a;
@@ -60,7 +62,6 @@
     .btn-danger:hover {
       background: #8b0000;
       box-shadow: 0 0 25px #8b0000;
-      transform: translateY(-2px);
     }
     .btn-success {
       background: #1a4a1a;
@@ -69,25 +70,26 @@
     .btn-success:hover {
       background: #2e7d32;
       box-shadow: 0 0 25px #2e7d32;
-      transform: translateY(-2px);
     }
     .btn-sm {
       padding: 6px 14px;
       font-size: 12px;
-      border-radius: 20px;
     }
-    .btn-group {
+
+    .flex-buttons {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
     }
-    .btn-group .btn {
-      flex: 1 1 auto;
+    .flex-buttons .btn {
+      flex: 0 1 auto;
     }
 
     input, select {
       width: 100%;
-      padding: 12px 14px;
+      padding: 10px 14px;
       margin: 8px 0;
       border-radius: 8px;
       border: 1px solid #555;
@@ -103,14 +105,6 @@
     }
     .hidden {
       display: none !important;
-    }
-    .flex {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .flex .btn {
-      flex: 1;
     }
 
     /* ===== عدادات الذئاب والقرويين ===== */
@@ -177,26 +171,28 @@
     }
 
     .start-btn-wrapper {
-      margin-top: 15px;
+      margin-top: 20px;
       text-align: center;
     }
     .start-btn-wrapper .btn {
       font-size: 18px;
       padding: 12px 30px;
       width: auto;
-      min-width: 200px;
+      min-width: 180px;
     }
 
-    /* ===== دوائر الأدوار الإضافية (6 في صف واحد) ===== */
+    /* ===== دوائر الأدوار الإضافية - 6 في صف واحد بحجم صغير ===== */
     .roles-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
+      gap: 10px;
       margin: 15px 0;
+      max-width: 100%;
     }
     .role-circle-wrapper {
       position: relative;
       aspect-ratio: 1/1;
+      max-width: 100%;
     }
     .role-circle {
       width: 100%;
@@ -214,7 +210,8 @@
     }
     .role-circle:hover {
       border-color: crimson;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+      box-shadow: 0 0 18px rgba(255, 0, 0, 0.3);
+      transform: scale(1.05);
     }
     .role-circle img {
       width: 100%;
@@ -222,7 +219,7 @@
       object-fit: cover;
     }
     .role-circle .placeholder {
-      font-size: 28px;
+      font-size: 24px;
       color: #555;
       font-weight: 900;
     }
@@ -234,9 +231,9 @@
       color: #fff;
       border: none;
       border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      font-size: 12px;
+      width: 18px;
+      height: 18px;
+      font-size: 11px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -244,20 +241,21 @@
       transition: 0.3s;
       z-index: 2;
       line-height: 1;
+      padding: 0;
     }
     .role-circle .remove-btn:hover {
       background: #8b0000;
       box-shadow: 0 0 15px #8b0000;
-      transform: scale(1.1);
+      transform: scale(1.15);
     }
     .role-circle .role-name-label {
       position: absolute;
       bottom: 2px;
       left: 0;
       right: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.75);
       color: #fff;
-      font-size: 10px;
+      font-size: 9px;
       text-align: center;
       padding: 2px 0;
       font-family: 'Cinzel', serif;
@@ -267,7 +265,7 @@
       border-radius: 0 0 50% 50% / 0 0 100% 100%;
     }
 
-    /* القائمة المنسدلة المنبثقة لاختيار الدور */
+    /* القائمة المنسدلة المنبثقة */
     .role-select-dropdown {
       position: absolute;
       top: 105%;
@@ -281,37 +279,45 @@
       z-index: 10;
       display: none;
       padding: 4px 0;
+      min-width: 120px;
     }
     .role-select-dropdown.show {
       display: block;
     }
     .role-select-dropdown .option {
-      padding: 6px 10px;
+      padding: 5px 8px;
       cursor: pointer;
       color: #ccc;
-      font-size: 12px;
+      font-size: 11px;
       transition: 0.2s;
       font-family: 'Cinzel', serif;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
     .role-select-dropdown .option:hover {
       background: #2c2c2c;
       color: #fff;
     }
     .role-select-dropdown .option img {
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       object-fit: cover;
       border: 1px solid #555;
     }
 
-    @media (max-width: 600px) {
+    /* ===== تحسين التجاوب ===== */
+    @media (max-width: 500px) {
       .roles-grid {
         grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+        gap: 8px;
+      }
+      .role-circle .role-name-label {
+        font-size: 8px;
+      }
+      .role-circle .placeholder {
+        font-size: 18px;
       }
       .counter-group {
         flex-direction: column;
@@ -320,6 +326,25 @@
       .start-btn-wrapper .btn {
         width: 100%;
         min-width: unset;
+        font-size: 16px;
+      }
+      .flex-buttons .btn {
+        flex: 1;
+        justify-content: center;
+        font-size: 11px;
+        padding: 6px 10px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .roles-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+      }
+      .role-circle .remove-btn {
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
       }
     }
   </style>
@@ -331,10 +356,8 @@
     <!-- ===== اختيار الأدوار الإضافية (دوائر) ===== -->
     <div class="section">
       <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية (حد أقصى 6)</span>
-      <div class="roles-grid" id="rolesGrid">
-        <!-- سيتم إنشاء 6 دوائر بواسطة JavaScript -->
-      </div>
-      <p style="color:#777; font-size:12px; margin-top:5px;">انقر على دائرة فارغة لاختيار دور، واضغط ✕ لإزالته.</p>
+      <div class="roles-grid" id="rolesGrid"></div>
+      <p style="color:#777; font-size:11px; margin-top:5px;">انقر على دائرة فارغة لاختيار دور، واضغط ✕ لإزالته.</p>
     </div>
 
     <!-- ===== إعدادات عدد الذئاب والقرويين ===== -->
@@ -358,7 +381,7 @@
       <div id="playersList" class="player-list">
         <p style="color:#777; text-align:center;">لا يوجد لاعبون بعد</p>
       </div>
-      <div class="flex" style="margin-top:10px;">
+      <div class="flex-buttons" style="margin-top:10px;">
         <button class="btn btn-danger btn-sm" id="exitBtn">🚪 خروج</button>
         <button class="btn btn-primary btn-sm" id="refreshBtn">🔄 تحديث</button>
       </div>
@@ -424,6 +447,16 @@
     const exitBtn = document.getElementById('exitBtn');
     const refreshBtn = document.getElementById('refreshBtn');
 
+    // ===== أدوار افتراضية (في حال كانت قاعدة البيانات فارغة) =====
+    const DEFAULT_ROLES = [
+      { name: { ar: 'ذئب', fr: 'Loup', en: 'Wolf' }, imageUrl: 'https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg' },
+      { name: { ar: 'قروي', fr: 'Villageois', en: 'Villager' }, imageUrl: 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png' },
+      { name: { ar: 'صياد', fr: 'Chasseur', en: 'Hunter' }, imageUrl: 'https://i.postimg.cc/2SQKX2KM/hunter.png' },
+      { name: { ar: 'منقذ', fr: 'Sauveur', en: 'Savior' }, imageUrl: 'https://i.postimg.cc/qBGLQdD8/savior.png' },
+      { name: { ar: 'مستبصرة', fr: 'Voyante', en: 'Seer' }, imageUrl: 'https://i.postimg.cc/Mp3Nxb8h/seer.png' },
+      { name: { ar: 'الغراب', fr: 'Corbeau', en: 'Raven' }, imageUrl: 'https://i.postimg.cc/XqrptwNk/raven.png' },
+    ];
+
     // ===== تحميل الأدوار من Firebase =====
     let allRoles = [];
 
@@ -431,16 +464,24 @@
       try {
         const snap = await get(ref(db, 'global_roles'));
         const data = snap.val() || {};
-        allRoles = Object.values(data).map(role => ({
+        const firebaseRoles = Object.values(data).map(role => ({
           name: role.name,
           imageUrl: role.imageUrl || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png',
           description: role.description || ''
         }));
-        // تحديث القوائم المنسدلة للدوائر إذا كانت مفتوحة
+
+        // إذا كانت قاعدة البيانات فارغة، استخدم الأدوار الافتراضية
+        if (firebaseRoles.length === 0) {
+          allRoles = DEFAULT_ROLES;
+        } else {
+          allRoles = firebaseRoles;
+        }
+        // تحديث القوائم المنسدلة
         document.querySelectorAll('.role-select-dropdown').forEach(drop => populateDropdown(drop));
       } catch (e) {
         console.error(e);
-        allRoles = [];
+        allRoles = DEFAULT_ROLES; // استخدم الافتراضية في حالة الخطأ
+        document.querySelectorAll('.role-select-dropdown').forEach(drop => populateDropdown(drop));
       }
     }
 
@@ -449,7 +490,7 @@
       if (allRoles.length === 0) {
         const div = document.createElement('div');
         div.className = 'option';
-        div.textContent = t('noCustomRoles') || 'لا توجد أدوار';
+        div.textContent = 'لا توجد أدوار';
         dropdown.appendChild(div);
         return;
       }
@@ -457,7 +498,6 @@
         const div = document.createElement('div');
         div.className = 'option';
         const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
-        // عرض صورة مصغرة بجانب الاسم
         const img = document.createElement('img');
         img.src = role.imageUrl;
         img.onerror = () => { img.style.display = 'none'; };
@@ -503,21 +543,25 @@
 
         populateDropdown(dropdown);
 
-        // أحداث
+        // ===== حدث النقر على الدائرة =====
         circle.addEventListener('click', (e) => {
           const idx = parseInt(circle.dataset.index);
+          // فقط إذا كانت فارغة نفتح القائمة
           if (selectedRoles[idx] === null) {
+            // أغلق القوائم الأخرى
             document.querySelectorAll('.role-select-dropdown.show').forEach(d => d.classList.remove('show'));
             dropdown.classList.toggle('show');
           }
         });
 
+        // إغلاق القائمة عند النقر خارجها
         document.addEventListener('click', (e) => {
           if (!wrapper.contains(e.target)) {
             dropdown.classList.remove('show');
           }
         });
 
+        // ===== اختيار خيار من القائمة =====
         dropdown.addEventListener('click', (e) => {
           const option = e.target.closest('.option');
           if (!option) return;
@@ -528,8 +572,9 @@
           dropdown.classList.remove('show');
         });
 
+        // ===== زر الإزالة =====
         removeBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
+          e.stopPropagation(); // منع فتح القائمة عند الضغط على إزالة
           const idx = parseInt(removeBtn.dataset.index);
           selectedRoles[idx] = null;
           updateCircle(idx);
@@ -541,6 +586,7 @@
 
     function updateCircle(index) {
       const wrapper = rolesGrid.children[index];
+      if (!wrapper) return;
       const circle = wrapper.querySelector('.role-circle');
       const content = circle.querySelector('.circle-content');
       const removeBtn = circle.querySelector('.remove-btn');
@@ -626,7 +672,13 @@
     });
 
     // ===== تحديث =====
-    refreshBtn.addEventListener('click', loadRoles);
+    refreshBtn.addEventListener('click', () => {
+      loadRoles().then(() => {
+        // إعادة تعيين الدوائر المختارة (لأن الأدوار تغيرت)
+        selectedRoles = new Array(MAX_ROLES).fill(null);
+        for (let i = 0; i < MAX_ROLES; i++) updateCircle(i);
+      });
+    });
 
     // ===== تهيئة =====
     await loadRoles();
