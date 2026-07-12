@@ -55,7 +55,6 @@
       object-fit: contain;
       pointer-events: none;
     }
-    /* تنسيق وصف الدور */
     .role-description {
       background: #1a1a1a;
       border: 1px solid #555;
@@ -186,7 +185,7 @@
       update,
       remove,
       onValue,
-      get  // تأكد من استيراد get
+      get
     } from "./logic.js";
 
     function applyTranslations() {
@@ -245,10 +244,9 @@
       });
     }
 
-    // ===== دالة جلب وصف الدور من global_roles (تدعم النصوص والكائنات) =====
+    // ===== دالة جلب وصف الدور حسب اللغة الحالية =====
     async function fetchRoleDescription(roleNameInput) {
       try {
-        // استخراج الاسم العربي من المدخل (إذا كان كائنًا)
         let targetName = roleNameInput;
         if (typeof roleNameInput === 'object' && roleNameInput !== null) {
           targetName = roleNameInput.ar || roleNameInput.fr || roleNameInput.en || '';
@@ -257,15 +255,27 @@
 
         const snap = await get(ref(db, 'global_roles'));
         const roles = snap.val() || {};
+        const lang = getCurrentLang(); // ar, fr, en
+
         for (const key in roles) {
           const role = roles[key];
           const nameObj = role.name;
+          let match = false;
           if (typeof nameObj === 'object') {
             if (nameObj.ar === targetName || nameObj.fr === targetName || nameObj.en === targetName) {
-              return role.description || '';
+              match = true;
             }
           } else if (nameObj === targetName) {
-            return role.description || '';
+            match = true;
+          }
+          if (match) {
+            const desc = role.description;
+            if (typeof desc === 'object') {
+              // إرجاع الوصف حسب اللغة الحالية، أو العربية كافتراضي
+              return desc[lang] || desc.ar || desc.fr || desc.en || '';
+            } else {
+              return desc || '';
+            }
           }
         }
         return '';
@@ -275,7 +285,7 @@
       }
     }
 
-    // ===== عرض البطاقة مع الوصف =====
+    // ===== عرض البطاقة مع الوصف المترجم =====
     async function renderRoleContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const roleText = t('yourRole') + ' ' + roleDisplay;
