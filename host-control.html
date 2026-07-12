@@ -7,43 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ===== أنماط عامة ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Cinzel', serif;
-      background: #000;
-      background-image: radial-gradient(circle at 20% 30%, #1a0a0a 0%, #000000 100%);
-      color: #f0e0c0;
-      min-height: 100vh;
-      padding: 15px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-    .container {
-      max-width: 700px;
-      width: 100%;
-      margin: 0 auto;
-      background: #111;
-      border: 2px solid crimson;
-      border-radius: 16px;
-      padding: 25px 20px;
-      box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
-    }
-    h2 {
-      font-size: 28px;
-      color: crimson;
-      text-shadow: 0 0 10px red, 0 0 20px darkred;
-      text-align: center;
-      border-bottom: 2px solid #222;
-      padding-bottom: 12px;
-      margin-bottom: 20px;
-      letter-spacing: 2px;
-    }
+    /* ===== أنماط خاصة بالراوي ===== */
     .section {
       background: #1a1a1a;
       border: 1px solid crimson;
@@ -274,11 +238,6 @@
       padding: 16px;
     }
 
-    /* ===== إخفاء قسم الديسكورد ===== */
-    #discordSection {
-      display: none !important;
-    }
-
     @media (max-width: 600px) {
       .role-grid {
         grid-template-columns: repeat(4, 1fr);
@@ -307,11 +266,6 @@
 <body>
   <div class="container">
     <h2 id="hostTitle">🐺 لو ڨارو - الراوي</h2>
-
-    <!-- ===== قسم الديسكورد مخفي ===== -->
-    <div id="discordSection" style="display: none;">
-      <!-- تم إخفاء هذا القسم بالكامل -->
-    </div>
 
     <!-- ===== اختيار الأدوار الإضافية (شبكة دوائر) ===== -->
     <div class="section">
@@ -426,11 +380,16 @@
     // ===== تحميل الأدوار من Firebase =====
     async function loadRoles() {
       try {
+        console.log('🔍 جاري تحميل الأدوار من Firebase...');
         const snap = await get(ref(db, 'global_roles'));
         const data = snap.val() || {};
         allRoles = Object.values(data);
+        console.log('✅ تم تحميل الأدوار:', allRoles.length);
+        
         if (allRoles.length === 0) {
           rolesLoading.textContent = '📭 لا توجد أدوار مخصصة';
+          rolesLoading.classList.remove('hidden');
+          rolesGrid.classList.add('hidden');
           return;
         }
         // عرض الأدوار في شبكة دوائر
@@ -438,24 +397,29 @@
         rolesLoading.classList.add('hidden');
         rolesGrid.classList.remove('hidden');
       } catch (e) {
-        console.error(e);
+        console.error('❌ خطأ في تحميل الأدوار:', e);
         rolesLoading.textContent = '❌ خطأ في تحميل الأدوار';
       }
     }
 
     function renderRolesGrid(roles) {
       rolesGrid.innerHTML = '';
+      console.log('🖼️ جاري عرض الأدوار كصور...');
+      
       roles.forEach((role, index) => {
         const circle = document.createElement('div');
         circle.className = 'role-circle';
         const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
         const imageUrl = role.imageUrl || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
+        
+        console.log(`📸 دور ${index + 1}: ${nameAr} - الصورة: ${imageUrl}`);
+        
         circle.dataset.index = index;
         circle.dataset.name = nameAr;
         circle.dataset.image = imageUrl;
 
         circle.innerHTML = `
-          <img src="${imageUrl}" alt="${nameAr}" />
+          <img src="${imageUrl}" alt="${nameAr}" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
           <span class="role-name-tooltip">${nameAr}</span>
           <span class="check-mark">✔️</span>
         `;
@@ -464,13 +428,17 @@
           const isSelected = circle.classList.toggle('selected');
           if (isSelected) {
             selectedRoles[index] = { name: nameAr, imageUrl };
+            console.log(`✅ تم اختيار دور: ${nameAr}`);
           } else {
             delete selectedRoles[index];
+            console.log(`❌ تم إلغاء اختيار دور: ${nameAr}`);
           }
         });
 
         rolesGrid.appendChild(circle);
       });
+      
+      console.log('✅ تم عرض جميع الأدوار كدوائر');
     }
 
     // ===== جلب اللاعبين وعرضهم =====
@@ -535,7 +503,7 @@
     });
 
     // ===== تحميل الأدوار عند بدء الصفحة =====
-    loadRoles();
+    await loadRoles();
 
     console.log('🚪 كود الغرفة:', roomCode);
   </script>
