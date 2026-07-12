@@ -22,25 +22,29 @@
       display: block;
       text-shadow: 0 0 8px red;
     }
+    /* ===== أزرار محسّنة ===== */
     .btn {
-      padding: 14px 20px;
-      border-radius: 10px;
+      padding: 10px 18px;
+      border-radius: 30px;
       border: none;
       background: #2c2c2c;
       color: #fff;
       font-family: 'Cinzel', serif;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.3s;
-      width: 100%;
-      text-align: center;
-      font-size: 16px;
-      box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      font-size: 14px;
+      box-shadow: 0 0 8px rgba(255, 0, 0, 0.1);
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
     .btn:hover {
       background: #3a3a3a;
-      box-shadow: 0 0 15px crimson;
-      transform: scale(1.02);
+      box-shadow: 0 0 18px crimson;
+      transform: translateY(-2px);
     }
     .btn-primary {
       background: #2c2c2c;
@@ -56,6 +60,7 @@
     .btn-danger:hover {
       background: #8b0000;
       box-shadow: 0 0 25px #8b0000;
+      transform: translateY(-2px);
     }
     .btn-success {
       background: #1a4a1a;
@@ -64,21 +69,34 @@
     .btn-success:hover {
       background: #2e7d32;
       box-shadow: 0 0 25px #2e7d32;
+      transform: translateY(-2px);
     }
-    input,
-    select {
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 12px;
+      border-radius: 20px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-group .btn {
+      flex: 1 1 auto;
+    }
+
+    input, select {
       width: 100%;
-      padding: 14px;
-      margin: 10px 0;
+      padding: 12px 14px;
+      margin: 8px 0;
       border-radius: 8px;
       border: 1px solid #555;
       background: #1a1a1a;
       color: #fff;
       font-family: 'Cinzel', serif;
-      font-size: 16px;
+      font-size: 14px;
     }
-    input:focus,
-    select:focus {
+    input:focus, select:focus {
       border-color: crimson;
       outline: none;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
@@ -107,28 +125,28 @@
       background: #1a1a1a;
       border: 1px solid #555;
       border-radius: 10px;
-      padding: 10px 15px;
+      padding: 8px 15px;
       text-align: center;
       flex: 1;
-      min-width: 100px;
+      min-width: 80px;
     }
     .counter-item label {
       display: block;
       color: #ccc;
-      font-size: 14px;
-      margin-bottom: 5px;
+      font-size: 13px;
+      margin-bottom: 4px;
     }
     .counter-item input {
-      width: 60px;
+      width: 50px;
       text-align: center;
-      padding: 6px;
+      padding: 4px;
       margin: 0 auto;
       display: block;
       background: #111;
       border: 1px solid #555;
       border-radius: 6px;
       color: #fff;
-      font-size: 18px;
+      font-size: 16px;
       font-family: 'Cinzel', serif;
     }
 
@@ -140,43 +158,49 @@
       background: #1a1a1a;
       border: 1px solid #333;
       border-radius: 8px;
-      padding: 8px 12px;
-      margin-bottom: 6px;
+      padding: 6px 12px;
+      margin-bottom: 5px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     .player-item .name {
       color: #f0e0c0;
-      font-size: 16px;
+      font-size: 15px;
     }
     .player-item .badge {
       background: #2c2c2c;
       padding: 2px 10px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 11px;
       color: #ccc;
     }
 
     .start-btn-wrapper {
       margin-top: 15px;
+      text-align: center;
     }
     .start-btn-wrapper .btn {
-      font-size: 20px;
-      padding: 16px;
+      font-size: 18px;
+      padding: 12px 30px;
+      width: auto;
+      min-width: 200px;
     }
 
-    /* ===== دوائر الأدوار الإضافية ===== */
+    /* ===== دوائر الأدوار الإضافية (6 في صف واحد) ===== */
     .roles-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
       margin: 15px 0;
     }
-    .role-circle {
+    .role-circle-wrapper {
       position: relative;
-      width: 100%;
       aspect-ratio: 1/1;
+    }
+    .role-circle {
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
       border: 3px solid #555;
       background: #111;
@@ -186,6 +210,7 @@
       cursor: pointer;
       transition: 0.3s;
       overflow: hidden;
+      position: relative;
     }
     .role-circle:hover {
       border-color: crimson;
@@ -197,89 +222,104 @@
       object-fit: cover;
     }
     .role-circle .placeholder {
-      font-size: 40px;
+      font-size: 28px;
       color: #555;
+      font-weight: 900;
     }
     .role-circle .remove-btn {
       position: absolute;
-      top: 4px;
-      right: 4px;
+      top: 2px;
+      right: 2px;
       background: #a10d0d;
       color: #fff;
       border: none;
       border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      font-size: 14px;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: 0.3s;
       z-index: 2;
+      line-height: 1;
     }
     .role-circle .remove-btn:hover {
       background: #8b0000;
       box-shadow: 0 0 15px #8b0000;
+      transform: scale(1.1);
     }
     .role-circle .role-name-label {
       position: absolute;
-      bottom: 5px;
+      bottom: 2px;
       left: 0;
       right: 0;
       background: rgba(0,0,0,0.7);
       color: #fff;
-      font-size: 12px;
+      font-size: 10px;
       text-align: center;
       padding: 2px 0;
       font-family: 'Cinzel', serif;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      border-radius: 0 0 50% 50% / 0 0 100% 100%;
     }
 
     /* القائمة المنسدلة المنبثقة لاختيار الدور */
     .role-select-dropdown {
       position: absolute;
-      top: 100%;
+      top: 105%;
       left: 0;
       right: 0;
       background: #1a1a1a;
       border: 1px solid crimson;
       border-radius: 8px;
-      max-height: 150px;
+      max-height: 130px;
       overflow-y: auto;
       z-index: 10;
       display: none;
-      padding: 5px 0;
+      padding: 4px 0;
     }
     .role-select-dropdown.show {
       display: block;
     }
     .role-select-dropdown .option {
-      padding: 8px 12px;
+      padding: 6px 10px;
       cursor: pointer;
       color: #ccc;
-      font-size: 14px;
+      font-size: 12px;
       transition: 0.2s;
       font-family: 'Cinzel', serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .role-select-dropdown .option:hover {
       background: #2c2c2c;
       color: #fff;
     }
-    .role-circle-wrapper {
-      position: relative;
+    .role-select-dropdown .option img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #555;
     }
 
     @media (max-width: 600px) {
+      .roles-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
       .counter-group {
         flex-direction: column;
         align-items: center;
       }
-      .roles-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+      .start-btn-wrapper .btn {
+        width: 100%;
+        min-width: unset;
       }
     }
   </style>
@@ -319,8 +359,8 @@
         <p style="color:#777; text-align:center;">لا يوجد لاعبون بعد</p>
       </div>
       <div class="flex" style="margin-top:10px;">
-        <button class="btn btn-danger" id="exitBtn">🚪 خروج</button>
-        <button class="btn btn-primary" id="refreshBtn">🔄 تحديث</button>
+        <button class="btn btn-danger btn-sm" id="exitBtn">🚪 خروج</button>
+        <button class="btn btn-primary btn-sm" id="refreshBtn">🔄 تحديث</button>
       </div>
     </div>
 
@@ -334,22 +374,14 @@
     import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
     import {
       getRoomCode,
-      setRoomCode,
-      clearRoomCode,
       createOrGetRoom,
       deleteRoom,
       checkRoomExpiry,
       listenToPlayers,
-      getPlayers,
-      addPlayer,
       distributeRoles,
-      listenToRoles,
       db,
       ref,
-      update,
-      remove,
-      get,
-      onValue
+      get
     } from "./logic.js";
 
     // ===== ترجمة =====
@@ -393,7 +425,7 @@
     const refreshBtn = document.getElementById('refreshBtn');
 
     // ===== تحميل الأدوار من Firebase =====
-    let allRoles = []; // مصفوفة من الأدوار { name: {ar,fr,en}, imageUrl, description }
+    let allRoles = [];
 
     async function loadRoles() {
       try {
@@ -405,9 +437,7 @@
           description: role.description || ''
         }));
         // تحديث القوائم المنسدلة للدوائر إذا كانت مفتوحة
-        document.querySelectorAll('.role-select-dropdown').forEach(drop => {
-          populateDropdown(drop);
-        });
+        document.querySelectorAll('.role-select-dropdown').forEach(drop => populateDropdown(drop));
       } catch (e) {
         console.error(e);
         allRoles = [];
@@ -427,7 +457,13 @@
         const div = document.createElement('div');
         div.className = 'option';
         const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
-        div.textContent = nameAr;
+        // عرض صورة مصغرة بجانب الاسم
+        const img = document.createElement('img');
+        img.src = role.imageUrl;
+        img.onerror = () => { img.style.display = 'none'; };
+        div.appendChild(img);
+        const text = document.createTextNode(' ' + nameAr);
+        div.appendChild(text);
         div.dataset.roleData = JSON.stringify(role);
         dropdown.appendChild(div);
       });
@@ -435,7 +471,7 @@
 
     // ===== إنشاء 6 دوائر =====
     const MAX_ROLES = 6;
-    let selectedRoles = []; // مصفوفة من الأدوار المختارة (كائنات) بحجم 6، العناصر الفارغة تكون null
+    let selectedRoles = new Array(MAX_ROLES).fill(null);
 
     function initCircles() {
       rolesGrid.innerHTML = '';
@@ -447,19 +483,16 @@
         circle.className = 'role-circle';
         circle.dataset.index = i;
 
-        // محتوى الدائرة
         const content = document.createElement('div');
         content.className = 'circle-content';
         circle.appendChild(content);
 
-        // زر الإزالة (يظهر فقط عند وجود دور)
         const removeBtn = document.createElement('button');
         removeBtn.className = 'remove-btn hidden';
         removeBtn.textContent = '✕';
         removeBtn.dataset.index = i;
         circle.appendChild(removeBtn);
 
-        // القائمة المنسدلة
         const dropdown = document.createElement('div');
         dropdown.className = 'role-select-dropdown';
         dropdown.dataset.index = i;
@@ -468,40 +501,33 @@
         wrapper.appendChild(circle);
         rolesGrid.appendChild(wrapper);
 
-        // تعبئة القائمة المنسدلة
         populateDropdown(dropdown);
 
         // أحداث
         circle.addEventListener('click', (e) => {
-          // إذا كانت الدائرة فارغة، نفتح القائمة
           const idx = parseInt(circle.dataset.index);
           if (selectedRoles[idx] === null) {
-            // أغلق أي قائمة مفتوحة أخرى
             document.querySelectorAll('.role-select-dropdown.show').forEach(d => d.classList.remove('show'));
             dropdown.classList.toggle('show');
           }
         });
 
-        // إغلاق القائمة عند النقر خارجها
         document.addEventListener('click', (e) => {
           if (!wrapper.contains(e.target)) {
             dropdown.classList.remove('show');
           }
         });
 
-        // اختيار خيار من القائمة
         dropdown.addEventListener('click', (e) => {
           const option = e.target.closest('.option');
           if (!option) return;
           const roleData = JSON.parse(option.dataset.roleData);
           const idx = parseInt(dropdown.dataset.index);
-          // تعيين الدور
           selectedRoles[idx] = roleData;
           updateCircle(idx);
           dropdown.classList.remove('show');
         });
 
-        // زر الإزالة
         removeBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           const idx = parseInt(removeBtn.dataset.index);
@@ -509,8 +535,6 @@
           updateCircle(idx);
         });
 
-        // تهيئة الدائرة فارغة
-        selectedRoles[i] = null;
         updateCircle(i);
       }
     }
@@ -524,27 +548,25 @@
 
       const role = selectedRoles[index];
       if (role) {
-        // عرض الصورة واسم الدور
         const img = document.createElement('img');
-        img.src = role.imageUrl || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
-        img.alt = typeof role.name === 'object' ? role.name.ar : role.name;
+        img.src = role.imageUrl;
+        img.onerror = () => { img.src = 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'; };
         content.innerHTML = '';
         content.appendChild(img);
-        // إضافة اسم الدور أسفل الصورة
+
         const label = document.createElement('div');
         label.className = 'role-name-label';
         const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
         label.textContent = nameAr;
         content.appendChild(label);
+
         removeBtn.classList.remove('hidden');
         circle.style.borderColor = 'crimson';
       } else {
-        // فارغة
         content.innerHTML = `<span class="placeholder">+</span>`;
         removeBtn.classList.add('hidden');
         circle.style.borderColor = '#555';
       }
-      // إغلاق القائمة
       dropdown.classList.remove('show');
     }
 
@@ -574,7 +596,6 @@
     startBtn.addEventListener('click', async () => {
       const wolves = parseInt(wolvesInput.value) || 2;
       const villagers = parseInt(villagersInput.value) || 3;
-      // جمع الأدوار المختارة (غير الفارغة)
       const selected = selectedRoles.filter(r => r !== null);
 
       if (wolves < 1) {
@@ -599,7 +620,7 @@
     exitBtn.addEventListener('click', async () => {
       if (confirm('هل أنت متأكد من الخروج؟ سيتم حذف الغرفة.')) {
         await deleteRoom(roomCode);
-        clearRoomCode();
+        localStorage.removeItem('roomCode');
         window.location.href = 'index.html';
       }
     });
