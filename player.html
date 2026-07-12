@@ -55,7 +55,7 @@
       object-fit: contain;
       pointer-events: none;
     }
-    /* تنسيق وصف الدور - تم تصغير الخط وتحسين المقروئية */
+    /* تنسيق وصف الدور */
     .role-description {
       background: #1a1a1a;
       border: 1px solid #555;
@@ -63,11 +63,11 @@
       padding: 10px 12px;
       margin-top: 10px;
       color: #ccc;
-      font-size: 13px; /* تم التعديل من 14px إلى 13px */
-      line-height: 1.5; /* تم التعديل من 1.6 إلى 1.5 */
+      font-size: 13px;
+      line-height: 1.5;
       text-align: center;
       font-family: 'Cinzel', serif;
-      letter-spacing: 0.3px; /* تم التعديل من 0.5px إلى 0.3px */
+      letter-spacing: 0.3px;
     }
     .role-description strong {
       color: #d4a017;
@@ -186,7 +186,7 @@
       update,
       remove,
       onValue,
-      get
+      get  // تأكد من استيراد get
     } from "./logic.js";
 
     function applyTranslations() {
@@ -245,18 +245,26 @@
       });
     }
 
-    async function fetchRoleDescription(roleName) {
+    // ===== دالة جلب وصف الدور من global_roles (تدعم النصوص والكائنات) =====
+    async function fetchRoleDescription(roleNameInput) {
       try {
+        // استخراج الاسم العربي من المدخل (إذا كان كائنًا)
+        let targetName = roleNameInput;
+        if (typeof roleNameInput === 'object' && roleNameInput !== null) {
+          targetName = roleNameInput.ar || roleNameInput.fr || roleNameInput.en || '';
+        }
+        if (!targetName) return '';
+
         const snap = await get(ref(db, 'global_roles'));
         const roles = snap.val() || {};
         for (const key in roles) {
           const role = roles[key];
           const nameObj = role.name;
           if (typeof nameObj === 'object') {
-            if (nameObj.ar === roleName || nameObj.fr === roleName || nameObj.en === roleName) {
+            if (nameObj.ar === targetName || nameObj.fr === targetName || nameObj.en === targetName) {
               return role.description || '';
             }
-          } else if (nameObj === roleName) {
+          } else if (nameObj === targetName) {
             return role.description || '';
           }
         }
@@ -267,6 +275,7 @@
       }
     }
 
+    // ===== عرض البطاقة مع الوصف =====
     async function renderRoleContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const roleText = t('yourRole') + ' ' + roleDisplay;
@@ -309,6 +318,7 @@
       };
     }
 
+    // ===== عرض البطاقة للاعب المصاب =====
     async function renderInfectedContent(player) {
       const description = await fetchRoleDescription(player.role);
       roleBox.innerHTML = `
@@ -349,6 +359,7 @@
       };
     }
 
+    // ===== التحقق من حالة اللاعب =====
     async function checkPlayerStatus() {
       if (!playerId || !roomCode) return;
       const player = await getPlayer(roomCode, playerId);
@@ -404,6 +415,7 @@
       });
     }
 
+    // ===== الانضمام إلى الغرفة =====
     joinBtn.addEventListener("click", async () => {
       const name = nameInput.value.trim();
       const enteredRoom = codeInput.value.trim();
@@ -441,6 +453,7 @@
       }
     });
 
+    // ===== نظام الاقتراحات =====
     const modal = document.getElementById("suggestModal");
     document.getElementById("suggestBtn").addEventListener("click", () => {
       modal.style.display = "flex";
@@ -469,6 +482,7 @@
       }
     });
 
+    // ===== استعادة الجلسة =====
     if (playerId && roomCode) {
       joinForm.classList.add("hidden");
       statusDiv.classList.remove("hidden");
