@@ -71,25 +71,25 @@
       display: inline-block;
     }
 
-    /* ===== حاوية اللاعبين (شبكة أو عمود) ===== */
+    /* ===== حاوية اللاعبين ===== */
     #players {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
       padding-bottom: 80px;
     }
 
-    /* ===== بطاقة اللاعب المصغرة ===== */
+    /* ===== بطاقة اللاعب (شريط رفيع جداً) ===== */
     .player-card {
       background: #1a1a1a;
       border: 1px solid #333;
-      border-radius: 8px;
-      padding: 6px 12px;
+      border-radius: 6px;
+      padding: 4px 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       transition: 0.3s;
-      min-height: 50px;
+      min-height: 42px;
     }
     .player-card:hover {
       border-color: crimson;
@@ -101,17 +101,17 @@
       background: #111;
     }
 
-    /* ===== الجهة اليمنى (الصورة + الاسم) ===== */
+    /* ===== الجهة اليمنى (صورة + اسم + دور في سطر واحد) ===== */
     .player-card .info {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex: 1;
-      min-width: 120px;
+      min-width: 0;
     }
     .player-card .avatar {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       border: 2px solid crimson;
       object-fit: cover;
@@ -122,34 +122,39 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .player-card .details .name {
-      font-size: 16px;
+      font-size: 15px;
       color: #f2f2f2;
       font-weight: 700;
+      white-space: nowrap;
     }
     .player-card .details .role {
       font-size: 12px;
       color: #aaa;
+      white-space: nowrap;
     }
     .player-card .details .role strong {
       color: #fff;
     }
 
-    /* ===== الجهة اليسرى (الأزرار) ===== */
+    /* ===== الجهة اليسرى (أزرار صغيرة في سطر واحد) ===== */
     .player-card .actions {
       display: flex;
-      gap: 6px;
+      gap: 5px;
       flex-shrink: 0;
     }
     .player-card .actions button {
-      padding: 4px 12px;
+      padding: 3px 10px;
       border: none;
-      border-radius: 6px;
+      border-radius: 5px;
       font-family: 'Cinzel', serif;
       font-weight: bold;
-      font-size: 12px;
+      font-size: 11px;
       cursor: pointer;
       transition: 0.3s;
       background: #2c2c2c;
@@ -165,7 +170,7 @@
     }
     .player-card .actions .kill:hover {
       background: #8b0000;
-      box-shadow: 0 0 15px #8b0000;
+      box-shadow: 0 0 12px #8b0000;
     }
     .player-card .actions .infect {
       background: #1a4a1a;
@@ -173,23 +178,24 @@
     }
     .player-card .actions .infect:hover {
       background: #2e7d32;
-      box-shadow: 0 0 15px #2e7d32;
+      box-shadow: 0 0 12px #2e7d32;
     }
     .player-card.dead .actions button {
       opacity: 0.4;
       pointer-events: none;
     }
 
-    /* ===== التجاوب مع الشاشات الصغيرة ===== */
-    @media (max-width: 600px) {
+    /* ===== التجاوب للشاشات الصغيرة جداً ===== */
+    @media (max-width: 500px) {
       .player-card {
         flex-wrap: wrap;
-        padding: 8px 10px;
+        min-height: 50px;
+        padding: 6px 8px;
         gap: 4px;
       }
       .player-card .info {
         flex: 1 1 100%;
-        min-width: unset;
+        min-width: 0;
       }
       .player-card .actions {
         flex: 1 1 100%;
@@ -199,17 +205,24 @@
       .player-card .actions button {
         flex: 1;
         text-align: center;
-        font-size: 14px;
-        padding: 6px 10px;
+        font-size: 13px;
+        padding: 5px 10px;
+      }
+      .player-card .avatar {
+        width: 28px;
+        height: 28px;
       }
       .player-card .details .name {
         font-size: 14px;
       }
+      .player-card .details .role {
+        font-size: 11px;
+      }
     }
-    @media (max-width: 400px) {
+    @media (max-width: 380px) {
       .player-card .avatar {
-        width: 30px;
-        height: 30px;
+        width: 24px;
+        height: 24px;
       }
       .player-card .details .name {
         font-size: 13px;
@@ -317,11 +330,10 @@
       entries.forEach(([id, player]) => {
         const card = document.createElement("div");
         card.className = "player-card";
-        const isDead = player.isDead;
-        if (isDead) card.classList.add("dead");
+        if (player.isDead) card.classList.add("dead");
 
         const avatarUrl = player.roleImage || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png";
-        const infectedBadge = player.isInfected && !isDead
+        const infectedBadge = player.isInfected && !player.isDead
           ? `<span class="infected-badge">🐺 ${t('infected')}</span>`
           : "";
 
