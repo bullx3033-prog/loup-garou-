@@ -7,180 +7,179 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    .room-box {
-      background: #0d0805;
-      border: 2px solid #d4a017;
-      border-radius: 12px;
-      padding: 12px;
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    .room-box .code {
-      font-size: 32px;
-      color: #d4a017;
-      letter-spacing: 4px;
-    }
+    /* ===== أنماط خاصة بالراوي ===== */
     .section {
-      background: rgba(0, 0, 0, 0.4);
-      padding: 15px;
+      background: #1a1a1a;
+      border: 1px solid crimson;
       border-radius: 12px;
-      border: 1px solid #5a3a22;
+      padding: 15px;
       margin-top: 20px;
     }
     .section-title {
-      color: #d4a017;
+      color: crimson;
       font-size: 18px;
       margin-bottom: 10px;
       display: block;
+      text-shadow: 0 0 8px red;
     }
-    .roles-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 8px;
-    }
-    .role-toggle {
-      background: #1a0f0a;
-      padding: 8px 16px;
-      border-radius: 30px;
-      border: 2px solid #5a3a22;
-      color: #b8a08a;
-      font-family: "Cinzel", serif;
-      font-size: 14px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .role-toggle:hover {
-      border-color: #b8860b;
-      color: #f0e0c0;
-    }
-    .role-toggle.active {
-      background: #b8860b;
-      border-color: #d4a017;
-      color: #0d0805;
-      box-shadow: 0 0 20px #b8860b;
-    }
-    .players-list {
-      list-style: none;
-      padding: 0;
-    }
-    .players-list li {
-      padding: 8px 12px;
-      background: #1a0f0a;
-      border-radius: 8px;
-      border-right: 3px solid #7a4e2d;
-      color: #d4b48c;
-      margin-bottom: 5px;
-    }
-
-    .discord-section {
-      background: #1a1a1a;
-      border: 1px solid #5865F2;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 20px;
-      margin-top: 10px;
-    }
-    .discord-section .title {
-      color: #5865F2;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .discord-section .link-box {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-      background: #0d0d0d;
-      padding: 10px;
-      border-radius: 8px;
-      margin-top: 8px;
-      border: 1px solid #333;
-    }
-    .discord-section .link-box input {
-      flex: 1;
-      background: transparent;
+    .btn {
+      padding: 14px 20px;
+      border-radius: 10px;
       border: none;
-      color: #ccc;
-      font-family: 'Cinzel', serif;
-      font-size: 14px;
-      padding: 5px;
-      min-width: 150px;
-      direction: ltr;
-    }
-    .discord-section .link-box input:focus {
-      outline: none;
-      border-color: #5865F2;
-    }
-    .discord-section .btn-discord-outline {
-      background: transparent;
-      color: #5865F2;
-      border: 1px solid #5865F2;
-      padding: 8px 16px;
-      border-radius: 8px;
+      background: #2c2c2c;
+      color: #fff;
       font-family: 'Cinzel', serif;
       font-weight: bold;
       cursor: pointer;
       transition: 0.3s;
-      font-size: 14px;
-    }
-    .discord-section .btn-discord-outline:hover {
-      background: #5865F2;
-      color: #fff;
-      box-shadow: 0 0 15px #5865F2;
-    }
-    .discord-section .btn-group-discord {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .discord-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
       width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 2000;
-      justify-content: center;
-      align-items: center;
-    }
-    .discord-modal-content {
-      background: #111;
-      border: 1px solid #5865F2;
-      border-radius: 16px;
-      padding: 30px;
-      max-width: 400px;
-      width: 90%;
-      color: #fff;
-    }
-    .discord-modal-content h3 {
-      color: #5865F2;
-      margin-bottom: 15px;
       text-align: center;
+      font-size: 16px;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
     }
-    .discord-modal-content input {
+    .btn:hover {
+      background: #3a3a3a;
+      box-shadow: 0 0 15px crimson;
+      transform: scale(1.02);
+    }
+    .btn-primary {
+      background: #2c2c2c;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #3a3a3a;
+    }
+    .btn-danger {
+      background: #a10d0d;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background: #8b0000;
+      box-shadow: 0 0 25px #8b0000;
+    }
+    .btn-success {
+      background: #1a4a1a;
+      color: #fff;
+    }
+    .btn-success:hover {
+      background: #2e7d32;
+      box-shadow: 0 0 25px #2e7d32;
+    }
+    input,
+    select {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
+      margin: 10px 0;
       border-radius: 8px;
-      border: 1px solid #333;
+      border: 1px solid #555;
       background: #1a1a1a;
       color: #fff;
       font-family: 'Cinzel', serif;
-      font-size: 14px;
-      direction: ltr;
+      font-size: 16px;
     }
-    .discord-modal-content .btn-row {
+    input:focus,
+    select:focus {
+      border-color: crimson;
+      outline: none;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+    }
+    .hidden {
+      display: none !important;
+    }
+    .flex {
       display: flex;
       gap: 10px;
+      flex-wrap: wrap;
+    }
+    .flex .btn {
+      flex: 1;
+    }
+
+    /* تنسيق العدادات */
+    .counter-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+      justify-content: center;
+    }
+    .counter-item {
+      background: #1a1a1a;
+      border: 1px solid #555;
+      border-radius: 10px;
+      padding: 10px 15px;
+      text-align: center;
+      flex: 1;
+      min-width: 100px;
+    }
+    .counter-item label {
+      display: block;
+      color: #ccc;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    .counter-item input {
+      width: 60px;
+      text-align: center;
+      padding: 6px;
+      margin: 0 auto;
+      display: block;
+      background: #111;
+      border: 1px solid #555;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 18px;
+      font-family: 'Cinzel', serif;
+    }
+
+    /* قائمة اللاعبين */
+    .player-list {
+      margin-top: 10px;
+    }
+    .player-item {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .player-item .name {
+      color: #f0e0c0;
+      font-size: 16px;
+    }
+    .player-item .badge {
+      background: #2c2c2c;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #ccc;
+    }
+
+    /* زر بدء اللعبة */
+    .start-btn-wrapper {
       margin-top: 15px;
     }
-    .discord-modal-content .btn-row .btn {
-      flex: 1;
+    .start-btn-wrapper .btn {
+      font-size: 20px;
+      padding: 16px;
+    }
+
+    /* ===== قسم الديسكورد (موجود في الأصل) ===== */
+    #discordSection {
+      margin-top: 20px;
+    }
+    #discordSection .flex {
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .counter-group {
+        flex-direction: column;
+        align-items: center;
+      }
     }
   </style>
 </head>
@@ -188,229 +187,249 @@
   <div class="container">
     <h2 id="hostTitle">🐺 لو ڨارو - الراوي</h2>
 
-    <div class="room-box">
-      <div id="roomCodeLabel">🔑 رمز الغرفة</div>
-      <div class="code" id="codeDisplay">...</div>
+    <!-- ===== قسم الديسكورد (الأصلي) ===== -->
+    <div class="section" id="discordSection">
+      <span class="section-title">🎙️ إعدادات Discord</span>
+      <input type="text" id="discordLinkInput" placeholder="أضف رابط غرفة Discord" />
+      <div class="flex">
+        <button class="btn btn-primary" id="saveDiscordBtn">💾 حفظ الرابط</button>
+        <button class="btn" id="copyDiscordBtn">📋 نسخ الرابط</button>
+      </div>
+      <p style="color:#777; font-size:12px; margin-top:5px;" id="discordHint">انسخ رابط الغرفة الصوتية من Discord والصقه هنا ليظهر للاعبين.</p>
     </div>
 
-    <div class="discord-section">
-      <div class="title" id="discordTitle">🎙️ إعدادات Discord</div>
-      <div class="btn-group-discord">
-        <button class="btn-discord-outline" id="pasteDiscordBtn">📋 أضف رابط غرفة Discord</button>
-      </div>
-      <div class="link-box">
-        <input type="text" id="discordLinkInput" placeholder="رابط الغرفة الصوتية (اختياري)" readonly />
-        <button class="btn-discord-outline" id="copyDiscordBtn" style="font-size:12px; padding:6px 12px;">🔗 نسخ</button>
-      </div>
-      <p style="color:#777; font-size:12px; margin-top:5px;" id="discordHint">💡 انسخ رابط الغرفة الصوتية من Discord والصقه هنا ليظهر للاعبين.</p>
-    </div>
-
+    <!-- ===== اختيار الأدوار الإضافية (الأصلي: قائمة منسدلة) ===== -->
     <div class="section">
       <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية</span>
-      <div class="roles-grid" id="extraRolesContainer">
-        <span style="color:#7a4e2d;" id="loadingText">جاري التحميل...</span>
+      <div id="rolesContainer">
+        <select id="rolesSelect" multiple style="height:150px; background:#1a1a1a; color:#fff; border:1px solid #555; border-radius:8px; padding:10px; width:100%; font-family:'Cinzel',serif;">
+          <option value="" disabled>جاري التحميل...</option>
+        </select>
+        <p style="color:#777; font-size:12px; margin-top:5px;">اضغط مع الاستمرار على Ctrl (أو Cmd) لتحديد عدة أدوار.</p>
       </div>
     </div>
 
+    <!-- ===== إعدادات عدد الذئاب والقرويين ===== -->
     <div class="section">
       <span class="section-title" id="roomSettingsTitle">⚙️ إعدادات الغرفة</span>
-      <label id="wolvesLabel">عدد الذئاب:</label>
-      <input type="number" id="wolvesCount" min="0" max="10" value="1" />
-      <label id="villagersLabel">عدد القرويين:</label>
-      <input type="number" id="villagersCount" min="0" max="20" value="3" />
-    </div>
-
-    <div class="section">
-      <span class="section-title" id="playersInRoomTitle">📋 اللاعبون في الغرفة</span>
-      <ul class="players-list" id="playersList"></ul>
-    </div>
-
-    <button class="btn btn-primary" id="startGameBtn" style="margin-top:20px;">⚔️ بدء اللعبة</button>
-    <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">خروج</button>
-  </div>
-
-  <div class="discord-modal" id="discordModal">
-    <div class="discord-modal-content">
-      <h3 id="discordModalTitle">📋 أدخل رابط Discord</h3>
-      <input type="text" id="manualDiscordInput" placeholder="https://discord.gg/..." dir="ltr" />
-      <div class="btn-row">
-        <button class="btn btn-primary" id="saveDiscordLinkBtn">💾 حفظ</button>
-        <button class="btn" id="closeDiscordModalBtn">إلغاء</button>
+      <div class="counter-group">
+        <div class="counter-item">
+          <label for="wolvesCount">🐺 عدد الذئاب</label>
+          <input type="number" id="wolvesCount" value="2" min="1" max="10" />
+        </div>
+        <div class="counter-item">
+          <label for="villagersCount">👨‍🌾 عدد القرويين</label>
+          <input type="number" id="villagersCount" value="3" min="1" max="20" />
+        </div>
       </div>
+    </div>
+
+    <!-- ===== قائمة اللاعبين ===== -->
+    <div class="section">
+      <span class="section-title" id="playersTitle">👥 اللاعبون في الغرفة</span>
+      <div id="playersList" class="player-list">
+        <p style="color:#777; text-align:center;">لا يوجد لاعبون بعد</p>
+      </div>
+      <div class="flex" style="margin-top:10px;">
+        <button class="btn btn-danger" id="exitBtn">🚪 خروج</button>
+        <button class="btn btn-primary" id="refreshBtn">🔄 تحديث</button>
+      </div>
+    </div>
+
+    <!-- ===== زر بدء اللعبة ===== -->
+    <div class="start-btn-wrapper">
+      <button class="btn btn-success" id="startGameBtn">🚀 بدء اللعبة</button>
     </div>
   </div>
 
   <script type="module">
     import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
     import {
-      createOrGetRoom,
-      listenToPlayers,
-      listenToRoles,
-      distributeRoles,
-      deleteRoom,
+      getRoomCode,
       setRoomCode,
       clearRoomCode,
-      getRoomCode,
+      createOrGetRoom,
+      deleteRoom,
+      checkRoomExpiry,
+      listenToPlayers,
+      getPlayers,
+      addPlayer,
+      distributeRoles,
+      listenToRoles,
       db,
       ref,
       update,
-      onValue,
-      get
+      remove,
+      get,
+      onValue
     } from "./logic.js";
 
+    // ===== ترجمة =====
     function applyTranslations() {
       document.title = t('appName') + ' - ' + t('hostTitle');
       document.getElementById('hostTitle').textContent = `🐺 ${t('appName')} - ${t('hostTitle')}`;
-      document.getElementById('roomCodeLabel').textContent = '🔑 ' + t('roomCode');
-      document.getElementById('discordTitle').textContent = '🎙️ ' + t('discordSettings');
-      document.getElementById('pasteDiscordBtn').textContent = '📋 ' + t('addDiscordLink');
-      document.getElementById('copyDiscordBtn').textContent = '🔗 ' + t('copyLink');
-      document.getElementById('discordHint').textContent = '💡 ' + t('discordHint');
       document.getElementById('extraRolesTitle').textContent = '🃏 ' + t('chooseExtraRoles');
-      document.getElementById('loadingText').textContent = t('loading');
       document.getElementById('roomSettingsTitle').textContent = '⚙️ ' + t('roomSettings');
-      document.getElementById('wolvesLabel').textContent = t('wolvesCount');
-      document.getElementById('villagersLabel').textContent = t('villagersCount');
-      document.getElementById('playersInRoomTitle').textContent = '📋 ' + t('playersInRoom');
-      document.getElementById('startGameBtn').textContent = '⚔️ ' + t('startGame');
-      document.getElementById('exitBtn').textContent = t('exit');
-      document.getElementById('discordModalTitle').textContent = '📋 ' + t('enterDiscordLink');
-      document.getElementById('saveDiscordLinkBtn').textContent = '💾 ' + t('save');
-      document.getElementById('closeDiscordModalBtn').textContent = t('cancel');
+      document.getElementById('playersTitle').textContent = '👥 ' + t('playersInRoom');
+      document.getElementById('discordHint').textContent = '💡 ' + t('discordHint');
+      document.getElementById('saveDiscordBtn').textContent = '💾 ' + t('save');
+      document.getElementById('copyDiscordBtn').textContent = '📋 ' + t('copyLink');
+      document.getElementById('exitBtn').textContent = '🚪 ' + t('exit');
+      document.getElementById('refreshBtn').textContent = '🔄 ' + t('refresh');
+      document.getElementById('startGameBtn').textContent = '🚀 ' + t('startGame');
+      document.getElementById('discordLinkInput').placeholder = t('enterDiscordLink');
 
       const lang = getCurrentLang();
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = lang;
     }
-
     applyTranslations();
 
-    const roomCode = await createOrGetRoom();
-    document.getElementById("codeDisplay").textContent = roomCode;
+    // ===== متغيرات =====
+    const roomCode = getRoomCode();
+    if (!roomCode) {
+      alert('لا يوجد كود غرفة، سيتم إنشاء واحدة جديدة');
+      await createOrGetRoom();
+      location.reload();
+    }
 
-    const playersList = document.getElementById("playersList");
-    listenToPlayers(roomCode, (data) => {
-      playersList.innerHTML = "";
-      if (!data) {
-        playersList.innerHTML = `<li style="color:#7a4e2d; text-align:center;">${t('noPlayers')}</li>`;
-        return;
-      }
-      Object.values(data).forEach((p) => {
-        const li = document.createElement("li");
-        li.textContent = p.name;
-        playersList.appendChild(li);
-      });
-    });
+    const valid = await checkRoomExpiry(roomCode);
+    if (!valid) {
+      alert('انتهت صلاحية الغرفة');
+      window.location.href = 'index.html';
+    }
 
-    const extraContainer = document.getElementById("extraRolesContainer");
-    let selectedExtraRoles = [];
-    listenToRoles((data) => {
-      extraContainer.innerHTML = "";
-      if (!data) {
-        extraContainer.innerHTML = `<span style="color:#7a4e2d;">${t('noCustomRoles')}</span>`;
-        return;
-      }
-      const extras = Object.entries(data).filter(([id, r]) => {
-        const roleName = typeof r.name === 'object' ? r.name.ar : r.name;
-        return roleName !== "ذئب" && roleName !== "قروي";
-      });
-      if (extras.length === 0) {
-        extraContainer.innerHTML = `<span style="color:#7a4e2d;">${t('noCustomRoles')}</span>`;
-        return;
-      }
-      extras.forEach(([id, role]) => {
-        const btn = document.createElement("button");
-        btn.className = "role-toggle";
-        btn.textContent = translateDynamicRole(role.name);
-        btn.onclick = () => {
-          btn.classList.toggle("active");
-          const index = selectedExtraRoles.findIndex((r) => r.id === id);
-          if (index === -1) {
-            selectedExtraRoles.push({ id, name: role.name, imageUrl: role.imageUrl || "" });
-          } else {
-            selectedExtraRoles.splice(index, 1);
-          }
-        };
-        extraContainer.appendChild(btn);
-      });
-    });
+    // ===== مراجع العناصر =====
+    const rolesSelect = document.getElementById('rolesSelect');
+    const playersList = document.getElementById('playersList');
+    const wolvesInput = document.getElementById('wolvesCount');
+    const villagersInput = document.getElementById('villagersCount');
+    const startBtn = document.getElementById('startGameBtn');
+    const exitBtn = document.getElementById('exitBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const discordInput = document.getElementById('discordLinkInput');
+    const saveDiscordBtn = document.getElementById('saveDiscordBtn');
+    const copyDiscordBtn = document.getElementById('copyDiscordBtn');
 
-    document.getElementById("startGameBtn").addEventListener("click", async () => {
-      const wolvesCount = parseInt(document.getElementById("wolvesCount").value) || 0;
-      const villagersCount = parseInt(document.getElementById("villagersCount").value) || 0;
+    // ===== تحميل الأدوار من Firebase =====
+    async function loadRoles() {
       try {
-        await distributeRoles(roomCode, wolvesCount, villagersCount, selectedExtraRoles);
-        setRoomCode(roomCode);
-        window.location.href = "host-control.html";
+        const snap = await get(ref(db, 'global_roles'));
+        const data = snap.val() || {};
+        const roles = Object.values(data);
+        rolesSelect.innerHTML = '';
+        if (roles.length === 0) {
+          rolesSelect.innerHTML = '<option value="">لا توجد أدوار مخصصة</option>';
+          return;
+        }
+        roles.forEach(role => {
+          const option = document.createElement('option');
+          const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
+          option.value = JSON.stringify({ name: nameAr, imageUrl: role.imageUrl || '' });
+          option.textContent = nameAr;
+          rolesSelect.appendChild(option);
+        });
+      } catch (e) {
+        console.error(e);
+        rolesSelect.innerHTML = '<option value="">خطأ في تحميل الأدوار</option>';
+      }
+    }
+
+    // ===== جلب اللاعبين وعرضهم =====
+    function renderPlayers(playersData) {
+      if (!playersData || Object.keys(playersData).length === 0) {
+        playersList.innerHTML = `<p style="color:#777; text-align:center;">${t('noPlayers')}</p>`;
+        return;
+      }
+      let html = '';
+      Object.values(playersData).forEach(p => {
+        html += `
+          <div class="player-item">
+            <span class="name">👤 ${p.name}</span>
+            <span class="badge">${p.role ? t('role') + ': ' + translateDynamicRole(p.role) : t('waiting')}</span>
+          </div>
+        `;
+      });
+      playersList.innerHTML = html;
+    }
+
+    listenToPlayers(roomCode, (data) => {
+      renderPlayers(data);
+    });
+
+    // ===== بدء اللعبة =====
+    startBtn.addEventListener('click', async () => {
+      const wolves = parseInt(wolvesInput.value) || 2;
+      const villagers = parseInt(villagersInput.value) || 3;
+      const selectedOptions = rolesSelect.selectedOptions;
+      const selected = [];
+      for (let opt of selectedOptions) {
+        try {
+          const val = JSON.parse(opt.value);
+          selected.push(val);
+        } catch (e) {}
+      }
+
+      if (wolves < 1) {
+        alert('يجب أن يكون عدد الذئاب 1 على الأقل');
+        return;
+      }
+      if (villagers < 1) {
+        alert('يجب أن يكون عدد القرويين 1 على الأقل');
+        return;
+      }
+
+      try {
+        await distributeRoles(roomCode, wolves, villagers, selected);
+        alert('✅ تم توزيع الأدوار بنجاح!');
+        window.location.href = 'control.html';
       } catch (err) {
-        alert(err.message);
+        alert('❌ خطأ: ' + err.message);
       }
     });
 
-    document.getElementById("exitBtn").addEventListener("click", async () => {
-      await deleteRoom(roomCode);
-      clearRoomCode();
-      window.location.href = "index.html";
-    });
-
-    const discordLinkInput = document.getElementById("discordLinkInput");
-    const pasteDiscordBtn = document.getElementById("pasteDiscordBtn");
-    const copyDiscordBtn = document.getElementById("copyDiscordBtn");
-    const discordModal = document.getElementById("discordModal");
-    const manualDiscordInput = document.getElementById("manualDiscordInput");
-    const saveDiscordLinkBtn = document.getElementById("saveDiscordLinkBtn");
-    const closeDiscordModalBtn = document.getElementById("closeDiscordModalBtn");
-
-    const discordRef = ref(db, `rooms/${roomCode}/discordLink`);
-    onValue(discordRef, (snapshot) => {
-      const link = snapshot.val();
-      if (link) {
-        discordLinkInput.value = link;
+    // ===== خروج =====
+    exitBtn.addEventListener('click', async () => {
+      if (confirm('هل أنت متأكد من الخروج؟ سيتم حذف الغرفة.')) {
+        await deleteRoom(roomCode);
+        clearRoomCode();
+        window.location.href = 'index.html';
       }
     });
 
-    pasteDiscordBtn.addEventListener("click", () => {
-      manualDiscordInput.value = "";
-      discordModal.style.display = "flex";
-    });
+    // ===== تحديث =====
+    refreshBtn.addEventListener('click', loadRoles);
 
-    saveDiscordLinkBtn.addEventListener("click", async () => {
-      const link = manualDiscordInput.value.trim();
-      if (link && link.startsWith("https://")) {
-        discordLinkInput.value = link;
+    // ===== Discord =====
+    saveDiscordBtn.addEventListener('click', async () => {
+      const link = discordInput.value.trim();
+      if (!link) {
+        alert('الرجاء إدخال رابط صحيح');
+        return;
+      }
+      try {
         await update(ref(db, `rooms/${roomCode}`), { discordLink: link });
-        discordModal.style.display = "none";
-        alert("✅ " + t('save'));
-      } else {
-        alert("⚠️ " + t('fillAllFields'));
+        alert('✅ تم حفظ رابط Discord');
+      } catch (e) {
+        alert('❌ خطأ: ' + e.message);
       }
     });
 
-    closeDiscordModalBtn.addEventListener("click", () => {
-      discordModal.style.display = "none";
-    });
-    window.addEventListener("click", (e) => {
-      if (e.target === discordModal) discordModal.style.display = "none";
-    });
-
-    copyDiscordBtn.addEventListener("click", () => {
-      const link = discordLinkInput.value;
+    copyDiscordBtn.addEventListener('click', () => {
+      const link = discordInput.value;
       if (link) {
         navigator.clipboard.writeText(link).then(() => {
-          alert("✅ " + t('copyLink'));
+          alert('📋 تم نسخ الرابط');
         }).catch(() => {
-          const input = document.createElement("input");
-          input.value = link;
-          document.body.appendChild(input);
-          input.select();
-          document.execCommand("copy");
-          document.body.removeChild(input);
-          alert("✅ " + t('copyLink'));
+          alert('❌ تعذر النسخ');
         });
       } else {
-        alert("⚠️ " + t('noLink'));
+        alert('لا يوجد رابط لنسخه');
       }
     });
+
+    loadRoles();
+    console.log('🚪 كود الغرفة:', roomCode);
   </script>
 </body>
 </html>
