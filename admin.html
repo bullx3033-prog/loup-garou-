@@ -6,7 +6,6 @@
   <title>لوحة تحكم المطور</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <style>
-    /* نفس الأنماط السابقة، أضيفت فقط */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Cinzel', serif;
@@ -311,7 +310,6 @@
 
     const IMGBB_API_KEY = "552ab56b92a08f22f57b49363a60a9fd";
 
-    // عناصر الصفحة
     const loginScreen = document.getElementById('loginScreen');
     const mainContent = document.getElementById('mainContent');
     const loginBtn = document.getElementById('loginBtn');
@@ -487,7 +485,6 @@
         const role = rolesData[id];
         if (!role) return;
         roleModalTitle.textContent = '✏️ ' + t('editRole');
-        // تعبئة حقول الاسم
         if (typeof role.name === 'object') {
           roleNameAr.value = role.name.ar || '';
           roleNameFr.value = role.name.fr || '';
@@ -497,7 +494,6 @@
           roleNameFr.value = '';
           roleNameEn.value = '';
         }
-        // تعبئة حقول الوصف
         if (typeof role.description === 'object') {
           roleDescAr.value = role.description.ar || '';
           roleDescFr.value = role.description.fr || '';
@@ -593,7 +589,6 @@
             await push(ref(db, 'global_roles'), roleData);
           }
           roleModal.style.display = 'none';
-          // تنظيف الحقول
           roleNameAr.value = '';
           roleNameFr.value = '';
           roleNameEn.value = '';
