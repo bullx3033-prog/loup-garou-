@@ -46,18 +46,15 @@ async function seedBaseRoles() {
   const rolesRef = ref(db, 'global_roles');
   const snap = await get(rolesRef);
   if (snap.exists()) {
-    // تحديث الأدوار القديمة إذا كانت مخزنة كنصوص
     const roles = snap.val();
     let needUpdate = false;
     for (const key in roles) {
       const role = roles[key];
-      // تحويل الاسم إلى كائن إذا كان نصاً
       if (role.name && typeof role.name === 'string') {
         const oldName = role.name;
         roles[key].name = { ar: oldName, fr: oldName, en: oldName };
         needUpdate = true;
       }
-      // تحويل الوصف إلى كائن إذا كان نصاً
       if (role.description && typeof role.description === 'string') {
         const oldDesc = role.description;
         roles[key].description = { ar: oldDesc, fr: oldDesc, en: oldDesc };
@@ -71,7 +68,6 @@ async function seedBaseRoles() {
     return;
   }
 
-  // إنشاء الأدوار الأساسية
   const baseRoles = [
     {
       name: { ar: "ذئب", fr: "Loup", en: "Wolf" },
@@ -199,7 +195,7 @@ function shuffleArray(array) {
   return array;
 }
 
-// ===== توزيع الأدوار (جميعها من Firebase) =====
+// ===== توزيع الأدوار =====
 async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRoles) {
   const playersObj = await getPlayers(roomCode);
   const players = Object.keys(playersObj).map(key => ({ id: key, ...playersObj[key] }));
@@ -243,12 +239,11 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
   return shuffledPlayers;
 }
 
-// ===== إدارة الأدوار (مع دعم الوصف متعدد اللغات) =====
+// ===== إدارة الأدوار =====
 function listenToRoles(callback) {
   onValue(ref(db, "global_roles"), (snap) => callback(snap.val()));
 }
 
-// دوال الإضافة والتحديث تدعم الآن وصفاً متعدد اللغات
 async function addRole(nameObj, imageUrl, descriptionObj) {
   const newRef = push(ref(db, "global_roles"));
   await set(newRef, { name: nameObj, imageUrl, description: descriptionObj });
@@ -333,7 +328,6 @@ async function getPlayer(roomCode, playerId) {
   return snap.val();
 }
 
-// ===== تصدير كل شيء =====
 export {
   db, ref, update, remove, get, set, push, onValue, serverTimestamp, runTransaction, child,
   getRoomCode, setRoomCode, clearRoomCode,
