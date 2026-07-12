@@ -497,8 +497,8 @@
       try {
         await distributeRoles(roomCode, wolves, villagers, selected);
         alert('✅ تم توزيع الأدوار بنجاح!');
-        // ===== التوجيه إلى control.html (التعديل الوحيد) =====
-        window.location.href = 'control.html';
+        // ===== التوجيه إلى host-control.html (التعديل الوحيد) =====
+        window.location.href = 'host-control.html';
       } catch (err) {
         alert('❌ خطأ: ' + err.message);
       }
