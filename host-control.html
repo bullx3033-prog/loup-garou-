@@ -7,6 +7,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
+    /* ===== إخفاء أي عناصر ديسكورد إن وجدت ===== */
+    *[class*="discord"],
+    *[id*="discord"],
+    .discord-section,
+    #discordSection {
+      display: none !important;
+    }
+
     .info-box {
       background: #0d0805;
       border: 1px solid #d4a017;
@@ -55,12 +63,160 @@
     .infected-badge {
       background: #6b1a1a;
       color: #ff6b6b;
-      padding: 2px 12px;
-      border-radius: 20px;
-      font-size: 14px;
+      padding: 1px 8px;
+      border-radius: 12px;
+      font-size: 10px;
       border: 1px solid #ff6b6b;
-      margin-right: 10px;
+      margin-right: 5px;
       display: inline-block;
+    }
+
+    /* ===== حاوية اللاعبين (شبكة أو عمود) ===== */
+    #players {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-bottom: 80px;
+    }
+
+    /* ===== بطاقة اللاعب المصغرة ===== */
+    .player-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: 0.3s;
+      min-height: 50px;
+    }
+    .player-card:hover {
+      border-color: crimson;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+    }
+    .player-card.dead {
+      opacity: 0.5;
+      border-color: #555;
+      background: #111;
+    }
+
+    /* ===== الجهة اليمنى (الصورة + الاسم) ===== */
+    .player-card .info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 120px;
+    }
+    .player-card .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid crimson;
+      object-fit: cover;
+      background: #0d0805;
+      flex-shrink: 0;
+    }
+    .player-card .details {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .player-card .details .name {
+      font-size: 16px;
+      color: #f2f2f2;
+      font-weight: 700;
+    }
+    .player-card .details .role {
+      font-size: 12px;
+      color: #aaa;
+    }
+    .player-card .details .role strong {
+      color: #fff;
+    }
+
+    /* ===== الجهة اليسرى (الأزرار) ===== */
+    .player-card .actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .player-card .actions button {
+      padding: 4px 12px;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+      background: #2c2c2c;
+      color: #fff;
+      white-space: nowrap;
+    }
+    .player-card .actions button:hover {
+      transform: scale(1.05);
+    }
+    .player-card .actions .kill {
+      background: #6b1a1a;
+      color: #fff;
+    }
+    .player-card .actions .kill:hover {
+      background: #8b0000;
+      box-shadow: 0 0 15px #8b0000;
+    }
+    .player-card .actions .infect {
+      background: #1a4a1a;
+      color: #fff;
+    }
+    .player-card .actions .infect:hover {
+      background: #2e7d32;
+      box-shadow: 0 0 15px #2e7d32;
+    }
+    .player-card.dead .actions button {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* ===== التجاوب مع الشاشات الصغيرة ===== */
+    @media (max-width: 600px) {
+      .player-card {
+        flex-wrap: wrap;
+        padding: 8px 10px;
+        gap: 4px;
+      }
+      .player-card .info {
+        flex: 1 1 100%;
+        min-width: unset;
+      }
+      .player-card .actions {
+        flex: 1 1 100%;
+        justify-content: flex-start;
+        gap: 8px;
+      }
+      .player-card .actions button {
+        flex: 1;
+        text-align: center;
+        font-size: 14px;
+        padding: 6px 10px;
+      }
+      .player-card .details .name {
+        font-size: 14px;
+      }
+    }
+    @media (max-width: 400px) {
+      .player-card .avatar {
+        width: 30px;
+        height: 30px;
+      }
+      .player-card .details .name {
+        font-size: 13px;
+      }
+      .player-card .details .role {
+        font-size: 10px;
+      }
     }
   </style>
 </head>
@@ -80,7 +236,7 @@
   </div>
 
   <script type="module">
-    import { t, setLanguage, getCurrentLang } from './translations.js';
+    import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
     import {
       getRoomCode,
       clearRoomCode,
@@ -169,12 +325,14 @@
           ? `<span class="infected-badge">🐺 ${t('infected')}</span>`
           : "";
 
+        const roleDisplay = translateDynamicRole(player.role) || t('unknown');
+
         card.innerHTML = `
           <div class="info">
             <img src="${avatarUrl}" class="avatar" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
             <div class="details">
-              <div class="name">${player.name} ${infectedBadge}</div>
-              <div class="role">${t('role')}: <strong>${player.role || t('unknown')}</strong></div>
+              <span class="name">${player.name} ${infectedBadge}</span>
+              <span class="role">${t('role')}: <strong>${roleDisplay}</strong></span>
             </div>
           </div>
           <div class="actions">
@@ -182,14 +340,6 @@
             <button class="infect" onclick="infectPlayer('${id}')">🐺 ${t('infect')}</button>
           </div>
         `;
-
-        if (isDead) {
-          const btns = card.querySelectorAll("button");
-          btns.forEach((btn) => {
-            btn.style.pointerEvents = "none";
-            btn.style.opacity = "0.4";
-          });
-        }
 
         playerContainer.appendChild(card);
       });
