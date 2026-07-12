@@ -111,17 +111,17 @@
       flex: 1;
     }
 
-    /* ===== شبكة الأدوار المصغرة (دوائر) ===== */
+    /* ===== شبكة الأدوار المصغرة: 6 دوائر في السطر ===== */
     .role-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
+      gap: 10px;
       margin-top: 10px;
       justify-items: center;
     }
     .role-circle {
-      width: 70px;
-      height: 70px;
+      width: 60px; /* تم التصغير من 70px إلى 60px */
+      height: 60px;
       border-radius: 50%;
       border: 3px solid #555;
       overflow: hidden;
@@ -145,14 +145,14 @@
     }
     .role-circle .role-name-tooltip {
       position: absolute;
-      bottom: -25px;
+      bottom: -22px;
       left: 50%;
       transform: translateX(-50%);
       background: #111;
       color: #ccc;
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 10px;
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 8px;
       white-space: nowrap;
       opacity: 0;
       transition: 0.3s;
@@ -169,9 +169,9 @@
       background: #d4a017;
       color: #000;
       border-radius: 50%;
-      width: 22px;
-      height: 22px;
-      font-size: 14px;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
       display: none;
       align-items: center;
       justify-content: center;
@@ -254,14 +254,27 @@
       padding: 16px;
     }
 
+    /* ===== استجابة للشاشات الصغيرة: الحفاظ على 6 أعمدة مع تصغير الحجم ===== */
     @media (max-width: 600px) {
       .role-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
       }
       .role-circle {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
+        border-width: 2px;
+      }
+      .role-circle .role-name-tooltip {
+        font-size: 8px;
+        bottom: -18px;
+      }
+      .role-circle .check-mark {
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
+        top: -4px;
+        right: -4px;
       }
       .counter-group {
         flex-direction: column;
@@ -270,11 +283,16 @@
     }
     @media (max-width: 400px) {
       .role-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(6, 1fr);
+        gap: 6px;
       }
       .role-circle {
-        width: 55px;
-        height: 55px;
+        width: 40px;
+        height: 40px;
+        border-width: 2px;
+      }
+      .role-circle .role-name-tooltip {
+        display: none; /* إخفاء التلميحات في الشاشات الصغيرة جداً لتوفير المساحة */
       }
     }
   </style>
@@ -497,7 +515,6 @@
       try {
         await distributeRoles(roomCode, wolves, villagers, selected);
         alert('✅ تم توزيع الأدوار بنجاح!');
-        // ===== التوجيه إلى host-control.html (التعديل الوحيد) =====
         window.location.href = 'host-control.html';
       } catch (err) {
         alert('❌ خطأ: ' + err.message);
