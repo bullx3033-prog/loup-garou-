@@ -271,7 +271,7 @@
           if (match) {
             const desc = role.description;
             if (typeof desc === 'object') {
-              // إرجاع الوصف حسب اللغة الحالية، أو العربية كافتراضي
+              // اختيار اللغة المطلوبة، أو العربية إذا لم توجد
               return desc[lang] || desc.ar || desc.fr || desc.en || '';
             } else {
               return desc || '';
