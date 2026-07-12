@@ -176,15 +176,16 @@ function listenToRoles(callback) {
   });
 }
 
-async function addRole(name, imageUrl) {
+// دوال الإضافة والتحديث تدعم description كنص أو كائن (ثلاثي اللغات)
+async function addRole(nameObj, imageUrl, description) {
   const rolesRef = ref(db, "global_roles");
   const newRef = push(rolesRef);
-  await set(newRef, { name, imageUrl });
+  await set(newRef, { name: nameObj, imageUrl, description });
   return newRef.key;
 }
 
-async function updateRole(roleId, name, imageUrl) {
-  await update(ref(db, `global_roles/${roleId}`), { name, imageUrl });
+async function updateRole(roleId, nameObj, imageUrl, description) {
+  await update(ref(db, `global_roles/${roleId}`), { name: nameObj, imageUrl, description });
 }
 
 async function deleteRole(roleId) {
