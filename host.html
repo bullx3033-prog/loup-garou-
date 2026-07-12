@@ -95,7 +95,7 @@
       flex: 1;
     }
 
-    /* تنسيق العدادات */
+    /* ===== عدادات الذئاب والقرويين ===== */
     .counter-group {
       display: flex;
       gap: 20px;
@@ -132,7 +132,7 @@
       font-family: 'Cinzel', serif;
     }
 
-    /* قائمة اللاعبين */
+    /* ===== قائمة اللاعبين ===== */
     .player-list {
       margin-top: 10px;
     }
@@ -158,7 +158,6 @@
       color: #ccc;
     }
 
-    /* زر بدء اللعبة */
     .start-btn-wrapper {
       margin-top: 15px;
     }
@@ -167,18 +166,120 @@
       padding: 16px;
     }
 
-    /* ===== قسم الديسكورد (موجود في الأصل) ===== */
-    #discordSection {
-      margin-top: 20px;
+    /* ===== دوائر الأدوار الإضافية ===== */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 15px 0;
     }
-    #discordSection .flex {
-      margin-top: 10px;
+    .role-circle {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      border: 3px solid #555;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.3s;
+      overflow: hidden;
+    }
+    .role-circle:hover {
+      border-color: crimson;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    }
+    .role-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .role-circle .placeholder {
+      font-size: 40px;
+      color: #555;
+    }
+    .role-circle .remove-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: #a10d0d;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.3s;
+      z-index: 2;
+    }
+    .role-circle .remove-btn:hover {
+      background: #8b0000;
+      box-shadow: 0 0 15px #8b0000;
+    }
+    .role-circle .role-name-label {
+      position: absolute;
+      bottom: 5px;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 12px;
+      text-align: center;
+      padding: 2px 0;
+      font-family: 'Cinzel', serif;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* القائمة المنسدلة المنبثقة لاختيار الدور */
+    .role-select-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #1a1a1a;
+      border: 1px solid crimson;
+      border-radius: 8px;
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 10;
+      display: none;
+      padding: 5px 0;
+    }
+    .role-select-dropdown.show {
+      display: block;
+    }
+    .role-select-dropdown .option {
+      padding: 8px 12px;
+      cursor: pointer;
+      color: #ccc;
+      font-size: 14px;
+      transition: 0.2s;
+      font-family: 'Cinzel', serif;
+    }
+    .role-select-dropdown .option:hover {
+      background: #2c2c2c;
+      color: #fff;
+    }
+    .role-circle-wrapper {
+      position: relative;
     }
 
     @media (max-width: 600px) {
       .counter-group {
         flex-direction: column;
         align-items: center;
+      }
+      .roles-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
       }
     }
   </style>
@@ -187,26 +288,13 @@
   <div class="container">
     <h2 id="hostTitle">🐺 لو ڨارو - الراوي</h2>
 
-    <!-- ===== قسم الديسكورد (الأصلي) ===== -->
-    <div class="section" id="discordSection">
-      <span class="section-title">🎙️ إعدادات Discord</span>
-      <input type="text" id="discordLinkInput" placeholder="أضف رابط غرفة Discord" />
-      <div class="flex">
-        <button class="btn btn-primary" id="saveDiscordBtn">💾 حفظ الرابط</button>
-        <button class="btn" id="copyDiscordBtn">📋 نسخ الرابط</button>
-      </div>
-      <p style="color:#777; font-size:12px; margin-top:5px;" id="discordHint">انسخ رابط الغرفة الصوتية من Discord والصقه هنا ليظهر للاعبين.</p>
-    </div>
-
-    <!-- ===== اختيار الأدوار الإضافية (الأصلي: قائمة منسدلة) ===== -->
+    <!-- ===== اختيار الأدوار الإضافية (دوائر) ===== -->
     <div class="section">
-      <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية</span>
-      <div id="rolesContainer">
-        <select id="rolesSelect" multiple style="height:150px; background:#1a1a1a; color:#fff; border:1px solid #555; border-radius:8px; padding:10px; width:100%; font-family:'Cinzel',serif;">
-          <option value="" disabled>جاري التحميل...</option>
-        </select>
-        <p style="color:#777; font-size:12px; margin-top:5px;">اضغط مع الاستمرار على Ctrl (أو Cmd) لتحديد عدة أدوار.</p>
+      <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية (حد أقصى 6)</span>
+      <div class="roles-grid" id="rolesGrid">
+        <!-- سيتم إنشاء 6 دوائر بواسطة JavaScript -->
       </div>
+      <p style="color:#777; font-size:12px; margin-top:5px;">انقر على دائرة فارغة لاختيار دور، واضغط ✕ لإزالته.</p>
     </div>
 
     <!-- ===== إعدادات عدد الذئاب والقرويين ===== -->
@@ -271,13 +359,9 @@
       document.getElementById('extraRolesTitle').textContent = '🃏 ' + t('chooseExtraRoles');
       document.getElementById('roomSettingsTitle').textContent = '⚙️ ' + t('roomSettings');
       document.getElementById('playersTitle').textContent = '👥 ' + t('playersInRoom');
-      document.getElementById('discordHint').textContent = '💡 ' + t('discordHint');
-      document.getElementById('saveDiscordBtn').textContent = '💾 ' + t('save');
-      document.getElementById('copyDiscordBtn').textContent = '📋 ' + t('copyLink');
       document.getElementById('exitBtn').textContent = '🚪 ' + t('exit');
       document.getElementById('refreshBtn').textContent = '🔄 ' + t('refresh');
       document.getElementById('startGameBtn').textContent = '🚀 ' + t('startGame');
-      document.getElementById('discordLinkInput').placeholder = t('enterDiscordLink');
 
       const lang = getCurrentLang();
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
@@ -300,39 +384,168 @@
     }
 
     // ===== مراجع العناصر =====
-    const rolesSelect = document.getElementById('rolesSelect');
+    const rolesGrid = document.getElementById('rolesGrid');
     const playersList = document.getElementById('playersList');
     const wolvesInput = document.getElementById('wolvesCount');
     const villagersInput = document.getElementById('villagersCount');
     const startBtn = document.getElementById('startGameBtn');
     const exitBtn = document.getElementById('exitBtn');
     const refreshBtn = document.getElementById('refreshBtn');
-    const discordInput = document.getElementById('discordLinkInput');
-    const saveDiscordBtn = document.getElementById('saveDiscordBtn');
-    const copyDiscordBtn = document.getElementById('copyDiscordBtn');
 
     // ===== تحميل الأدوار من Firebase =====
+    let allRoles = []; // مصفوفة من الأدوار { name: {ar,fr,en}, imageUrl, description }
+
     async function loadRoles() {
       try {
         const snap = await get(ref(db, 'global_roles'));
         const data = snap.val() || {};
-        const roles = Object.values(data);
-        rolesSelect.innerHTML = '';
-        if (roles.length === 0) {
-          rolesSelect.innerHTML = '<option value="">لا توجد أدوار مخصصة</option>';
-          return;
-        }
-        roles.forEach(role => {
-          const option = document.createElement('option');
-          const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
-          option.value = JSON.stringify({ name: nameAr, imageUrl: role.imageUrl || '' });
-          option.textContent = nameAr;
-          rolesSelect.appendChild(option);
+        allRoles = Object.values(data).map(role => ({
+          name: role.name,
+          imageUrl: role.imageUrl || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png',
+          description: role.description || ''
+        }));
+        // تحديث القوائم المنسدلة للدوائر إذا كانت مفتوحة
+        document.querySelectorAll('.role-select-dropdown').forEach(drop => {
+          populateDropdown(drop);
         });
       } catch (e) {
         console.error(e);
-        rolesSelect.innerHTML = '<option value="">خطأ في تحميل الأدوار</option>';
+        allRoles = [];
       }
+    }
+
+    function populateDropdown(dropdown) {
+      dropdown.innerHTML = '';
+      if (allRoles.length === 0) {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.textContent = t('noCustomRoles') || 'لا توجد أدوار';
+        dropdown.appendChild(div);
+        return;
+      }
+      allRoles.forEach(role => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
+        div.textContent = nameAr;
+        div.dataset.roleData = JSON.stringify(role);
+        dropdown.appendChild(div);
+      });
+    }
+
+    // ===== إنشاء 6 دوائر =====
+    const MAX_ROLES = 6;
+    let selectedRoles = []; // مصفوفة من الأدوار المختارة (كائنات) بحجم 6، العناصر الفارغة تكون null
+
+    function initCircles() {
+      rolesGrid.innerHTML = '';
+      for (let i = 0; i < MAX_ROLES; i++) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'role-circle-wrapper';
+
+        const circle = document.createElement('div');
+        circle.className = 'role-circle';
+        circle.dataset.index = i;
+
+        // محتوى الدائرة
+        const content = document.createElement('div');
+        content.className = 'circle-content';
+        circle.appendChild(content);
+
+        // زر الإزالة (يظهر فقط عند وجود دور)
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-btn hidden';
+        removeBtn.textContent = '✕';
+        removeBtn.dataset.index = i;
+        circle.appendChild(removeBtn);
+
+        // القائمة المنسدلة
+        const dropdown = document.createElement('div');
+        dropdown.className = 'role-select-dropdown';
+        dropdown.dataset.index = i;
+        circle.appendChild(dropdown);
+
+        wrapper.appendChild(circle);
+        rolesGrid.appendChild(wrapper);
+
+        // تعبئة القائمة المنسدلة
+        populateDropdown(dropdown);
+
+        // أحداث
+        circle.addEventListener('click', (e) => {
+          // إذا كانت الدائرة فارغة، نفتح القائمة
+          const idx = parseInt(circle.dataset.index);
+          if (selectedRoles[idx] === null) {
+            // أغلق أي قائمة مفتوحة أخرى
+            document.querySelectorAll('.role-select-dropdown.show').forEach(d => d.classList.remove('show'));
+            dropdown.classList.toggle('show');
+          }
+        });
+
+        // إغلاق القائمة عند النقر خارجها
+        document.addEventListener('click', (e) => {
+          if (!wrapper.contains(e.target)) {
+            dropdown.classList.remove('show');
+          }
+        });
+
+        // اختيار خيار من القائمة
+        dropdown.addEventListener('click', (e) => {
+          const option = e.target.closest('.option');
+          if (!option) return;
+          const roleData = JSON.parse(option.dataset.roleData);
+          const idx = parseInt(dropdown.dataset.index);
+          // تعيين الدور
+          selectedRoles[idx] = roleData;
+          updateCircle(idx);
+          dropdown.classList.remove('show');
+        });
+
+        // زر الإزالة
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const idx = parseInt(removeBtn.dataset.index);
+          selectedRoles[idx] = null;
+          updateCircle(idx);
+        });
+
+        // تهيئة الدائرة فارغة
+        selectedRoles[i] = null;
+        updateCircle(i);
+      }
+    }
+
+    function updateCircle(index) {
+      const wrapper = rolesGrid.children[index];
+      const circle = wrapper.querySelector('.role-circle');
+      const content = circle.querySelector('.circle-content');
+      const removeBtn = circle.querySelector('.remove-btn');
+      const dropdown = circle.querySelector('.role-select-dropdown');
+
+      const role = selectedRoles[index];
+      if (role) {
+        // عرض الصورة واسم الدور
+        const img = document.createElement('img');
+        img.src = role.imageUrl || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
+        img.alt = typeof role.name === 'object' ? role.name.ar : role.name;
+        content.innerHTML = '';
+        content.appendChild(img);
+        // إضافة اسم الدور أسفل الصورة
+        const label = document.createElement('div');
+        label.className = 'role-name-label';
+        const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
+        label.textContent = nameAr;
+        content.appendChild(label);
+        removeBtn.classList.remove('hidden');
+        circle.style.borderColor = 'crimson';
+      } else {
+        // فارغة
+        content.innerHTML = `<span class="placeholder">+</span>`;
+        removeBtn.classList.add('hidden');
+        circle.style.borderColor = '#555';
+      }
+      // إغلاق القائمة
+      dropdown.classList.remove('show');
     }
 
     // ===== جلب اللاعبين وعرضهم =====
@@ -361,14 +574,8 @@
     startBtn.addEventListener('click', async () => {
       const wolves = parseInt(wolvesInput.value) || 2;
       const villagers = parseInt(villagersInput.value) || 3;
-      const selectedOptions = rolesSelect.selectedOptions;
-      const selected = [];
-      for (let opt of selectedOptions) {
-        try {
-          const val = JSON.parse(opt.value);
-          selected.push(val);
-        } catch (e) {}
-      }
+      // جمع الأدوار المختارة (غير الفارغة)
+      const selected = selectedRoles.filter(r => r !== null);
 
       if (wolves < 1) {
         alert('يجب أن يكون عدد الذئاب 1 على الأقل');
@@ -400,35 +607,9 @@
     // ===== تحديث =====
     refreshBtn.addEventListener('click', loadRoles);
 
-    // ===== Discord =====
-    saveDiscordBtn.addEventListener('click', async () => {
-      const link = discordInput.value.trim();
-      if (!link) {
-        alert('الرجاء إدخال رابط صحيح');
-        return;
-      }
-      try {
-        await update(ref(db, `rooms/${roomCode}`), { discordLink: link });
-        alert('✅ تم حفظ رابط Discord');
-      } catch (e) {
-        alert('❌ خطأ: ' + e.message);
-      }
-    });
-
-    copyDiscordBtn.addEventListener('click', () => {
-      const link = discordInput.value;
-      if (link) {
-        navigator.clipboard.writeText(link).then(() => {
-          alert('📋 تم نسخ الرابط');
-        }).catch(() => {
-          alert('❌ تعذر النسخ');
-        });
-      } else {
-        alert('لا يوجد رابط لنسخه');
-      }
-    });
-
-    loadRoles();
+    // ===== تهيئة =====
+    await loadRoles();
+    initCircles();
     console.log('🚪 كود الغرفة:', roomCode);
   </script>
 </body>
