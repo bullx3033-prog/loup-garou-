@@ -24,8 +24,34 @@ function getRoomCode() { return localStorage.getItem("roomCode"); }
 function setRoomCode(code) { localStorage.setItem("roomCode", code); }
 function clearRoomCode() { localStorage.removeItem("roomCode"); }
 
-// ===== إدارة الغرفة =====
+// ===== دالة مسح الغرف المنتهية (24 ساعة) =====
+async function deleteAllStaleRooms() {
+  const roomsRef = ref(db, 'rooms');
+  const snapshot = await get(roomsRef);
+  if (!snapshot.exists()) return;
+  
+  const rooms = snapshot.val();
+  const now = Date.now();
+  const twentyFourHours = 24 * 60 * 60 * 1000;
+  let count = 0;
+
+  for (const [code, data] of Object.entries(rooms)) {
+    const createdAt = data.createdAt || 0;
+    if (now - createdAt > twentyFourHours) {
+      await remove(ref(db, `rooms/${code}`));
+      count++;
+      console.log(`🗑️ تم حذف الغرفة المعلقة: ${code}`);
+    }
+  }
+  if (count > 0) console.log(`✅ تم حذف ${count} غرفة منتهية الصلاحية`);
+  return count;
+}
+
+// ===== إدارة الغرفة (مع المسح التلقائي) =====
 async function createOrGetRoom() {
+  // مسح الغرف المنتهية قبل إنشاء أو استرجاع غرفة
+  await deleteAllStaleRooms();
+
   let roomCode = getRoomCode();
   if (roomCode) {
     const snap = await get(ref(db, `rooms/${roomCode}`));
@@ -34,19 +60,31 @@ async function createOrGetRoom() {
   }
   roomCode = Math.floor(100 + Math.random() * 900).toString();
   setRoomCode(roomCode);
-  await set(ref(db, `rooms/${roomCode}`), { started: false, createdAt: serverTimestamp() });
+  await set(ref(db, `rooms/${roomCode}`), { 
+    started: false, 
+    createdAt: serverTimestamp() 
+  });
   return roomCode;
 }
 
-async function deleteRoom(roomCode) { await remove(ref(db, `rooms/${roomCode}`)); clearRoomCode(); }
+async function deleteRoom(roomCode) { 
+  await remove(ref(db, `rooms/${roomCode}`)); 
+  clearRoomCode(); 
+}
 
 async function checkRoomExpiry(roomCode) {
+  // مسح الغرف المنتهية قبل التحقق من الصلاحية
+  await deleteAllStaleRooms();
+
   const snap = await get(ref(db, `rooms/${roomCode}`));
   if (!snap.exists()) return false;
   const data = snap.val();
   if (data.createdAt) {
     const now = Date.now();
-    if (now - data.createdAt > 24 * 60 * 60 * 1000) { await deleteRoom(roomCode); return false; }
+    if (now - data.createdAt > 24 * 60 * 60 * 1000) { 
+      await deleteRoom(roomCode); 
+      return false; 
+    }
   }
   return true;
 }
@@ -71,7 +109,7 @@ async function addPlayer(roomCode, name) {
   return newRef.key;
 }
 
-// ===== توزيع الأدوار (النسخة المصححة لمرونة الحساب) =====
+// ===== دالة خلط عشوائية (فعالة) =====
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -80,73 +118,166 @@ function shuffleArray(array) {
   return array;
 }
 
+// ===== توزيع الأدوار (مع خلط مزدوج للاعبين والأدوار) =====
 async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRoles) {
+  // 1. جلب اللاعبين
   const playersObj = await getPlayers(roomCode);
   const players = Object.keys(playersObj).map(key => ({ id: key, ...playersObj[key] }));
   if (players.length === 0) throw new Error("لا يوجد لاعبين");
 
+  // 2. جلب جميع الأدوار من Firebase
   const rolesSnap = await get(ref(db, 'global_roles'));
   const allRoles = Object.values(rolesSnap.val() || {});
   const wolfRole = allRoles.find(r => r.name?.ar === "ذئب" || r.name === "ذئب");
   const villagerRole = allRoles.find(r => r.name?.ar === "قروي" || r.name === "قروي");
 
+  // 3. بناء قائمة الأدوار
   const roles = [];
-  // إضافة الأدوار من الصور أولاً
+  
+  // إضافة الأدوار الإضافية المختارة
   selectedRoles.forEach(r => {
     const found = allRoles.find(role => role.name?.ar === r.name || role.name === r.name);
-    roles.push({ name: r.name, imageUrl: found?.imageUrl || r.imageUrl || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" });
+    roles.push({ 
+      name: r.name, 
+      imageUrl: found?.imageUrl || r.imageUrl || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" 
+    });
   });
 
-  // إضافة الذئاب والقرويين فقط لتكملة النقص
-  while (roles.length < players.length && wolvesCount > 0) {
-    roles.push({ name: wolfRole?.name || "ذئب", imageUrl: wolfRole?.imageUrl || "https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" });
-    wolvesCount--;
+  // إضافة الذئاب والقرويين لتكملة العدد
+  let wolvesLeft = wolvesCount;
+  let villagersLeft = villagersCount;
+  
+  while (roles.length < players.length && wolvesLeft > 0) {
+    roles.push({ 
+      name: wolfRole?.name || "ذئب", 
+      imageUrl: wolfRole?.imageUrl || "https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" 
+    });
+    wolvesLeft--;
   }
-  while (roles.length < players.length && villagersCount > 0) {
-    roles.push({ name: villagerRole?.name || "قروي", imageUrl: villagerRole?.imageUrl || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" });
-    villagersCount--;
+  
+  while (roles.length < players.length && villagersLeft > 0) {
+    roles.push({ 
+      name: villagerRole?.name || "قروي", 
+      imageUrl: villagerRole?.imageUrl || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" 
+    });
+    villagersLeft--;
   }
 
+  // 4. التحقق من تطابق العدد
   if (players.length !== roles.length) {
     throw new Error(`عدد الأدوار الكلي (${roles.length}) لا يساوي عدد اللاعبين (${players.length})`);
   }
 
-  const shuffledRoles = shuffleArray(roles);
-  const shuffledPlayers = shuffleArray(players);
+  // 5. خلط الأدوار واللاعبين بشكل منفصل لضمان عشوائية تامة
+  const shuffledRoles = shuffleArray([...roles]);
+  const shuffledPlayers = shuffleArray([...players]);
 
+  // 6. توزيع الأدوار على اللاعبين
   for (let i = 0; i < shuffledPlayers.length; i++) {
     await update(ref(db, `rooms/${roomCode}/players/${shuffledPlayers[i].id}`), {
       role: shuffledRoles[i].name,
       roleImage: shuffledRoles[i].imageUrl
     });
   }
+  
+  // 7. تحديث حالة الغرفة
   await update(ref(db, `rooms/${roomCode}`), { started: true });
   return shuffledPlayers;
 }
 
-// ===== باقي الدوال (إدارة الأدوار، الاقتراحات، الإحصائيات) =====
+// ===== إدارة الأدوار (global_roles) =====
 function listenToRoles(callback) { onValue(ref(db, "global_roles"), (s) => callback(s.val())); }
-async function addRole(nameObj, imageUrl, description) { const newRef = push(ref(db, "global_roles")); await set(newRef, { name: nameObj, imageUrl, description }); return newRef.key; }
-async function updateRole(roleId, nameObj, imageUrl, description) { await update(ref(db, `global_roles/${roleId}`), { name: nameObj, imageUrl, description }); }
-async function deleteRole(roleId) { await remove(ref(db, `global_roles/${roleId}`)); }
+
+async function addRole(nameObj, imageUrl, description) { 
+  const newRef = push(ref(db, "global_roles")); 
+  await set(newRef, { name: nameObj, imageUrl, description }); 
+  return newRef.key; 
+}
+
+async function updateRole(roleId, nameObj, imageUrl, description) { 
+  await update(ref(db, `global_roles/${roleId}`), { name: nameObj, imageUrl, description }); 
+}
+
+async function deleteRole(roleId) { 
+  await remove(ref(db, `global_roles/${roleId}`)); 
+}
+
 async function uploadImageToImgBB(file) {
   const reader = new FileReader();
-  const base64 = await new Promise((resolve) => { reader.onload = (e) => resolve(e.target.result.split(",")[1]); reader.readAsDataURL(file); });
-  const formData = new FormData(); formData.append("key", IMGBB_API_KEY); formData.append("image", base64);
+  const base64 = await new Promise((resolve) => { 
+    reader.onload = (e) => resolve(e.target.result.split(",")[1]); 
+    reader.readAsDataURL(file); 
+  });
+  const formData = new FormData(); 
+  formData.append("key", IMGBB_API_KEY); 
+  formData.append("image", base64);
   const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: formData });
   const json = await res.json();
   if (!json.success) throw new Error("فشل الرفع");
   return json.data.url;
 }
-async function sendSuggestion(playerName, message, roomId) { await push(ref(db, "suggestions"), { playerName: playerName || "لاعب مجهول", message: message, roomId: roomId || "غير معروف", timestamp: serverTimestamp() }); }
-function listenToSuggestions(callback) { onValue(ref(db, "suggestions"), (s) => callback(s.val())); }
-async function deleteSuggestion(suggestionId) { await remove(ref(db, `suggestions/${suggestionId}`)); }
-async function deleteAllSuggestions() { await remove(ref(db, "suggestions")); }
-async function incrementDownloadCount() { await runTransaction(ref(db, "stats/downloadCount"), (curr) => curr ? { count: curr.count + 1 } : { count: 1 }); }
-async function getDownloadCount() { const s = await get(ref(db, "stats/downloadCount")); return s.val()?.count || 0; }
-async function getCredentials() { const s = await get(ref(db, "admin_credentials")); return s.val(); }
-async function setCredentials(username, password) { await set(ref(db, "admin_credentials"), { username, password }); }
-async function seedDefaultCredentials() { const creds = await getCredentials(); if (!creds) await setCredentials("admin", "admin123"); }
-async function getPlayer(roomCode, playerId) { const s = await get(child(ref(db), `rooms/${roomCode}/players/${playerId}`)); return s.val(); }
 
-export { db, ref, update, remove, get, set, push, onValue, serverTimestamp, runTransaction, child, getRoomCode, setRoomCode, clearRoomCode, createOrGetRoom, deleteRoom, checkRoomExpiry, listenToPlayers, getPlayers, killPlayer, infectPlayer, addPlayer, distributeRoles, listenToRoles, addRole, updateRole, deleteRole, uploadImageToImgBB, sendSuggestion, listenToSuggestions, deleteSuggestion, deleteAllSuggestions, incrementDownloadCount, getDownloadCount, getCredentials, setCredentials, seedDefaultCredentials, getPlayer };
+// ===== نظام الاقتراحات =====
+async function sendSuggestion(playerName, message, roomId) { 
+  await push(ref(db, "suggestions"), { 
+    playerName: playerName || "لاعب مجهول", 
+    message: message, 
+    roomId: roomId || "غير معروف", 
+    timestamp: serverTimestamp() 
+  }); 
+}
+
+function listenToSuggestions(callback) { 
+  onValue(ref(db, "suggestions"), (s) => callback(s.val())); 
+}
+
+async function deleteSuggestion(suggestionId) { 
+  await remove(ref(db, `suggestions/${suggestionId}`)); 
+}
+
+async function deleteAllSuggestions() { 
+  await remove(ref(db, "suggestions")); 
+}
+
+// ===== إحصائيات التحميل =====
+async function incrementDownloadCount() { 
+  await runTransaction(ref(db, "stats/downloadCount"), (curr) => curr ? { count: curr.count + 1 } : { count: 1 }); 
+}
+
+async function getDownloadCount() { 
+  const s = await get(ref(db, "stats/downloadCount")); 
+  return s.val()?.count || 0; 
+}
+
+// ===== بيانات الاعتماد =====
+async function getCredentials() { 
+  const s = await get(ref(db, "admin_credentials")); 
+  return s.val(); 
+}
+
+async function setCredentials(username, password) { 
+  await set(ref(db, "admin_credentials"), { username, password }); 
+}
+
+async function seedDefaultCredentials() { 
+  const creds = await getCredentials(); 
+  if (!creds) await setCredentials("admin", "admin123"); 
+}
+
+async function getPlayer(roomCode, playerId) { 
+  const s = await get(child(ref(db), `rooms/${roomCode}/players/${playerId}`)); 
+  return s.val(); 
+}
+
+// ===== تصدير كل شيء =====
+export { 
+  db, ref, update, remove, get, set, push, onValue, serverTimestamp, runTransaction, child,
+  getRoomCode, setRoomCode, clearRoomCode,
+  createOrGetRoom, deleteRoom, checkRoomExpiry, deleteAllStaleRooms,
+  listenToPlayers, getPlayers, killPlayer, infectPlayer, addPlayer,
+  distributeRoles,
+  listenToRoles, addRole, updateRole, deleteRole, uploadImageToImgBB,
+  sendSuggestion, listenToSuggestions, deleteSuggestion, deleteAllSuggestions,
+  incrementDownloadCount, getDownloadCount,
+  getCredentials, setCredentials, seedDefaultCredentials, getPlayer
+};
