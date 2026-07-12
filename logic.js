@@ -44,28 +44,42 @@ function clearRoomCode() {
   localStorage.removeItem("roomCode");
 }
 
-// ===== مسح الغرف المعلقة (التي مضى عليها أكثر من 12 ساعة) =====
-async function deleteAllStaleRooms() {
-  const roomsRef = ref(db, 'rooms');
-  const snapshot = await get(roomsRef);
-  if (!snapshot.exists()) return;
-  const rooms = snapshot.val();
-  const now = Date.now();
-  const twelveHours = 12 * 60 * 60 * 1000;
+// ===== تهيئة الأدوار الأساسية في Firebase (مرة واحدة) =====
+async function seedBaseRoles() {
+  const rolesRef = ref(db, 'global_roles');
+  const snap = await get(rolesRef);
+  if (snap.exists()) return; // موجودة مسبقاً
 
-  for (const [code, data] of Object.entries(rooms)) {
-    const createdAt = data.createdAt || 0;
-    // حذف إذا مضى أكثر من 12 ساعة منذ الإنشاء، أو إذا انتهت صلاحيتها
-    if (now - createdAt > twelveHours || (data.expiresAt && now > data.expiresAt)) {
-      await remove(ref(db, `rooms/${code}`));
-      console.log(`🗑️ حذفت الغرفة المعلقة: ${code}`);
-    }
-  }
+  // إنشاء دور "ذئب"
+  await push(rolesRef, {
+    name: {
+      ar: "ذئب",
+      fr: "Loup",
+      en: "Wolf"
+    },
+    imageUrl: "https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg",
+    description: "يحاول المستأنبون قتل جميع القرويين دون أن يتم كشفهم. يجتمع كل ليلة مع المستأنبين الآخرين لاتخاذ قرار بشأن ضحيتهم. يفوز إذا تم القضاء على القرية بأكملها."
+  });
+
+  // إنشاء دور "قروي"
+  await push(rolesRef, {
+    name: {
+      ar: "قروي",
+      fr: "Villageois",
+      en: "Villager"
+    },
+    imageUrl: "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png",
+    description: "عادي، ليس لديه قدرات خاصة، مهمته التعاون مع القرويين الآخرين لاكتشاف المستأنبين والقضاء عليهم قبل أن يفنوا القرية."
+  });
+
+  console.log('✅ تم إنشاء الأدوار الأساسية في Firebase');
 }
+
+// تشغيل التهيئة عند تحميل الوحدة
+await seedBaseRoles();
 
 // ===== إدارة الغرفة (صلاحية 12 ساعة) =====
 async function createOrGetRoom() {
-  // مسح الغرف المنتهية أولاً
   await deleteAllStaleRooms();
 
   let roomCode = getRoomCode();
@@ -76,7 +90,7 @@ async function createOrGetRoom() {
   }
   roomCode = Math.floor(100 + Math.random() * 900).toString();
   setRoomCode(roomCode);
-  const expiresAt = Date.now() + 12 * 60 * 60 * 1000; // 12 ساعة
+  const expiresAt = Date.now() + 12 * 60 * 60 * 1000;
   await set(ref(db, `rooms/${roomCode}`), {
     started: false,
     createdAt: serverTimestamp(),
@@ -91,9 +105,7 @@ async function deleteRoom(roomCode) {
 }
 
 async function checkRoomExpiry(roomCode) {
-  // مسح الغرف المنتهية أولاً
   await deleteAllStaleRooms();
-
   const snap = await get(ref(db, `rooms/${roomCode}`));
   if (!snap.exists()) return false;
   const data = snap.val();
@@ -102,6 +114,23 @@ async function checkRoomExpiry(roomCode) {
     return false;
   }
   return true;
+}
+
+async function deleteAllStaleRooms() {
+  const roomsRef = ref(db, 'rooms');
+  const snapshot = await get(roomsRef);
+  if (!snapshot.exists()) return;
+  const rooms = snapshot.val();
+  const now = Date.now();
+  const twelveHours = 12 * 60 * 60 * 1000;
+
+  for (const [code, data] of Object.entries(rooms)) {
+    const createdAt = data.createdAt || 0;
+    if (now - createdAt > twelveHours || (data.expiresAt && now > data.expiresAt)) {
+      await remove(ref(db, `rooms/${code}`));
+      console.log(`🗑️ حذفت الغرفة المعلقة: ${code}`);
+    }
+  }
 }
 
 // ===== جلب اللاعبين =====
@@ -158,30 +187,54 @@ function shuffleArray(array) {
   return array;
 }
 
-// ===== توزيع الأدوار (مع الخلط العشوائي) =====
+// ===== توزيع الأدوار (جلب كل الأدوار من Firebase) =====
 async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRoles) {
+  // جلب اللاعبين
   const playersObj = await getPlayers(roomCode);
   const players = Object.keys(playersObj).map(key => ({ id: key, ...playersObj[key] }));
 
   if (players.length === 0) throw new Error("لا يوجد لاعبين");
 
-  const totalRoles = wolvesCount + villagersCount + selectedRoles.length;
+  // جلب جميع الأدوار من Firebase
+  const rolesSnap = await get(ref(db, 'global_roles'));
+  const allRoles = rolesSnap.val() || {};
+  const rolesList = Object.values(allRoles);
+
+  // فلترة الأدوار حسب الطلب
+  const wolves = rolesList.filter(r => r.name.ar === "ذئب");
+  const villagers = rolesList.filter(r => r.name.ar === "قروي");
+  const selected = selectedRoles.map(sel => {
+    // البحث عن الدور المطابق بالاسم العربي
+    return rolesList.find(r => r.name.ar === sel.name || r.name.en === sel.name || r.name.fr === sel.name);
+  }).filter(Boolean);
+
+  // التأكد من وجود الأدوار المطلوبة
+  if (wolves.length === 0) throw new Error("دور 'ذئب' غير موجود في قاعدة البيانات");
+  if (villagers.length === 0) throw new Error("دور 'قروي' غير موجود في قاعدة البيانات");
+
+  // بناء قائمة الأدوار المطلوبة
+  const roles = [];
+  for (let i = 0; i < wolvesCount; i++) {
+    roles.push({ name: wolves[0].name, imageUrl: wolves[0].imageUrl, description: wolves[0].description || '' });
+  }
+  for (let i = 0; i < villagersCount; i++) {
+    roles.push({ name: villagers[0].name, imageUrl: villagers[0].imageUrl, description: villagers[0].description || '' });
+  }
+  selected.forEach(role => {
+    roles.push({ name: role.name, imageUrl: role.imageUrl, description: role.description || '' });
+  });
+
+  // التحقق من تطابق العدد
+  const totalRoles = roles.length;
   if (players.length !== totalRoles) {
     throw new Error(`عدد الأدوار (${totalRoles}) لا يساوي عدد اللاعبين (${players.length})`);
   }
 
-  const roles = [];
-  for (let i = 0; i < wolvesCount; i++) {
-    roles.push({ name: "ذئب", imageUrl: "https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" });
-  }
-  for (let i = 0; i < villagersCount; i++) {
-    roles.push({ name: "قروي", imageUrl: "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" });
-  }
-  selectedRoles.forEach(r => roles.push({ name: r.name, imageUrl: r.imageUrl || "" }));
-
+  // خلط الأدوار واللاعبين
   const shuffledRoles = shuffleArray(roles);
   const shuffledPlayers = shuffleArray(players);
 
+  // توزيع الأدوار
   for (let i = 0; i < shuffledPlayers.length; i++) {
     await update(ref(db, `rooms/${roomCode}/players/${shuffledPlayers[i].id}`), {
       role: shuffledRoles[i].name,
