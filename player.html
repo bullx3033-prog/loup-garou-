@@ -55,6 +55,22 @@
       object-fit: contain;
       pointer-events: none;
     }
+    .role-description {
+      background: #1a1a1a;
+      border: 1px solid #555;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 10px;
+      color: #ccc;
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.3px;
+    }
+    .role-description strong {
+      color: #d4a017;
+    }
 
     .discord-player-section {
       background: #1a1a1a;
@@ -168,7 +184,8 @@
       ref,
       update,
       remove,
-      onValue
+      onValue,
+      get
     } from "./logic.js";
 
     function applyTranslations() {
@@ -227,14 +244,52 @@
       });
     }
 
-    function renderRoleContent(player) {
+    // ===== دالة جلب وصف الدور من Firebase (بدون ترجمة) =====
+    async function fetchRoleDescription(roleNameInput) {
+      try {
+        let targetName = roleNameInput;
+        if (typeof roleNameInput === 'object' && roleNameInput !== null) {
+          targetName = roleNameInput.ar || roleNameInput.fr || roleNameInput.en || '';
+        }
+        if (!targetName) return '';
+
+        const snap = await get(ref(db, 'global_roles'));
+        const roles = snap.val() || {};
+
+        for (const key in roles) {
+          const role = roles[key];
+          const nameObj = role.name;
+          let match = false;
+          if (typeof nameObj === 'object') {
+            if (nameObj.ar === targetName || nameObj.fr === targetName || nameObj.en === targetName) {
+              match = true;
+            }
+          } else if (nameObj === targetName) {
+            match = true;
+          }
+          if (match) {
+            return role.description || '';
+          }
+        }
+        return '';
+      } catch (e) {
+        console.error('خطأ في جلب وصف الدور:', e);
+        return '';
+      }
+    }
+
+    // ===== عرض البطاقة مع الوصف =====
+    async function renderRoleContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const roleText = t('yourRole') + ' ' + roleDisplay;
+      const description = await fetchRoleDescription(player.role);
+      
       roleBox.innerHTML = `
         <div class="role-name">${roleText}</div>
         <div class="role-image-wrapper">
           <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
         </div>
+        ${description ? `<div class="role-description"><strong>📖 الوصف:</strong> ${description}</div>` : ''}
         <div class="btn-group-vertical">
           <button class="btn btn-primary" id="hideRoleBtn">🔒 ${t('hideCard')}</button>
           <button class="btn btn-danger" id="suicideBtn">💀 ${t('suicide')}</button>
@@ -266,13 +321,16 @@
       };
     }
 
-    function renderInfectedContent(player) {
+    // ===== عرض البطاقة للاعب المصاب =====
+    async function renderInfectedContent(player) {
+      const description = await fetchRoleDescription(player.role);
       roleBox.innerHTML = `
         <div class="role-name" style="color:#66bb6a;">${t('infectedMessage')}</div>
         <div class="role-image-wrapper">
           <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
           <img src="https://i.postimg.cc/y8Dhy5VS/IMG-20260708-204243.png" class="blood-overlay" />
         </div>
+        ${description ? `<div class="role-description"><strong>📖 الوصف:</strong> ${description}</div>` : ''}
         <div class="btn-group-vertical">
           <button class="btn btn-primary" id="hideInfectedBtn">🔒 ${t('hideCard')}</button>
           <button class="btn btn-danger" id="suicideInfectedBtn">💀 ${t('suicide')}</button>
@@ -304,6 +362,7 @@
       };
     }
 
+    // ===== التحقق من حالة اللاعب =====
     async function checkPlayerStatus() {
       if (!playerId || !roomCode) return;
       const player = await getPlayer(roomCode, playerId);
@@ -359,6 +418,7 @@
       });
     }
 
+    // ===== الانضمام إلى الغرفة =====
     joinBtn.addEventListener("click", async () => {
       const name = nameInput.value.trim();
       const enteredRoom = codeInput.value.trim();
@@ -396,6 +456,7 @@
       }
     });
 
+    // ===== نظام الاقتراحات =====
     const modal = document.getElementById("suggestModal");
     document.getElementById("suggestBtn").addEventListener("click", () => {
       modal.style.display = "flex";
@@ -424,6 +485,7 @@
       }
     });
 
+    // ===== استعادة الجلسة =====
     if (playerId && roomCode) {
       joinForm.classList.add("hidden");
       statusDiv.classList.remove("hidden");
