@@ -7,41 +7,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ===== أنماط عامة ===== */
-    * {
-      box-sizing: border-box;
+    /* إخفاء أي عنصر يحمل كلمة Discord أو class يحتوي على discord */
+    *[class*="discord"],
+    *[id*="discord"],
+    .discord-section,
+    #discordSection {
+      display: none !important;
     }
-    body {
-      font-family: 'Cinzel', serif;
-      background: #000;
-      background-image: radial-gradient(circle at 20% 30%, #1a0a0a 0%, #000000 100%);
-      color: #f0e0c0;
-      min-height: 100vh;
-      padding: 15px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-    .container {
-      max-width: 750px;
-      width: 100%;
-      margin: 0 auto;
-      background: #111;
-      border: 2px solid crimson;
-      border-radius: 16px;
-      padding: 25px 20px;
-      box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
-    }
-    h2 {
-      font-size: 28px;
-      color: crimson;
-      text-shadow: 0 0 10px red, 0 0 20px darkred;
-      text-align: center;
-      border-bottom: 2px solid #222;
-      padding-bottom: 12px;
-      margin-bottom: 20px;
-      letter-spacing: 2px;
-    }
+
     .info-box {
       background: #0d0805;
       border: 1px solid #d4a017;
@@ -364,6 +337,7 @@
         if (player.isDead) circle.classList.add("dead");
         if (player.isInfected && !player.isDead) circle.classList.add("infected");
 
+        // صورة اللاعب (أو صورة افتراضية)
         const avatarUrl = player.roleImage || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png";
         const roleDisplay = translateDynamicRole(player.role) || t('unknown');
 
@@ -378,7 +352,7 @@
         img.src = avatarUrl;
         img.onerror = () => { img.src = "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png"; };
 
-        // حالة (ميت / مصاب)
+        // حالة (ميت / مصاب / الدور)
         let statusText = roleDisplay;
         if (player.isDead) statusText = "💀 " + t('dead');
         else if (player.isInfected) statusText = "🐺 " + t('infected');
