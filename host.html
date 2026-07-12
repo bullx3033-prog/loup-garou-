@@ -7,42 +7,279 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* أنماط الراوي الأصلية */
-    .section { background: #1a1a1a; border: 1px solid crimson; border-radius: 12px; padding: 15px; margin-top: 20px; }
-    .section-title { color: crimson; font-size: 18px; margin-bottom: 10px; display: block; text-shadow: 0 0 8px red; }
-    .btn { padding: 14px 20px; border-radius: 10px; border: none; background: #2c2c2c; color: #fff; font-family: 'Cinzel', serif; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; text-align: center; font-size: 16px; box-shadow: 0 0 10px rgba(255, 0, 0, 0.1); }
-    .btn:hover { background: #3a3a3a; box-shadow: 0 0 15px crimson; transform: scale(1.02); }
-    .btn-primary { background: #2c2c2c; color: #fff; }
-    .btn-danger { background: #a10d0d; color: #fff; }
-    .btn-success { background: #1a4a1a; color: #fff; }
-    input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: 1px solid #555; background: #1a1a1a; color: #fff; font-family: 'Cinzel', serif; font-size: 16px; }
-    .counter-group { display: flex; gap: 20px; flex-wrap: wrap; margin: 10px 0; justify-content: center; }
-    .counter-item { background: #1a1a1a; border: 1px solid #555; border-radius: 10px; padding: 10px 15px; text-align: center; flex: 1; min-width: 100px; }
-    .counter-item input { width: 60px; text-align: center; padding: 6px; margin: 0 auto; display: block; background: #111; border: 1px solid #555; border-radius: 6px; color: #fff; font-size: 18px; font-family: 'Cinzel', serif; }
-    .player-list { margin-top: 10px; }
-    .player-item { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-    .start-btn-wrapper { margin-top: 15px; }
-    .start-btn-wrapper .btn { font-size: 20px; padding: 16px; }
+    /* ===== أنماط خاصة بالراوي ===== */
+    .section {
+      background: #1a1a1a;
+      border: 1px solid crimson;
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 20px;
+    }
+    .section-title {
+      color: crimson;
+      font-size: 18px;
+      margin-bottom: 10px;
+      display: block;
+      text-shadow: 0 0 8px red;
+    }
+    .btn {
+      padding: 14px 20px;
+      border-radius: 10px;
+      border: none;
+      background: #2c2c2c;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      text-align: center;
+      font-size: 16px;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+    }
+    .btn:hover {
+      background: #3a3a3a;
+      box-shadow: 0 0 15px crimson;
+      transform: scale(1.02);
+    }
+    .btn-primary {
+      background: #2c2c2c;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #3a3a3a;
+    }
+    .btn-danger {
+      background: #a10d0d;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background: #8b0000;
+      box-shadow: 0 0 25px #8b0000;
+    }
+    .btn-success {
+      background: #1a4a1a;
+      color: #fff;
+    }
+    .btn-success:hover {
+      background: #2e7d32;
+      box-shadow: 0 0 25px #2e7d32;
+    }
+    input,
+    select {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #1a1a1a;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+    }
+    input:focus,
+    select:focus {
+      border-color: crimson;
+      outline: none;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+    }
+    .hidden {
+      display: none !important;
+    }
+    .flex {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .flex .btn {
+      flex: 1;
+    }
 
-    /* التعديلات المطلوبة: الصور الدائرية 6 في السطر */
-    .roles-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 10px; }
-    .role-item { cursor: pointer; transition: 0.3s; }
-    .role-item img { width: 100%; aspect-ratio: 1/1; border-radius: 50%; border: 2px solid #555; object-fit: cover; }
-    .role-item.selected img { border-color: #d4a017; box-shadow: 0 0 10px #d4a017; transform: scale(1.05); }
-    @media (max-width: 600px) { .roles-grid { grid-template-columns: repeat(6, 1fr); } }
+    /* ===== شبكة الأدوار المصغرة (دوائر) ===== */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+      justify-items: center;
+    }
+    .role-circle {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 3px solid #555;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.3s;
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .role-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .role-circle.selected {
+      border-color: #d4a017;
+      box-shadow: 0 0 20px #d4a017;
+      transform: scale(1.05);
+    }
+    .role-circle .role-name-tooltip {
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111;
+      color: #ccc;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+      opacity: 0;
+      transition: 0.3s;
+      pointer-events: none;
+      font-family: 'Cinzel', serif;
+    }
+    .role-circle:hover .role-name-tooltip {
+      opacity: 1;
+    }
+    .role-circle .check-mark {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #d4a017;
+      color: #000;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 14px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border: 2px solid #000;
+    }
+    .role-circle.selected .check-mark {
+      display: flex;
+    }
+
+    /* تنسيق العدادات */
+    .counter-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+      justify-content: center;
+    }
+    .counter-item {
+      background: #1a1a1a;
+      border: 1px solid #555;
+      border-radius: 10px;
+      padding: 10px 15px;
+      text-align: center;
+      flex: 1;
+      min-width: 100px;
+    }
+    .counter-item label {
+      display: block;
+      color: #ccc;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    .counter-item input {
+      width: 60px;
+      text-align: center;
+      padding: 6px;
+      margin: 0 auto;
+      display: block;
+      background: #111;
+      border: 1px solid #555;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 18px;
+      font-family: 'Cinzel', serif;
+    }
+
+    /* قائمة اللاعبين */
+    .player-list {
+      margin-top: 10px;
+    }
+    .player-item {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .player-item .name {
+      color: #f0e0c0;
+      font-size: 16px;
+    }
+    .player-item .badge {
+      background: #2c2c2c;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #ccc;
+    }
+
+    /* زر بدء اللعبة */
+    .start-btn-wrapper {
+      margin-top: 15px;
+    }
+    .start-btn-wrapper .btn {
+      font-size: 20px;
+      padding: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .role-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+      .role-circle {
+        width: 60px;
+        height: 60px;
+      }
+      .counter-group {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+    @media (max-width: 400px) {
+      .role-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .role-circle {
+        width: 55px;
+        height: 55px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h2 id="hostTitle">🐺 لو ڨارو - الراوي</h2>
 
-    <!-- تم حذف قسم الديسكورد بالكامل -->
+    <!-- ===== تم حذف قسم الديسكورد بالكامل ===== -->
 
+    <!-- ===== اختيار الأدوار الإضافية (شبكة دوائر) ===== -->
     <div class="section">
       <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية</span>
-      <div id="rolesGrid" class="roles-grid"></div>
+      <div id="rolesGridContainer">
+        <div id="rolesLoading" style="color:#777; text-align:center;">جاري التحميل...</div>
+        <div id="rolesGrid" class="role-grid hidden"></div>
+      </div>
+      <p style="color:#777; font-size:12px; margin-top:10px; text-align:center;">اضغط على الصورة لتحديد الدور (يظهر علامة ✔️)</p>
     </div>
 
+    <!-- ===== إعدادات عدد الذئاب والقرويين ===== -->
     <div class="section">
       <span class="section-title" id="roomSettingsTitle">⚙️ إعدادات الغرفة</span>
       <div class="counter-group">
@@ -57,6 +294,7 @@
       </div>
     </div>
 
+    <!-- ===== قائمة اللاعبين ===== -->
     <div class="section">
       <span class="section-title" id="playersTitle">👥 اللاعبون في الغرفة</span>
       <div id="playersList" class="player-list">
@@ -68,6 +306,7 @@
       </div>
     </div>
 
+    <!-- ===== زر بدء اللعبة ===== -->
     <div class="start-btn-wrapper">
       <button class="btn btn-success" id="startGameBtn">🚀 بدء اللعبة</button>
     </div>
@@ -75,8 +314,27 @@
 
   <script type="module">
     import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
-    import { getRoomCode, setRoomCode, clearRoomCode, createOrGetRoom, deleteRoom, checkRoomExpiry, listenToPlayers, getPlayers, addPlayer, distributeRoles, listenToRoles, db, ref, update, remove, get, onValue } from "./logic.js";
+    import {
+      getRoomCode,
+      setRoomCode,
+      clearRoomCode,
+      createOrGetRoom,
+      deleteRoom,
+      checkRoomExpiry,
+      listenToPlayers,
+      getPlayers,
+      addPlayer,
+      distributeRoles,
+      listenToRoles,
+      db,
+      ref,
+      update,
+      remove,
+      get,
+      onValue
+    } from "./logic.js";
 
+    // ===== ترجمة =====
     function applyTranslations() {
       document.title = t('appName') + ' - ' + t('hostTitle');
       document.getElementById('hostTitle').textContent = `🐺 ${t('appName')} - ${t('hostTitle')}`;
@@ -86,68 +344,157 @@
       document.getElementById('exitBtn').textContent = '🚪 ' + t('exit');
       document.getElementById('refreshBtn').textContent = '🔄 ' + t('refresh');
       document.getElementById('startGameBtn').textContent = '🚀 ' + t('startGame');
+
       const lang = getCurrentLang();
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = lang;
     }
     applyTranslations();
 
+    // ===== متغيرات =====
     const roomCode = getRoomCode();
-    if (!roomCode) { await createOrGetRoom(); location.reload(); }
-    const valid = await checkRoomExpiry(roomCode);
-    if (!valid) { alert('انتهت صلاحية الغرفة'); window.location.href = 'index.html'; }
+    if (!roomCode) {
+      alert('لا يوجد كود غرفة، سيتم إنشاء واحدة جديدة');
+      await createOrGetRoom();
+      location.reload();
+    }
 
+    const valid = await checkRoomExpiry(roomCode);
+    if (!valid) {
+      alert('انتهت صلاحية الغرفة');
+      window.location.href = 'index.html';
+    }
+
+    // ===== مراجع العناصر =====
     const rolesGrid = document.getElementById('rolesGrid');
+    const rolesLoading = document.getElementById('rolesLoading');
     const playersList = document.getElementById('playersList');
     const wolvesInput = document.getElementById('wolvesCount');
     const villagersInput = document.getElementById('villagersCount');
     const startBtn = document.getElementById('startGameBtn');
     const exitBtn = document.getElementById('exitBtn');
     const refreshBtn = document.getElementById('refreshBtn');
-    let selectedRoles = [];
 
+    // ===== حالة الأدوار المختارة =====
+    let selectedRoles = {};
+    let allRoles = [];
+
+    // ===== تحميل الأدوار من Firebase =====
     async function loadRoles() {
-      const snap = await get(ref(db, 'global_roles'));
-      const data = snap.val() || {};
+      try {
+        console.log('🔍 جاري تحميل الأدوار من Firebase...');
+        const snap = await get(ref(db, 'global_roles'));
+        const data = snap.val() || {};
+        allRoles = Object.values(data);
+        console.log(`✅ تم تحميل ${allRoles.length} دور`);
+        
+        if (allRoles.length === 0) {
+          rolesLoading.textContent = '📭 لا توجد أدوار مخصصة';
+          rolesLoading.classList.remove('hidden');
+          rolesGrid.classList.add('hidden');
+          return;
+        }
+        renderRolesGrid(allRoles);
+        rolesLoading.classList.add('hidden');
+        rolesGrid.classList.remove('hidden');
+      } catch (e) {
+        console.error('❌ خطأ في تحميل الأدوار:', e);
+        rolesLoading.textContent = '❌ خطأ في تحميل الأدوار';
+      }
+    }
+
+    function renderRolesGrid(roles) {
       rolesGrid.innerHTML = '';
-      Object.entries(data).forEach(([id, role]) => {
-        const div = document.createElement('div');
-        div.className = 'role-item';
-        div.innerHTML = `<img src="${role.imageUrl || 'https://via.placeholder.com/100'}" />`;
-        div.onclick = () => {
-          div.classList.toggle('selected');
-          if (div.classList.contains('selected')) selectedRoles.push(role);
-          else selectedRoles = selectedRoles.filter(r => r.name !== role.name);
-        };
-        rolesGrid.appendChild(div);
+      roles.forEach((role, index) => {
+        const circle = document.createElement('div');
+        circle.className = 'role-circle';
+        const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
+        const imageUrl = role.imageUrl || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
+        circle.dataset.index = index;
+        circle.dataset.name = nameAr;
+        circle.dataset.image = imageUrl;
+
+        circle.innerHTML = `
+          <img src="${imageUrl}" alt="${nameAr}" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
+          <span class="role-name-tooltip">${nameAr}</span>
+          <span class="check-mark">✔️</span>
+        `;
+
+        circle.addEventListener('click', () => {
+          const isSelected = circle.classList.toggle('selected');
+          if (isSelected) {
+            selectedRoles[index] = { name: nameAr, imageUrl };
+          } else {
+            delete selectedRoles[index];
+          }
+        });
+
+        rolesGrid.appendChild(circle);
       });
     }
 
+    // ===== جلب اللاعبين وعرضهم =====
+    function renderPlayers(playersData) {
+      if (!playersData || Object.keys(playersData).length === 0) {
+        playersList.innerHTML = `<p style="color:#777; text-align:center;">${t('noPlayers')}</p>`;
+        return;
+      }
+      let html = '';
+      Object.values(playersData).forEach(p => {
+        html += `
+          <div class="player-item">
+            <span class="name">👤 ${p.name}</span>
+            <span class="badge">${p.role ? t('role') + ': ' + translateDynamicRole(p.role) : t('waiting')}</span>
+          </div>
+        `;
+      });
+      playersList.innerHTML = html;
+    }
+
     listenToPlayers(roomCode, (data) => {
-      if (!data) { playersList.innerHTML = `<p style="color:#777; text-align:center;">لا يوجد لاعبون</p>`; return; }
-      playersList.innerHTML = Object.values(data).map(p => `
-        <div class="player-item">
-          <span class="name">👤 ${p.name}</span>
-          <span class="badge">${p.role ? translateDynamicRole(p.role) : '⏳'}</span>
-        </div>
-      `).join('');
+      renderPlayers(data);
     });
 
+    // ===== بدء اللعبة =====
     startBtn.addEventListener('click', async () => {
-      const wolves = parseInt(wolvesInput.value) || 0;
-      const villagers = parseInt(villagersInput.value) || 0;
+      const wolves = parseInt(wolvesInput.value) || 2;
+      const villagers = parseInt(villagersInput.value) || 3;
+      const selected = Object.values(selectedRoles);
+
+      if (wolves < 1) {
+        alert('يجب أن يكون عدد الذئاب 1 على الأقل');
+        return;
+      }
+      if (villagers < 1) {
+        alert('يجب أن يكون عدد القرويين 1 على الأقل');
+        return;
+      }
+
       try {
-        await distributeRoles(roomCode, wolves, villagers, selectedRoles);
+        await distributeRoles(roomCode, wolves, villagers, selected);
+        alert('✅ تم توزيع الأدوار بنجاح!');
         window.location.href = 'control.html';
-      } catch (err) { alert('خطأ: ' + err.message); }
+      } catch (err) {
+        alert('❌ خطأ: ' + err.message);
+      }
     });
 
+    // ===== خروج =====
     exitBtn.addEventListener('click', async () => {
-      if (confirm('تأكيد الخروج؟')) { await deleteRoom(roomCode); clearRoomCode(); window.location.href = 'index.html'; }
+      if (confirm('هل أنت متأكد من الخروج؟ سيتم حذف الغرفة.')) {
+        await deleteRoom(roomCode);
+        clearRoomCode();
+        window.location.href = 'index.html';
+      }
     });
 
+    // ===== تحديث =====
     refreshBtn.addEventListener('click', loadRoles);
+
+    // ===== تحميل الأدوار عند بدء الصفحة =====
     loadRoles();
+
+    console.log('🚪 كود الغرفة:', roomCode);
   </script>
 </body>
 </html>
