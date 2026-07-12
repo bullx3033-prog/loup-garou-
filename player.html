@@ -244,7 +244,7 @@
       });
     }
 
-    // ===== دالة جلب وصف الدور من Firebase (بدون ترجمة) =====
+    // ===== دالة جلب وصف الدور (ذكية وتتعامل مع كل الصيغ) =====
     async function fetchRoleDescription(roleNameInput) {
       try {
         let targetName = roleNameInput;
@@ -268,7 +268,15 @@
             match = true;
           }
           if (match) {
-            return role.description || '';
+            const desc = role.description;
+            // حالة 1: الوصف نص عادي
+            if (typeof desc === 'string') return desc;
+            // حالة 2: الوصف كائن (مثل {ar, fr, en})
+            if (typeof desc === 'object' && desc !== null) {
+              return desc.ar || desc.fr || desc.en || '';
+            }
+            // حالة 3: أي شيء آخر (مثل undefined, null)
+            return '';
           }
         }
         return '';
