@@ -75,6 +75,30 @@
     .about-modal-content .btn-close-about {
       margin-top: 15px;
     }
+    .about-modal-content hr {
+      border-color: #d4a017;
+      margin: 15px 0;
+    }
+    .about-modal-content h4 {
+      color: #d4a017;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+    .about-modal-content .how-to-play p {
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+    .about-modal-content .how-to-play strong {
+      color: #d4a017;
+    }
+    .about-modal-content .tip {
+      font-size: 13px;
+      color: #aaa;
+      margin-top: 15px;
+      text-align: center;
+      font-style: italic;
+    }
     .lang-flags {
       position: fixed;
       top: 8px;
@@ -155,10 +179,37 @@
   <div class="modal" id="aboutModal">
     <div class="modal-content about-modal-content">
       <h3 id="aboutTitle" style="color:crimson;">📖 ما هي لعبة لو ڨارو؟</h3>
+      
+      <!-- النص الأصلي -->
       <p id="aboutP1"><span class="highlight">لو ڨارو</span> هي نسخة رقمية ذكية من لعبة الورق الشهيرة <span class="highlight">"القرويون والذئاب"</span>.</p>
       <p id="aboutP2">بدلاً من توزيع البطاقات الورقية التقليدية، يقوم هذا التطبيق بتوزيع الأدوار <span class="highlight">عشوائياً</span> على جميع اللاعبين، مما يضمن <span class="highlight">الخصوصية التامة</span> لكل لاعب.</p>
       <p id="aboutP3"><span class="highlight">الراوي</span> هو اللاعب الوحيد الذي يمتلك الصلاحية المطلقة في إدارة اللعبة، حيث يمكنه <span class="highlight">قتل</span> أو <span class="highlight">استذئاب</span> أي لاعب.</p>
       <p id="aboutP4">الهدف من هذه اللعبة هو توفير تجربة سلسة وعادلة لجميع اللاعبين، مع الحفاظ على السرية التامة ومنع أي محاولة للغش.</p>
+
+      <!-- قسم طريقة اللعب الجديد -->
+      <hr />
+      <h4 id="howToPlayTitle">📖 كيف تلعب؟ (دليل المبتدئين)</h4>
+      
+      <div class="how-to-play">
+        <p id="howToPlayHost">
+          <strong>🔹 الراوي (المضيف):</strong><br />
+          • اضغط على زر <strong>"أنا الراوي"</strong>.<br />
+          • ستظهر لك غرفة خاصة برقم فريد (مثل <strong>480</strong>).<br />
+          • قم بإعداد اللعبة: اختر الأدوار الإضافية، وحدد عدد الذئاب والقرويين.<br />
+          • أعطِ رقم الغرفة للاعبين الآخرين شفهياً.<br />
+          • بعد انضمام جميع اللاعبين، اضغط <strong>"بدء اللعبة"</strong> وستنطلق المغامرة!
+        </p>
+        <p id="howToPlayPlayer">
+          <strong>🔸 اللاعبون:</strong><br />
+          • اضغط على زر <strong>"أنا اللاعب"</strong>.<br />
+          • اكتب <strong>رقم الغرفة</strong> الذي أعطاك إياه الراوي.<br />
+          • اكتب <strong>اسمك</strong> (حتى يعرفك الراوي).<br />
+          • اضغط <strong>"انضم"</strong> وانتظر حتى يبدأ الراوي اللعبة.<br />
+          • بعد البدء، ستظهر لك بطاقة دورك – لا تُظهرها لأحد! 🤫
+        </p>
+        <p class="tip" id="howToPlayTip">💡 نصيحة: الراوي هو المسؤول الوحيد عن إدارة الجولة، واللاعبون يتبعون توجيهاته.</p>
+      </div>
+
       <button class="btn btn-danger btn-close-about" id="closeAboutBtn">إغلاق</button>
     </div>
   </div>
@@ -191,6 +242,10 @@
       document.getElementById('aboutP2').innerHTML = t('aboutP2');
       document.getElementById('aboutP3').innerHTML = t('aboutP3');
       document.getElementById('aboutP4').innerHTML = t('aboutP4');
+      document.getElementById('howToPlayTitle').textContent = t('howToPlayTitle');
+      document.getElementById('howToPlayHost').innerHTML = t('howToPlayHost');
+      document.getElementById('howToPlayPlayer').innerHTML = t('howToPlayPlayer');
+      document.getElementById('howToPlayTip').textContent = t('howToPlayTip');
       document.getElementById('closeAboutBtn').textContent = t('close');
 
       const counter = document.getElementById('downloadCounter');
@@ -213,7 +268,7 @@
       });
     });
 
-    // ===== أحداث الأزرار (بدلاً من onclick) =====
+    // ===== أحداث الأزرار =====
     document.getElementById('hostBtn').addEventListener('click', () => {
       window.location.href = 'host.html';
     });
