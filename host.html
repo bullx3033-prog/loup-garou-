@@ -7,56 +7,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ===== الأنماط العامة ===== */
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      background: #0a0a0a;
-      font-family: 'Cinzel', serif;
-      color: #f0e0c0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      padding: 10px;
-      margin: 0;
-    }
-    .container {
-      max-width: 500px;
-      width: 100%;
-      background: #111;
-      border: 2px solid crimson;
-      border-radius: 16px;
-      padding: 20px 15px;
-      box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
-    }
-    h2 {
-      font-size: 26px;
-      color: crimson;
-      text-shadow: 0 0 10px red, 0 0 20px darkred;
-      text-align: center;
-      border-bottom: 2px solid #222;
-      padding-bottom: 10px;
-      margin-bottom: 18px;
-      letter-spacing: 2px;
-    }
+    /* ===== أنماط خاصة بالراوي ===== */
     .section {
       background: #1a1a1a;
-      border: 1px solid #333;
+      border: 1px solid crimson;
       border-radius: 12px;
-      padding: 14px;
-      margin-top: 16px;
+      padding: 15px;
+      margin-top: 20px;
     }
     .section-title {
       color: crimson;
-      font-size: 16px;
-      margin-bottom: 8px;
+      font-size: 18px;
+      margin-bottom: 10px;
       display: block;
       text-shadow: 0 0 8px red;
     }
-    /* ===== أزرار محسّنة صغيرة ===== */
+
+    /* ===== أزرار محسّنة ===== */
     .btn {
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: 30px;
       border: none;
       background: #2c2c2c;
@@ -65,19 +34,19 @@
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-size: 12px;
-      box-shadow: 0 0 6px rgba(255, 0, 0, 0.1);
+      font-size: 13px;
+      box-shadow: 0 0 8px rgba(255, 0, 0, 0.1);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 6px;
       white-space: nowrap;
       line-height: 1.2;
     }
     .btn:hover {
       background: #3a3a3a;
-      box-shadow: 0 0 14px crimson;
-      transform: translateY(-1px);
+      box-shadow: 0 0 18px crimson;
+      transform: translateY(-2px);
     }
     .btn-primary {
       background: #2c2c2c;
@@ -92,7 +61,7 @@
     }
     .btn-danger:hover {
       background: #8b0000;
-      box-shadow: 0 0 20px #8b0000;
+      box-shadow: 0 0 25px #8b0000;
     }
     .btn-success {
       background: #1a4a1a;
@@ -100,15 +69,11 @@
     }
     .btn-success:hover {
       background: #2e7d32;
-      box-shadow: 0 0 20px #2e7d32;
+      box-shadow: 0 0 25px #2e7d32;
     }
     .btn-sm {
       padding: 4px 12px;
       font-size: 11px;
-    }
-    .btn-block {
-      width: 100%;
-      justify-content: center;
     }
     .flex-buttons {
       display: flex;
@@ -120,11 +85,10 @@
       flex: 0 1 auto;
     }
 
-    /* ===== حقول الإدخال ===== */
-    input, select {
+    input {
       width: 100%;
-      padding: 8px 12px;
-      margin: 4px 0;
+      padding: 10px 14px;
+      margin: 6px 0;
       border-radius: 8px;
       border: 1px solid #555;
       background: #0d0d0d;
@@ -132,14 +96,16 @@
       font-family: 'Cinzel', serif;
       font-size: 14px;
     }
-    input:focus, select:focus {
+    input:focus {
       border-color: crimson;
       outline: none;
       box-shadow: 0 0 12px rgba(255, 0, 0, 0.2);
     }
+
+    /* ===== عدادات الذئاب والقرويين ===== */
     .counter-group {
       display: flex;
-      gap: 12px;
+      gap: 15px;
       flex-wrap: wrap;
       justify-content: center;
     }
@@ -203,29 +169,29 @@
       text-align: center;
     }
     .start-btn-wrapper .btn {
-      font-size: 16px;
-      padding: 10px 24px;
-      min-width: 140px;
+      font-size: 18px;
+      padding: 12px 30px;
+      min-width: 160px;
+      width: auto;
     }
 
     /* ===== دوائر الأدوار ===== */
     .roles-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
-      margin: 10px 0;
+      gap: 10px;
+      margin: 12px 0;
     }
     .role-circle-wrapper {
       position: relative;
       aspect-ratio: 1/1;
       width: 100%;
-      max-width: 100%;
     }
     .role-circle {
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      border: 2px solid #555;
+      border: 3px solid #555;
       background: #0d0d0d;
       display: flex;
       align-items: center;
@@ -237,8 +203,8 @@
     }
     .role-circle:hover {
       border-color: crimson;
-      box-shadow: 0 0 14px rgba(255, 0, 0, 0.3);
-      transform: scale(1.04);
+      box-shadow: 0 0 16px rgba(255, 0, 0, 0.3);
+      transform: scale(1.05);
     }
     .role-circle img {
       width: 100%;
@@ -247,21 +213,21 @@
       display: block;
     }
     .role-circle .placeholder {
-      font-size: 22px;
+      font-size: 24px;
       color: #555;
       font-weight: 900;
     }
     .role-circle .remove-btn {
       position: absolute;
-      top: 1px;
-      right: 1px;
+      top: 2px;
+      right: 2px;
       background: #a10d0d;
       color: #fff;
       border: none;
       border-radius: 50%;
-      width: 16px;
-      height: 16px;
-      font-size: 10px;
+      width: 18px;
+      height: 18px;
+      font-size: 11px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -278,14 +244,14 @@
     }
     .role-circle .role-name-label {
       position: absolute;
-      bottom: 1px;
+      bottom: 2px;
       left: 0;
       right: 0;
       background: rgba(0,0,0,0.7);
       color: #fff;
-      font-size: 8px;
+      font-size: 9px;
       text-align: center;
-      padding: 1px 0;
+      padding: 2px 0;
       font-family: 'Cinzel', serif;
       white-space: nowrap;
       overflow: hidden;
@@ -302,7 +268,7 @@
       background: #1a1a1a;
       border: 1px solid crimson;
       border-radius: 6px;
-      max-height: 110px;
+      max-height: 120px;
       overflow-y: auto;
       z-index: 10;
       display: none;
@@ -313,33 +279,55 @@
       display: block;
     }
     .role-select-dropdown .option {
-      padding: 4px 8px;
+      padding: 5px 8px;
       cursor: pointer;
       color: #ccc;
-      font-size: 10px;
+      font-size: 11px;
       transition: 0.2s;
       font-family: 'Cinzel', serif;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
     }
     .role-select-dropdown .option:hover {
       background: #2c2c2c;
       color: #fff;
     }
     .role-select-dropdown .option img {
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       object-fit: cover;
       border: 1px solid #555;
     }
 
+    /* ===== عرض رقم الغرفة ===== */
+    .room-code-display {
+      background: #0d0d0d;
+      border: 1px solid #d4a017;
+      border-radius: 30px;
+      padding: 6px 16px;
+      display: inline-block;
+      color: #d4a017;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      margin-right: 10px;
+    }
+    .room-code-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
     /* ===== تحسين التجاوب ===== */
-    @media (max-width: 480px) {
+    @media (max-width: 500px) {
       .roles-grid {
         grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
+        gap: 8px;
       }
       .role-circle .role-name-label {
         font-size: 7px;
@@ -348,9 +336,9 @@
         font-size: 18px;
       }
       .role-circle .remove-btn {
-        width: 14px;
-        height: 14px;
-        font-size: 9px;
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
       }
       .counter-group {
         flex-direction: row;
@@ -371,8 +359,8 @@
         padding: 4px 8px;
       }
       .start-btn-wrapper .btn {
-        font-size: 14px;
-        padding: 8px 16px;
+        font-size: 16px;
+        padding: 10px 20px;
         min-width: 120px;
         width: 100%;
       }
@@ -401,11 +389,17 @@
   <div class="container">
     <h2 id="hostTitle">🐺 لو ڨارو - الراوي</h2>
 
+    <!-- ===== عرض رقم الغرفة ===== -->
+    <div class="room-code-container">
+      <span>🔑 رمز الغرفة:</span>
+      <span class="room-code-display" id="roomCodeDisplay">---</span>
+    </div>
+
     <!-- ===== اختيار الأدوار الإضافية (دوائر) ===== -->
     <div class="section">
       <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية</span>
       <div class="roles-grid" id="rolesGrid"></div>
-      <p style="color:#777; font-size:10px; margin-top:4px;">انقر على دائرة فارغة لاختيار دور، واضغط ✕ لإزالته.</p>
+      <p style="color:#777; font-size:11px; margin-top:4px;">انقر على دائرة فارغة لاختيار دور، واضغط ✕ لإزالته.</p>
     </div>
 
     <!-- ===== إعدادات عدد الذئاب والقرويين ===== -->
@@ -485,6 +479,9 @@
       alert('انتهت صلاحية الغرفة');
       window.location.href = 'index.html';
     }
+
+    // ===== عرض رقم الغرفة =====
+    document.getElementById('roomCodeDisplay').textContent = roomCode;
 
     // ===== مراجع العناصر =====
     const rolesGrid = document.getElementById('rolesGrid');
@@ -590,7 +587,7 @@
 
         populateDropdown(dropdown);
 
-        // ===== حدث النقر =====
+        // ===== حدث النقر على الدائرة =====
         circle.addEventListener('click', (e) => {
           const idx = parseInt(circle.dataset.index);
           if (selectedRoles[idx] === null) {
