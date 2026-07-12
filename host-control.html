@@ -5,16 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>لو ڨارو - تحكم الراوي</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
   <style>
-    /* ===== إخفاء أي عناصر ديسكورد إن وجدت ===== */
-    *[class*="discord"],
-    *[id*="discord"],
-    .discord-section,
-    #discordSection {
-      display: none !important;
-    }
+    /* ===== إخفاء أي عناصر ديسكورد ===== */
+    *[class*="discord"], *[id*="discord"] { display: none !important; }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Cinzel', serif;
+      background: #000;
+      background-image: radial-gradient(circle at 20% 30%, #1a0a0a 0%, #000000 100%);
+      color: #f0e0c0;
+      min-height: 100vh;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .container {
+      max-width: 700px;
+      width: 100%;
+      margin: 0 auto;
+      background: #111;
+      border: 2px solid crimson;
+      border-radius: 16px;
+      padding: 25px 20px;
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
+    }
+    h2 {
+      font-size: 28px;
+      color: crimson;
+      text-shadow: 0 0 10px red, 0 0 20px darkred;
+      text-align: center;
+      border-bottom: 2px solid #222;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
     .info-box {
       background: #0d0805;
       border: 1px solid #d4a017;
@@ -59,6 +85,21 @@
       transform: translateX(-50%);
       width: 95%;
       max-width: 500px;
+      padding: 14px 20px;
+      border-radius: 10px;
+      border: none;
+      background: #a10d0d;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 16px;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+    }
+    #exitBtn:hover {
+      background: #8b0000;
+      box-shadow: 0 0 25px #8b0000;
     }
     .infected-badge {
       background: #6b1a1a;
@@ -75,43 +116,45 @@
     #players {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 4px;
       padding-bottom: 80px;
     }
 
-    /* ===== بطاقة اللاعب (شريط رفيع جداً) ===== */
+    /* ===== البطاقة الجديدة (رفيعة جداً) ===== */
     .player-card {
       background: #1a1a1a;
       border: 1px solid #333;
       border-radius: 6px;
-      padding: 4px 10px;
+      padding: 3px 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       transition: 0.3s;
-      min-height: 42px;
+      min-height: 38px;
+      height: 38px;
     }
     .player-card:hover {
       border-color: crimson;
-      box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+      box-shadow: 0 0 8px rgba(255, 0, 0, 0.2);
     }
     .player-card.dead {
-      opacity: 0.5;
+      opacity: 0.4;
       border-color: #555;
       background: #111;
     }
 
-    /* ===== الجهة اليمنى (صورة + اسم + دور في سطر واحد) ===== */
+    /* ===== الجهة اليمنى (صورة + اسم + دور) ===== */
     .player-card .info {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       flex: 1;
       min-width: 0;
+      height: 100%;
     }
     .player-card .avatar {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       border: 2px solid crimson;
       object-fit: cover;
@@ -121,45 +164,44 @@
     .player-card .details {
       display: flex;
       align-items: center;
-      gap: 6px;
-      flex-wrap: nowrap;
+      gap: 4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .player-card .details .name {
-      font-size: 15px;
+      font-size: 14px;
       color: #f2f2f2;
       font-weight: 700;
-      white-space: nowrap;
     }
     .player-card .details .role {
-      font-size: 12px;
+      font-size: 11px;
       color: #aaa;
-      white-space: nowrap;
     }
     .player-card .details .role strong {
       color: #fff;
     }
 
-    /* ===== الجهة اليسرى (أزرار صغيرة في سطر واحد) ===== */
+    /* ===== الجهة اليسرى (أزرار صغيرة) ===== */
     .player-card .actions {
       display: flex;
-      gap: 5px;
+      gap: 4px;
       flex-shrink: 0;
     }
     .player-card .actions button {
-      padding: 3px 10px;
+      padding: 2px 8px;
       border: none;
-      border-radius: 5px;
+      border-radius: 4px;
       font-family: 'Cinzel', serif;
       font-weight: bold;
-      font-size: 11px;
+      font-size: 10px;
       cursor: pointer;
       transition: 0.3s;
       background: #2c2c2c;
       color: #fff;
       white-space: nowrap;
+      height: 24px;
+      line-height: 1;
     }
     .player-card .actions button:hover {
       transform: scale(1.05);
@@ -181,21 +223,21 @@
       box-shadow: 0 0 12px #2e7d32;
     }
     .player-card.dead .actions button {
-      opacity: 0.4;
+      opacity: 0.3;
       pointer-events: none;
     }
 
-    /* ===== التجاوب للشاشات الصغيرة جداً ===== */
+    /* ===== التجاوب للشاشات الصغيرة ===== */
     @media (max-width: 500px) {
       .player-card {
-        flex-wrap: wrap;
-        min-height: 50px;
+        height: auto;
+        min-height: 44px;
         padding: 6px 8px;
+        flex-wrap: wrap;
         gap: 4px;
       }
       .player-card .info {
         flex: 1 1 100%;
-        min-width: 0;
       }
       .player-card .actions {
         flex: 1 1 100%;
@@ -205,21 +247,10 @@
       .player-card .actions button {
         flex: 1;
         text-align: center;
-        font-size: 13px;
-        padding: 5px 10px;
+        font-size: 12px;
+        height: 30px;
+        padding: 4px 10px;
       }
-      .player-card .avatar {
-        width: 28px;
-        height: 28px;
-      }
-      .player-card .details .name {
-        font-size: 14px;
-      }
-      .player-card .details .role {
-        font-size: 11px;
-      }
-    }
-    @media (max-width: 380px) {
       .player-card .avatar {
         width: 24px;
         height: 24px;
@@ -229,6 +260,18 @@
       }
       .player-card .details .role {
         font-size: 10px;
+      }
+    }
+    @media (max-width: 380px) {
+      .player-card .avatar {
+        width: 20px;
+        height: 20px;
+      }
+      .player-card .details .name {
+        font-size: 12px;
+      }
+      .player-card .details .role {
+        font-size: 9px;
       }
     }
   </style>
@@ -245,7 +288,7 @@
 
     <div id="players"></div>
 
-    <button class="btn btn-danger" id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
+    <button id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
   </div>
 
   <script type="module">
@@ -259,14 +302,9 @@
       killPlayer,
       infectPlayer,
       deleteRoom,
-      db,
-      ref,
-      update,
-      remove,
-      onValue,
-      get
     } from "./logic.js";
 
+    // ===== ترجمة =====
     function applyTranslations() {
       document.title = t('appName') + ' - ' + t('controlTitle');
       document.getElementById('controlTitle').textContent = `🐺 ${t('controlTitle')}`;
@@ -277,9 +315,9 @@
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = lang;
     }
-
     applyTranslations();
 
+    // ===== متغيرات =====
     const roomCode = getRoomCode();
     const playerContainer = document.getElementById("players");
     const roomDisplay = document.getElementById("roomCodeDisplay");
@@ -304,6 +342,7 @@
       throw new Error("Expired");
     }
 
+    // ===== دوال القتل والتحويل =====
     window.killPlayer = (id) => {
       killPlayer(roomCode, id);
       fetchPlayers();
@@ -313,20 +352,17 @@
       fetchPlayers();
     };
 
+    // ===== عرض اللاعبين =====
     function renderPlayers(data) {
       playerContainer.innerHTML = "";
-      if (!data) {
+      if (!data || Object.keys(data).length === 0) {
         playerContainer.innerHTML = `<p style="color:#b8a08a; text-align:center;">📭 ${t('noPlayersInRoom')}</p>`;
         statusDisplay.textContent = "⏳ " + t('waitingPlayers');
         return;
       }
       const entries = Object.entries(data);
-      if (entries.length === 0) {
-        playerContainer.innerHTML = `<p style="color:#b8a08a; text-align:center;">📭 ${t('noPlayersInRoom')}</p>`;
-        statusDisplay.textContent = "⏳ " + t('waitingPlayers');
-        return;
-      }
       statusDisplay.textContent = `✅ ${entries.length} ${t('playersInRoom')}`;
+
       entries.forEach(([id, player]) => {
         const card = document.createElement("div");
         card.className = "player-card";
@@ -336,7 +372,6 @@
         const infectedBadge = player.isInfected && !player.isDead
           ? `<span class="infected-badge">🐺 ${t('infected')}</span>`
           : "";
-
         const roleDisplay = translateDynamicRole(player.role) || t('unknown');
 
         card.innerHTML = `
@@ -362,6 +397,7 @@
       renderPlayers(data);
     }
 
+    // ===== استماع للتغييرات =====
     listenToPlayers(roomCode, (data) => {
       renderPlayers(data);
     });
@@ -370,6 +406,7 @@
     setInterval(fetchPlayers, 5000);
     await fetchPlayers();
 
+    // ===== زر الخروج =====
     document.getElementById("exitBtn").addEventListener("click", async () => {
       if (!confirm(t('confirmEndRound'))) return;
       try {
