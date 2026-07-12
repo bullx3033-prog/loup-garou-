@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ===== أنماط خاصة بالراوي ===== */
+    /* ===== أنماط خاصة بالراوي (تتجاوز style.css) ===== */
     .section {
       background: #1a1a1a;
       border: 1px solid crimson;
@@ -65,8 +65,7 @@
       background: #2e7d32;
       box-shadow: 0 0 25px #2e7d32;
     }
-    input,
-    select {
+    input, select {
       width: 100%;
       padding: 14px;
       margin: 10px 0;
@@ -77,23 +76,14 @@
       font-family: 'Cinzel', serif;
       font-size: 16px;
     }
-    input:focus,
-    select:focus {
+    input:focus, select:focus {
       border-color: crimson;
       outline: none;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
     }
-    .hidden {
-      display: none !important;
-    }
-    .flex {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .flex .btn {
-      flex: 1;
-    }
+    .hidden { display: none !important; }
+    .flex { display: flex; gap: 10px; flex-wrap: wrap; }
+    .flex .btn { flex: 1; }
 
     /* ===== شبكة الأدوار المصغرة (دوائر) ===== */
     .role-grid {
@@ -204,9 +194,7 @@
     }
 
     /* قائمة اللاعبين */
-    .player-list {
-      margin-top: 10px;
-    }
+    .player-list { margin-top: 10px; }
     .player-item {
       background: #1a1a1a;
       border: 1px solid #333;
@@ -217,10 +205,7 @@
       justify-content: space-between;
       align-items: center;
     }
-    .player-item .name {
-      color: #f0e0c0;
-      font-size: 16px;
-    }
+    .player-item .name { color: #f0e0c0; font-size: 16px; }
     .player-item .badge {
       background: #2c2c2c;
       padding: 2px 10px;
@@ -230,36 +215,17 @@
     }
 
     /* زر بدء اللعبة */
-    .start-btn-wrapper {
-      margin-top: 15px;
-    }
-    .start-btn-wrapper .btn {
-      font-size: 20px;
-      padding: 16px;
-    }
+    .start-btn-wrapper { margin-top: 15px; }
+    .start-btn-wrapper .btn { font-size: 20px; padding: 16px; }
 
     @media (max-width: 600px) {
-      .role-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-      }
-      .role-circle {
-        width: 60px;
-        height: 60px;
-      }
-      .counter-group {
-        flex-direction: column;
-        align-items: center;
-      }
+      .role-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+      .role-circle { width: 60px; height: 60px; }
+      .counter-group { flex-direction: column; align-items: center; }
     }
     @media (max-width: 400px) {
-      .role-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .role-circle {
-        width: 55px;
-        height: 55px;
-      }
+      .role-grid { grid-template-columns: repeat(3, 1fr); }
+      .role-circle { width: 55px; height: 55px; }
     }
   </style>
 </head>
@@ -313,23 +279,11 @@
   <script type="module">
     import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
     import {
-      getRoomCode,
-      setRoomCode,
-      clearRoomCode,
-      createOrGetRoom,
-      deleteRoom,
-      checkRoomExpiry,
-      listenToPlayers,
-      getPlayers,
-      addPlayer,
+      getRoomCode, setRoomCode, clearRoomCode,
+      createOrGetRoom, deleteRoom, checkRoomExpiry,
+      listenToPlayers, getPlayers, addPlayer,
       distributeRoles,
-      listenToRoles,
-      db,
-      ref,
-      update,
-      remove,
-      get,
-      onValue
+      db, ref, update, remove, get, onValue
     } from "./logic.js";
 
     // ===== ترجمة =====
@@ -342,7 +296,6 @@
       document.getElementById('exitBtn').textContent = '🚪 ' + t('exit');
       document.getElementById('refreshBtn').textContent = '🔄 ' + t('refresh');
       document.getElementById('startGameBtn').textContent = '🚀 ' + t('startGame');
-
       const lang = getCurrentLang();
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = lang;
@@ -356,7 +309,6 @@
       await createOrGetRoom();
       location.reload();
     }
-
     const valid = await checkRoomExpiry(roomCode);
     if (!valid) {
       alert('انتهت صلاحية الغرفة');
@@ -373,7 +325,6 @@
     const exitBtn = document.getElementById('exitBtn');
     const refreshBtn = document.getElementById('refreshBtn');
 
-    // ===== حالة الأدوار المختارة =====
     let selectedRoles = {};
     let allRoles = [];
 
@@ -384,7 +335,7 @@
         const snap = await get(ref(db, 'global_roles'));
         const data = snap.val() || {};
         allRoles = Object.values(data);
-        console.log('✅ تم تحميل الأدوار:', allRoles.length);
+        console.log(`✅ تم تحميل ${allRoles.length} دور`);
         
         if (allRoles.length === 0) {
           rolesLoading.textContent = '📭 لا توجد أدوار مخصصة';
@@ -392,7 +343,6 @@
           rolesGrid.classList.add('hidden');
           return;
         }
-        // عرض الأدوار في شبكة دوائر
         renderRolesGrid(allRoles);
         rolesLoading.classList.add('hidden');
         rolesGrid.classList.remove('hidden');
@@ -404,16 +354,11 @@
 
     function renderRolesGrid(roles) {
       rolesGrid.innerHTML = '';
-      console.log('🖼️ جاري عرض الأدوار كصور...');
-      
       roles.forEach((role, index) => {
         const circle = document.createElement('div');
         circle.className = 'role-circle';
         const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
         const imageUrl = role.imageUrl || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
-        
-        console.log(`📸 دور ${index + 1}: ${nameAr} - الصورة: ${imageUrl}`);
-        
         circle.dataset.index = index;
         circle.dataset.name = nameAr;
         circle.dataset.image = imageUrl;
@@ -428,17 +373,13 @@
           const isSelected = circle.classList.toggle('selected');
           if (isSelected) {
             selectedRoles[index] = { name: nameAr, imageUrl };
-            console.log(`✅ تم اختيار دور: ${nameAr}`);
           } else {
             delete selectedRoles[index];
-            console.log(`❌ تم إلغاء اختيار دور: ${nameAr}`);
           }
         });
 
         rolesGrid.appendChild(circle);
       });
-      
-      console.log('✅ تم عرض جميع الأدوار كدوائر');
     }
 
     // ===== جلب اللاعبين وعرضهم =====
@@ -459,26 +400,15 @@
       playersList.innerHTML = html;
     }
 
-    // ===== الاستماع للاعبين =====
-    listenToPlayers(roomCode, (data) => {
-      renderPlayers(data);
-    });
+    listenToPlayers(roomCode, (data) => { renderPlayers(data); });
 
     // ===== بدء اللعبة =====
     startBtn.addEventListener('click', async () => {
       const wolves = parseInt(wolvesInput.value) || 2;
       const villagers = parseInt(villagersInput.value) || 3;
       const selected = Object.values(selectedRoles);
-
-      if (wolves < 1) {
-        alert('يجب أن يكون عدد الذئاب 1 على الأقل');
-        return;
-      }
-      if (villagers < 1) {
-        alert('يجب أن يكون عدد القرويين 1 على الأقل');
-        return;
-      }
-
+      if (wolves < 1) { alert('يجب أن يكون عدد الذئاب 1 على الأقل'); return; }
+      if (villagers < 1) { alert('يجب أن يكون عدد القرويين 1 على الأقل'); return; }
       try {
         await distributeRoles(roomCode, wolves, villagers, selected);
         alert('✅ تم توزيع الأدوار بنجاح!');
@@ -498,13 +428,9 @@
     });
 
     // ===== تحديث =====
-    refreshBtn.addEventListener('click', () => {
-      loadRoles();
-    });
+    refreshBtn.addEventListener('click', loadRoles);
 
-    // ===== تحميل الأدوار عند بدء الصفحة =====
     await loadRoles();
-
     console.log('🚪 كود الغرفة:', roomCode);
   </script>
 </body>
