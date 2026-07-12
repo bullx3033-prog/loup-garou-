@@ -575,8 +575,12 @@
           roleNameFr.value = '';
           roleNameEn.value = '';
         }
-        // تعبئة حقل الوصف
-        roleDescription.value = role.description || '';
+        // تعبئة حقل الوصف (بغض النظر عن صيغته)
+        if (typeof role.description === 'object' && role.description !== null) {
+          roleDescription.value = role.description.ar || role.description.fr || role.description.en || '';
+        } else {
+          roleDescription.value = role.description || '';
+        }
         editingRoleId.value = id;
         imagePreview.innerHTML = role.imageUrl ? `<img src="${role.imageUrl}" style="max-width:100%; max-height:150px; border-radius:10px;" />` : '';
         roleImageInput.value = '';
@@ -654,6 +658,7 @@
             en: nameEn || nameAr
           };
 
+          // حفظ الوصف كنص عادي (وليس كائن) لتجنب المشاكل
           const roleData = { name: nameObj, imageUrl, description };
 
           if (editId) {
