@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -80,7 +80,7 @@
   </div>
 
   <script type="module">
-    import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
+    import { t, setLanguage, getCurrentLang } from './translations.js';
     import {
       getRoomCode,
       clearRoomCode,
@@ -169,15 +169,12 @@
           ? `<span class="infected-badge">🐺 ${t('infected')}</span>`
           : "";
 
-        // عرض اسم الدور باستخدام translateDynamicRole للتعامل مع النصوص والكائنات
-        const roleDisplay = translateDynamicRole(player.role) || t('unknown');
-
         card.innerHTML = `
           <div class="info">
             <img src="${avatarUrl}" class="avatar" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
             <div class="details">
               <div class="name">${player.name} ${infectedBadge}</div>
-              <div class="role">${t('role')}: <strong>${roleDisplay}</strong></div>
+              <div class="role">${t('role')}: <strong>${player.role || t('unknown')}</strong></div>
             </div>
           </div>
           <div class="actions">
