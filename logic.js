@@ -1,7 +1,17 @@
 // ===== تكوين Firebase =====
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import {
-  getDatabase, ref, set, push, update, remove, get, onValue, serverTimestamp, runTransaction, child
+  getDatabase,
+  ref,
+  set,
+  push,
+  update,
+  remove,
+  get,
+  onValue,
+  serverTimestamp,
+  runTransaction,
+  child
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -17,6 +27,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
 const IMGBB_API_KEY = "552ab56b92a08f22f57b49363a60a9fd";
 
 // ===== الأدوات العامة =====
@@ -24,22 +35,8 @@ function getRoomCode() { return localStorage.getItem("roomCode"); }
 function setRoomCode(code) { localStorage.setItem("roomCode", code); }
 function clearRoomCode() { localStorage.removeItem("roomCode"); }
 
-async function deleteAllStaleRooms() {
-  const roomsRef = ref(db, 'rooms');
-  const snapshot = await get(roomsRef);
-  if (!snapshot.exists()) return;
-  const rooms = snapshot.val();
-  const now = Date.now();
-  const twelveHours = 12 * 60 * 60 * 1000;
-  for (const [code, data] of Object.entries(rooms)) {
-    if (now - (data.createdAt || 0) > twelveHours || (data.expiresAt && now > data.expiresAt)) {
-      await remove(ref(db, `rooms/${code}`));
-    }
-  }
-}
-
+// ===== إدارة الغرفة =====
 async function createOrGetRoom() {
-  await deleteAllStaleRooms();
   let roomCode = getRoomCode();
   if (roomCode) {
     const snap = await get(ref(db, `rooms/${roomCode}`));
@@ -48,38 +45,77 @@ async function createOrGetRoom() {
   }
   roomCode = Math.floor(100 + Math.random() * 900).toString();
   setRoomCode(roomCode);
-  await set(ref(db, `rooms/${roomCode}`), { started: false, createdAt: serverTimestamp(), expiresAt: Date.now() + 12 * 60 * 60 * 1000 });
+  await set(ref(db, `rooms/${roomCode}`), {
+    started: false,
+    createdAt: serverTimestamp()
+  });
   return roomCode;
 }
 
-async function deleteRoom(roomCode) { await remove(ref(db, `rooms/${roomCode}`)); clearRoomCode(); }
+async function deleteRoom(roomCode) {
+  await remove(ref(db, `rooms/${roomCode}`));
+  clearRoomCode();
+}
+
 async function checkRoomExpiry(roomCode) {
-  await deleteAllStaleRooms();
   const snap = await get(ref(db, `rooms/${roomCode}`));
   if (!snap.exists()) return false;
   const data = snap.val();
-  if (data.expiresAt && Date.now() > data.expiresAt) { await deleteRoom(roomCode); return false; }
+  if (data.createdAt) {
+    const now = Date.now();
+    if (now - data.createdAt > 24 * 60 * 60 * 1000) {
+      await deleteRoom(roomCode);
+      return false;
+    }
+  }
   return true;
 }
 
+// ===== جلب اللاعبين =====
 function listenToPlayers(roomCode, callback) {
-  onValue(ref(db, `rooms/${roomCode}/players`), (s) => callback(s.val() || {}), (e) => console.error(e));
+  const playersRef = ref(db, `rooms/${roomCode}/players`);
+  onValue(playersRef, (snapshot) => {
+    const data = snapshot.val();
+    callback(data || {});
+  }, (error) => {
+    console.error("خطأ في الاستماع للاعبين:", error);
+    callback({});
+  });
 }
 
 async function getPlayers(roomCode) {
-  const snap = await get(ref(db, `rooms/${roomCode}/players`));
-  return snap.val() || {};
+  try {
+    const snap = await get(ref(db, `rooms/${roomCode}/players`));
+    return snap.val() || {};
+  } catch (error) {
+    console.error("خطأ في جلب اللاعبين:", error);
+    return {};
+  }
 }
 
-function killPlayer(roomCode, playerId) { update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true }); }
-function infectPlayer(roomCode, playerId) { update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isInfected: true }); }
+// ===== دوال القتل والتحويل =====
+function killPlayer(roomCode, playerId) {
+  update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
+}
+function infectPlayer(roomCode, playerId) {
+  update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isInfected: true });
+}
 
+// ===== إضافة لاعب =====
 async function addPlayer(roomCode, name) {
   const newRef = push(ref(db, `rooms/${roomCode}/players`));
-  await set(newRef, { name, role: null, roleImage: "", isDead: false, isInfected: false });
-  return newRef.key;
+  const playerId = newRef.key;
+  await set(newRef, {
+    name: name,
+    role: null,
+    roleImage: "",
+    isDead: false,
+    isInfected: false
+  });
+  return playerId;
 }
 
+// ===== توزيع الأدوار =====
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -88,21 +124,43 @@ function shuffleArray(array) {
   return array;
 }
 
-// ===== دالة التوزيع المصححة (تأخذ بعين الاعتبار العدد الفعلي للاعبين) =====
 async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRoles) {
   const playersObj = await getPlayers(roomCode);
   const players = Object.keys(playersObj).map(key => ({ id: key, ...playersObj[key] }));
-
   if (players.length === 0) throw new Error("لا يوجد لاعبين");
 
-  const roles = [];
-  for (let i = 0; i < wolvesCount; i++) roles.push({ name: "ذئب", imageUrl: "https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" });
-  for (let i = 0; i < villagersCount; i++) roles.push({ name: "قروي", imageUrl: "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" });
-  selectedRoles.forEach(r => roles.push({ name: r.name, imageUrl: r.imageUrl || "" }));
+  // جلب جميع الأدوار من Firebase (للتأكد من وجود imageUrl)
+  const rolesSnap = await get(ref(db, 'global_roles'));
+  const allRoles = Object.values(rolesSnap.val() || {});
+  const wolfRole = allRoles.find(r => r.name?.ar === "ذئب" || r.name === "ذئب");
+  const villagerRole = allRoles.find(r => r.name?.ar === "قروي" || r.name === "قروي");
 
-  if (players.length !== roles.length) {
-    throw new Error(`عدد الأدوار الكلي (${roles.length}) لا يساوي عدد اللاعبين (${players.length}). يرجى التأكد من اختيار أدوار تناسب عدد اللاعبين.`);
+  const totalRoles = wolvesCount + villagersCount + selectedRoles.length;
+  if (players.length !== totalRoles) {
+    throw new Error(`عدد الأدوار (${totalRoles}) لا يساوي عدد اللاعبين (${players.length})`);
   }
+
+  const roles = [];
+  for (let i = 0; i < wolvesCount; i++) {
+    roles.push({
+      name: wolfRole?.name || "ذئب",
+      imageUrl: wolfRole?.imageUrl || "https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg"
+    });
+  }
+  for (let i = 0; i < villagersCount; i++) {
+    roles.push({
+      name: villagerRole?.name || "قروي",
+      imageUrl: villagerRole?.imageUrl || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png"
+    });
+  }
+  selectedRoles.forEach(r => {
+    // البحث عن الصورة من Firebase إن وجدت
+    const found = allRoles.find(role => role.name?.ar === r.name || role.name === r.name);
+    roles.push({
+      name: r.name,
+      imageUrl: found?.imageUrl || r.imageUrl || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png"
+    });
+  });
 
   const shuffledRoles = shuffleArray(roles);
   const shuffledPlayers = shuffleArray(players);
@@ -114,36 +172,112 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
     });
   }
   await update(ref(db, `rooms/${roomCode}`), { started: true });
+  return shuffledPlayers;
 }
 
-function listenToRoles(callback) { onValue(ref(db, "global_roles"), (s) => callback(s.val())); }
-async function addRole(name, imageUrl) { const newRef = push(ref(db, "global_roles")); await set(newRef, { name, imageUrl }); return newRef.key; }
-async function updateRole(roleId, name, imageUrl) { await update(ref(db, `global_roles/${roleId}`), { name, imageUrl }); }
-async function deleteRole(roleId) { await remove(ref(db, `global_roles/${roleId}`)); }
+// ===== إدارة الأدوار =====
+function listenToRoles(callback) {
+  const rolesRef = ref(db, "global_roles");
+  onValue(rolesRef, (snapshot) => {
+    const data = snapshot.val();
+    callback(data);
+  });
+}
+
+async function addRole(nameObj, imageUrl, description) {
+  const rolesRef = ref(db, "global_roles");
+  const newRef = push(rolesRef);
+  await set(newRef, { name: nameObj, imageUrl, description });
+  return newRef.key;
+}
+
+async function updateRole(roleId, nameObj, imageUrl, description) {
+  await update(ref(db, `global_roles/${roleId}`), { name: nameObj, imageUrl, description });
+}
+
+async function deleteRole(roleId) {
+  await remove(ref(db, `global_roles/${roleId}`));
+}
+
 async function uploadImageToImgBB(file) {
   const reader = new FileReader();
-  const base64 = await new Promise((resolve) => { reader.onload = (e) => resolve(e.target.result.split(",")[1]); reader.readAsDataURL(file); });
-  const formData = new FormData(); formData.append("key", IMGBB_API_KEY); formData.append("image", base64);
-  const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: formData });
-  const json = await res.json();
-  if (!json.success) throw new Error("فشل الرفع");
+  const base64 = await new Promise((resolve) => {
+    reader.onload = (e) => resolve(e.target.result.split(",")[1]);
+    reader.readAsDataURL(file);
+  });
+  const formData = new FormData();
+  formData.append("key", IMGBB_API_KEY);
+  formData.append("image", base64);
+  const response = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: formData });
+  const json = await response.json();
+  if (!json.success) throw new Error("فشل رفع الصورة");
   return json.data.url;
 }
 
+// ===== نظام الاقتراحات =====
 async function sendSuggestion(playerName, message, roomId) {
-  await push(ref(db, "suggestions"), { playerName: playerName || "لاعب مجهول", message: message, roomId: roomId || "غير معروف", timestamp: serverTimestamp() });
+  const suggestionsRef = ref(db, "suggestions");
+  await push(suggestionsRef, {
+    playerName: playerName || "لاعب مجهول",
+    message: message,
+    roomId: roomId || "غير معروف",
+    timestamp: serverTimestamp()
+  });
+}
+function listenToSuggestions(callback) {
+  const suggestionsRef = ref(db, "suggestions");
+  onValue(suggestionsRef, (snapshot) => {
+    const data = snapshot.val();
+    callback(data);
+  });
+}
+async function deleteSuggestion(suggestionId) {
+  await remove(ref(db, `suggestions/${suggestionId}`));
+}
+async function deleteAllSuggestions() {
+  await remove(ref(db, "suggestions"));
 }
 
-function listenToSuggestions(callback) { onValue(ref(db, "suggestions"), (s) => callback(s.val())); }
-async function deleteSuggestion(suggestionId) { await remove(ref(db, `suggestions/${suggestionId}`)); }
-async function deleteAllSuggestions() { await remove(ref(db, "suggestions")); }
+// ===== عداد التحميلات =====
 async function incrementDownloadCount() {
-  await runTransaction(ref(db, "stats/downloadCount"), (curr) => curr ? { count: curr.count + 1 } : { count: 1 });
+  const countRef = ref(db, "stats/downloadCount");
+  await runTransaction(countRef, (current) => {
+    if (current === null) return { count: 1 };
+    return { count: current.count + 1 };
+  });
 }
-async function getDownloadCount() { const s = await get(ref(db, "stats/downloadCount")); return s.val()?.count || 0; }
-async function getCredentials() { const s = await get(ref(db, "admin_credentials")); return s.val(); }
-async function setCredentials(username, password) { await set(ref(db, "admin_credentials"), { username, password }); }
-async function seedDefaultCredentials() { const creds = await getCredentials(); if (!creds) await setCredentials("admin", "admin123"); }
-async function getPlayer(roomCode, playerId) { const s = await get(child(ref(db), `rooms/${roomCode}/players/${playerId}`)); return s.val(); }
+async function getDownloadCount() {
+  const snap = await get(ref(db, "stats/downloadCount"));
+  return snap.val()?.count || 0;
+}
 
-export { db, ref, update, remove, get, set, push, onValue, serverTimestamp, runTransaction, child, getRoomCode, setRoomCode, clearRoomCode, createOrGetRoom, deleteRoom, checkRoomExpiry, deleteAllStaleRooms, listenToPlayers, getPlayers, killPlayer, infectPlayer, addPlayer, distributeRoles, listenToRoles, addRole, updateRole, deleteRole, uploadImageToImgBB, sendSuggestion, listenToSuggestions, deleteSuggestion, deleteAllSuggestions, incrementDownloadCount, getDownloadCount, getCredentials, setCredentials, seedDefaultCredentials, getPlayer };
+// ===== بيانات الاعتماد =====
+async function getCredentials() {
+  const snap = await get(ref(db, "admin_credentials"));
+  return snap.val();
+}
+async function setCredentials(username, password) {
+  await set(ref(db, "admin_credentials"), { username, password });
+}
+async function seedDefaultCredentials() {
+  const creds = await getCredentials();
+  if (!creds) {
+    await setCredentials("admin", "admin123");
+  }
+}
+async function getPlayer(roomCode, playerId) {
+  const snap = await get(child(ref(db), `rooms/${roomCode}/players/${playerId}`));
+  return snap.val();
+}
+
+export {
+  db, ref, update, remove, get, set, push, onValue, serverTimestamp, runTransaction, child,
+  getRoomCode, setRoomCode, clearRoomCode,
+  createOrGetRoom, deleteRoom, checkRoomExpiry,
+  listenToPlayers, getPlayers, killPlayer, infectPlayer, addPlayer,
+  distributeRoles,
+  listenToRoles, addRole, updateRole, deleteRole, uploadImageToImgBB,
+  sendSuggestion, listenToSuggestions, deleteSuggestion, deleteAllSuggestions,
+  incrementDownloadCount, getDownloadCount,
+  getCredentials, setCredentials, seedDefaultCredentials, getPlayer
+};
