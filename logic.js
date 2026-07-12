@@ -176,16 +176,15 @@ function listenToRoles(callback) {
   });
 }
 
-// دوال الإضافة والتحديث تدعم وصفاً متعدد اللغات
-async function addRole(nameObj, imageUrl, descriptionObj) {
+async function addRole(name, imageUrl) {
   const rolesRef = ref(db, "global_roles");
   const newRef = push(rolesRef);
-  await set(newRef, { name: nameObj, imageUrl, description: descriptionObj });
+  await set(newRef, { name, imageUrl });
   return newRef.key;
 }
 
-async function updateRole(roleId, nameObj, imageUrl, descriptionObj) {
-  await update(ref(db, `global_roles/${roleId}`), { name: nameObj, imageUrl, description: descriptionObj });
+async function updateRole(roleId, name, imageUrl) {
+  await update(ref(db, `global_roles/${roleId}`), { name, imageUrl });
 }
 
 async function deleteRole(roleId) {
