@@ -99,6 +99,15 @@
       background: #2e7d32;
       box-shadow: 0 0 25px #2e7d32;
     }
+    .btn-secondary {
+      background: #2c2c2c;
+      color: #fff;
+      border: 1px solid #555;
+    }
+    .btn-secondary:hover {
+      background: #3a3a3a;
+      border-color: #777;
+    }
     input,
     textarea {
       width: 100%;
@@ -201,7 +210,7 @@
       gap: 10px;
       margin-bottom: 10px;
     }
-    /* ===== شبكة الأدوار (دوائر) ===== */
+    /* ===== شبكة الأدوار ===== */
     .role-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -279,7 +288,7 @@
       transform: scale(1.2);
     }
 
-    /* ===== إدارة الإشعارات ===== */
+    /* ===== نافذة الإشعارات (مودال) ===== */
     .notice-preview {
       margin-top: 10px;
       text-align: center;
@@ -326,6 +335,51 @@
       margin-bottom: 15px;
       text-shadow: 0 0 10px red;
       text-align: center;
+    }
+
+    /* ===== بطاقات الاقتراحات ===== */
+    .suggestion-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .suggestion-card .name {
+      color: crimson;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .suggestion-card .msg {
+      color: #ccc;
+      font-size: 14px;
+      margin: 5px 0;
+    }
+    .suggestion-card .meta {
+      color: #777;
+      font-size: 12px;
+    }
+    .suggestion-card .actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+    }
+    .suggestion-card .actions button {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: none;
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .suggestion-card .actions .del-single {
+      background: #6b1a1a;
+      color: #fff;
+    }
+    .suggestion-card .actions .del-single:hover {
+      background: #8b0000;
+      box-shadow: 0 0 15px #8b0000;
     }
 
     @media (max-width: 600px) {
@@ -377,6 +431,13 @@
         </div>
       </div>
 
+      <!-- ===== زر إدارة الإشعارات (يظهر كزر فقط) ===== -->
+      <div class="section">
+        <span class="section-title">📢 إدارة الإشعارات</span>
+        <button class="btn btn-primary" id="openNoticeModalBtn" style="width:auto; padding:12px 20px;">📝 فتح محرر الإشعارات</button>
+        <p style="color:#777; font-size:12px; margin-top:5px;">انقر لفتح نافذة تحرير الرسالة والصورة</p>
+      </div>
+
       <!-- ===== إدارة الأدوار (شبكة دوائر) ===== -->
       <div class="section">
         <span class="section-title" id="manageRolesTitle">🃏 إدارة الأدوار</span>
@@ -385,24 +446,6 @@
           <button class="btn btn-primary" id="addRoleBtn" style="width:auto; padding:8px 16px;">➕ إضافة</button>
         </div>
         <div id="rolesGrid" class="role-grid"></div>
-      </div>
-
-      <!-- ===== إدارة الإشعارات ===== -->
-      <div class="section">
-        <span class="section-title">📢 إدارة الإشعارات</span>
-        <p style="color:#aaa; font-size:13px; margin-bottom:10px;">
-          هذا الإشعار سيظهر في الصفحة الرئيسية للتطبيق (في الأسفل).
-        </p>
-        <textarea id="noticeText" rows="5" placeholder="اكتب نص الإشعار هنا..." style="margin-bottom:5px;"></textarea>
-        <input type="file" id="noticeImageInput" accept="image/*" />
-        <div class="notice-preview" id="noticePreview">
-          <div class="empty">📷 لا توجد صورة مرفوعة</div>
-        </div>
-        <div class="flex" style="margin-top:10px;">
-          <button class="btn btn-success" id="saveNoticeBtn">💾 حفظ الإشعار</button>
-          <button class="btn btn-danger" id="deleteNoticeBtn">🗑️ حذف الإشعار</button>
-        </div>
-        <p id="noticeStatus" style="color:#7a4e2d; font-size:13px; margin-top:8px; text-align:center;"></p>
       </div>
 
       <!-- ===== اقتراحات اللاعبين ===== -->
@@ -434,6 +477,27 @@
         <button class="btn btn-danger" id="deleteRoleBtn" style="display:none;">🗑️ حذف</button>
       </div>
       <button class="btn" id="closeRoleModal" style="margin-top:8px;">إلغاء</button>
+    </div>
+  </div>
+
+  <!-- ===== نافذة الإشعارات (مودال) ===== -->
+  <div class="modal" id="noticeModal">
+    <div class="modal-content">
+      <h3 style="color:#d4a017;">📢 تحرير الإشعار</h3>
+      <p style="color:#aaa; font-size:13px; margin-bottom:10px;">
+        هذا الإشعار سيظهر في الصفحة الرئيسية للتطبيق (في الأسفل).
+      </p>
+      <textarea id="noticeText" rows="6" placeholder="اكتب نص الإشعار هنا..." style="margin-bottom:5px;"></textarea>
+      <input type="file" id="noticeImageInput" accept="image/*" />
+      <div class="notice-preview" id="noticePreview">
+        <div class="empty">📷 لا توجد صورة مرفوعة</div>
+      </div>
+      <div class="flex" style="margin-top:10px;">
+        <button class="btn btn-success" id="saveNoticeBtn">💾 حفظ</button>
+        <button class="btn btn-danger" id="deleteNoticeBtn">🗑️ حذف</button>
+      </div>
+      <p id="noticeStatus" style="color:#7a4e2d; font-size:13px; margin-top:8px; text-align:center;"></p>
+      <button class="btn" id="closeNoticeModal" style="margin-top:8px;">إغلاق</button>
     </div>
   </div>
 
@@ -489,6 +553,10 @@
     const deleteRoleBtn = document.getElementById('deleteRoleBtn');
     const closeRoleModal = document.getElementById('closeRoleModal');
 
+    // ===== عناصر الإشعارات =====
+    const noticeModal = document.getElementById('noticeModal');
+    const openNoticeModalBtn = document.getElementById('openNoticeModalBtn');
+    const closeNoticeModal = document.getElementById('closeNoticeModal');
     const noticeText = document.getElementById('noticeText');
     const noticeImageInput = document.getElementById('noticeImageInput');
     const noticePreview = document.getElementById('noticePreview');
@@ -528,6 +596,9 @@
           } else {
             noticePreview.innerHTML = `<div class="empty">📷 لا توجد صورة مرفوعة</div>`;
           }
+        } else {
+          noticeText.value = '';
+          noticePreview.innerHTML = `<div class="empty">📷 لا توجد صورة مرفوعة</div>`;
         }
       } catch (e) {
         console.error('خطأ في تحميل الإشعار:', e);
@@ -683,7 +754,17 @@
       }
     });
 
-    // ===== أحداث الإشعارات =====
+    // ===== أحداث الإشعارات (مودال) =====
+    openNoticeModalBtn.addEventListener('click', () => {
+      noticeModal.style.display = 'flex';
+      loadNotice();
+    });
+    closeNoticeModal.addEventListener('click', () => {
+      noticeModal.style.display = 'none';
+    });
+    window.addEventListener('click', (e) => {
+      if (e.target === noticeModal) noticeModal.style.display = 'none';
+    });
     saveNoticeBtn.addEventListener('click', saveNotice);
     deleteNoticeBtn.addEventListener('click', deleteNotice);
     noticeImageInput.addEventListener('change', (e) => {
@@ -734,14 +815,12 @@
           <span class="delete-btn" data-id="${id}">✕</span>
         `;
 
-        // حذف الدور عند الضغط على زر الحذف
         const deleteBtn = circle.querySelector('.delete-btn');
         deleteBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           deleteRoleHandler(id);
         });
 
-        // فتح نافذة التعديل عند الضغط على الدائرة
         circle.addEventListener('click', () => {
           editRoleHandler(id);
         });
@@ -750,7 +829,6 @@
       });
     }
 
-    // ===== حذف الدور =====
     async function deleteRoleHandler(id) {
       const roleName = typeof rolesData[id]?.name === 'object' ? rolesData[id].name.ar : rolesData[id]?.name;
       if (!confirm(`⚠️ هل أنت متأكد من حذف دور "${roleName}"؟`)) return;
@@ -761,7 +839,6 @@
       }
     }
 
-    // ===== تعديل الدور =====
     function editRoleHandler(id) {
       const role = rolesData[id];
       if (!role) return;
@@ -789,7 +866,6 @@
       roleModal.style.display = 'flex';
     }
 
-    // ===== إضافة دور جديد =====
     addRoleBtn.addEventListener('click', () => {
       roleModalTitle.textContent = '➕ ' + t('addRole');
       deleteRoleBtn.style.display = 'none';
@@ -803,7 +879,6 @@
       roleModal.style.display = 'flex';
     });
 
-    // ===== إغلاق النافذة =====
     closeRoleModal.addEventListener('click', () => {
       roleModal.style.display = 'none';
     });
@@ -811,7 +886,6 @@
       if (e.target === roleModal) roleModal.style.display = 'none';
     });
 
-    // ===== معاينة الصورة في نافذة الدور =====
     roleImageInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -823,7 +897,6 @@
       }
     });
 
-    // ===== حفظ الدور =====
     saveRoleBtn.addEventListener('click', async () => {
       const nameAr = roleNameAr.value.trim();
       const nameFr = roleNameFr.value.trim();
@@ -854,7 +927,6 @@
           await push(ref(db, 'global_roles'), roleData);
         }
         roleModal.style.display = 'none';
-        // تنظيف الحقول
         roleNameAr.value = '';
         roleNameFr.value = '';
         roleNameEn.value = '';
@@ -867,7 +939,6 @@
       }
     });
 
-    // ===== عرض الاقتراحات =====
     function renderSuggestions(data) {
       suggestionsList.innerHTML = '';
       if (!data) {
