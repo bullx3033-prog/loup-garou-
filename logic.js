@@ -47,16 +47,32 @@ async function deleteAllStaleRooms() {
   return count;
 }
 
-// ===== إدارة الغرفة (مع المسح التلقائي) =====
+// ===== إدارة الغرفة (مع التعديل لحل مشكلة WebView) =====
 async function createOrGetRoom() {
+  // مسح الغرف المنتهية من Firebase أولاً
   await deleteAllStaleRooms();
 
   let roomCode = getRoomCode();
   if (roomCode) {
+    // تحقق من صلاحية الغرفة المخزنة محلياً
     const snap = await get(ref(db, `rooms/${roomCode}`));
-    if (snap.exists()) return roomCode;
-    clearRoomCode();
+    if (snap.exists()) {
+      const data = snap.val();
+      const now = Date.now();
+      // إذا انتهت صلاحية الغرفة، نحذفها من Firebase وlocalStorage
+      if (data.createdAt && (now - data.createdAt > 24 * 60 * 60 * 1000)) {
+        await deleteRoom(roomCode); // تحذف من Firebase وتمسح localStorage
+        roomCode = null; // نعيد تعيين المتغير
+      } else {
+        return roomCode; // الغرفة صالحة
+      }
+    } else {
+      // الغرفة غير موجودة في Firebase، نمسح localStorage
+      clearRoomCode();
+    }
   }
+
+  // إنشاء غرفة جديدة
   roomCode = Math.floor(100 + Math.random() * 900).toString();
   setRoomCode(roomCode);
   await set(ref(db, `rooms/${roomCode}`), { 
