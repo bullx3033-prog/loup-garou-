@@ -298,6 +298,22 @@
       gap: 10px;
       margin-bottom: 10px;
     }
+    /* ===== معاينة الصورة في قسم الإشعارات ===== */
+    .notice-preview {
+      margin-top: 10px;
+      text-align: center;
+    }
+    .notice-preview img {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
+      border: 1px solid #555;
+    }
+    .notice-preview .empty {
+      color: #777;
+      font-size: 14px;
+      padding: 10px;
+    }
     @media (max-width: 480px) {
       .container {
         padding: 15px;
@@ -332,6 +348,24 @@
           <button class="btn btn-success" id="updateCredBtn">💾 تحديث</button>
           <p id="updateCredMsg" style="color:#7a4e2d; font-size:13px; margin-top:5px;"></p>
         </div>
+      </div>
+
+      <!-- ===== قسم إدارة الإشعارات (جديد) ===== -->
+      <div class="section">
+        <span class="section-title">📢 إدارة الإشعارات</span>
+        <p style="color:#aaa; font-size:13px; margin-bottom:10px;">
+          هذا الإشعار سيظهر في الصفحة الرئيسية للتطبيق (أسفل الأزرار). يمكنك كتابة رسالة تنبيه ورفع صورة توضيحية.
+        </p>
+        <textarea id="noticeText" rows="5" placeholder="اكتب نص الإشعار هنا..." style="margin-bottom:5px;"></textarea>
+        <input type="file" id="noticeImageInput" accept="image/*" />
+        <div class="notice-preview" id="noticePreview">
+          <div class="empty">📷 لا توجد صورة مرفوعة</div>
+        </div>
+        <div class="flex" style="margin-top:10px;">
+          <button class="btn btn-success" id="saveNoticeBtn">💾 حفظ الإشعار</button>
+          <button class="btn btn-danger" id="deleteNoticeBtn">🗑️ حذف الإشعار</button>
+        </div>
+        <p id="noticeStatus" style="color:#7a4e2d; font-size:13px; margin-top:8px; text-align:center;"></p>
       </div>
 
       <div class="section">
@@ -405,6 +439,14 @@
     const updateCredBtn = document.getElementById('updateCredBtn');
     const updateCredMsg = document.getElementById('updateCredMsg');
 
+    // ===== عناصر الإشعارات (جديدة) =====
+    const noticeText = document.getElementById('noticeText');
+    const noticeImageInput = document.getElementById('noticeImageInput');
+    const noticePreview = document.getElementById('noticePreview');
+    const saveNoticeBtn = document.getElementById('saveNoticeBtn');
+    const deleteNoticeBtn = document.getElementById('deleteNoticeBtn');
+    const noticeStatus = document.getElementById('noticeStatus');
+
     const rolesList = document.getElementById('rolesList');
     const rolesCounter = document.getElementById('rolesCounter');
     const addRoleBtn = document.getElementById('addRoleBtn');
@@ -423,6 +465,101 @@
     const suggestionsList = document.getElementById('suggestionsList');
     const suggestCounter = document.getElementById('suggestCounter');
     const deleteAllSuggestBtn = document.getElementById('deleteAllSuggestBtn');
+
+    // ===== دالة رفع الصورة إلى ImgBB =====
+    async function uploadImageToImgBB(file) {
+      const reader = new FileReader();
+      const base64 = await new Promise((resolve) => {
+        reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+        reader.readAsDataURL(file);
+      });
+      const formData = new FormData();
+      formData.append('key', IMGBB_API_KEY);
+      formData.append('image', base64);
+      const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
+      const json = await res.json();
+      if (!json.success) throw new Error('فشل رفع الصورة');
+      return json.data.url;
+    }
+
+    // ===== تحميل الإشعار من Firebase =====
+    async function loadNotice() {
+      try {
+        const snap = await get(ref(db, 'notifications/main'));
+        const data = snap.val();
+        if (data) {
+          noticeText.value = data.text || '';
+          if (data.imageUrl) {
+            noticePreview.innerHTML = `<img src="${data.imageUrl}" alt="صورة الإشعار" />`;
+          } else {
+            noticePreview.innerHTML = `<div class="empty">📷 لا توجد صورة مرفوعة</div>`;
+          }
+        } else {
+          noticeText.value = '';
+          noticePreview.innerHTML = `<div class="empty">📷 لا توجد صورة مرفوعة</div>`;
+        }
+      } catch (e) {
+        console.error('خطأ في تحميل الإشعار:', e);
+      }
+    }
+
+    // ===== حفظ الإشعار =====
+    async function saveNotice() {
+      const text = noticeText.value.trim();
+      const file = noticeImageInput.files[0];
+      let imageUrl = '';
+
+      // جلب الصورة الحالية إن وجدت
+      try {
+        const snap = await get(ref(db, 'notifications/main'));
+        const current = snap.val();
+        if (current && current.imageUrl) {
+          imageUrl = current.imageUrl;
+        }
+      } catch (e) {}
+
+      try {
+        if (file) {
+          imageUrl = await uploadImageToImgBB(file);
+        }
+
+        await set(ref(db, 'notifications/main'), {
+          text: text,
+          imageUrl: imageUrl,
+          updatedAt: serverTimestamp()
+        });
+
+        noticeStatus.textContent = '✅ تم حفظ الإشعار بنجاح!';
+        noticeStatus.style.color = '#2ecc71';
+        // تحديث المعاينة
+        if (imageUrl) {
+          noticePreview.innerHTML = `<img src="${imageUrl}" alt="صورة الإشعار" />`;
+        } else {
+          noticePreview.innerHTML = `<div class="empty">📷 لا توجد صورة مرفوعة</div>`;
+        }
+        noticeImageInput.value = '';
+        setTimeout(() => { noticeStatus.textContent = ''; }, 3000);
+      } catch (e) {
+        noticeStatus.textContent = '❌ خطأ: ' + e.message;
+        noticeStatus.style.color = '#e74c3c';
+      }
+    }
+
+    // ===== حذف الإشعار =====
+    async function deleteNotice() {
+      if (!confirm('⚠️ هل أنت متأكد من حذف الإشعار؟')) return;
+      try {
+        await remove(ref(db, 'notifications/main'));
+        noticeText.value = '';
+        noticePreview.innerHTML = `<div class="empty">📷 لا توجد صورة مرفوعة</div>`;
+        noticeStatus.textContent = '🗑️ تم حذف الإشعار';
+        noticeStatus.style.color = '#e74c3c';
+        setTimeout(() => { noticeStatus.textContent = ''; }, 3000);
+      } catch (e) {
+        noticeStatus.textContent = '❌ خطأ: ' + e.message;
+        noticeStatus.style.color = '#e74c3c';
+      }
+    }
 
     function applyTranslations() {
       document.title = t('adminTitle');
@@ -465,6 +602,7 @@
       mainContent.style.display = 'block';
       applyTranslations();
       initAdmin();
+      loadNotice(); // تحميل الإشعار
     }
 
     loginBtn.addEventListener('click', async (e) => {
@@ -486,11 +624,28 @@
           loginError.textContent = '';
           applyTranslations();
           initAdmin();
+          loadNotice(); // تحميل الإشعار
         } else {
           loginError.textContent = t('wrongCredentials');
         }
       } catch (err) {
         loginError.textContent = '❌ خطأ في الاتصال: ' + err.message;
+      }
+    });
+
+    // ===== أحداث الإشعارات =====
+    saveNoticeBtn.addEventListener('click', saveNotice);
+    deleteNoticeBtn.addEventListener('click', deleteNotice);
+
+    // معاينة الصورة عند الاختيار
+    noticeImageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          noticePreview.innerHTML = `<img src="${ev.target.result}" alt="صورة الإشعار" />`;
+        };
+        reader.readAsDataURL(file);
       }
     });
 
@@ -635,18 +790,7 @@
         try {
           let imageUrl = '';
           if (file) {
-            const reader = new FileReader();
-            const base64 = await new Promise((resolve) => {
-              reader.onload = (e) => resolve(e.target.result.split(',')[1]);
-              reader.readAsDataURL(file);
-            });
-            const formData = new FormData();
-            formData.append('key', IMGBB_API_KEY);
-            formData.append('image', base64);
-            const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
-            const json = await res.json();
-            if (!json.success) throw new Error('فشل رفع الصورة');
-            imageUrl = json.data.url;
+            imageUrl = await uploadImageToImgBB(file);
           } else if (editId && rolesData[editId]?.imageUrl) {
             imageUrl = rolesData[editId].imageUrl;
           }
@@ -688,7 +832,6 @@
       entries.forEach(([key, sugg]) => {
         const card = document.createElement('div');
         card.className = 'suggestion-card';
-        // ===== التعديل هنا: استخدام en-US للأرقام الإنجليزية =====
         const date = sugg.timestamp ? new Date(sugg.timestamp).toLocaleString('en-US') : 'وقت غير معروف';
         card.innerHTML = `
           <div class="name">👤 ${sugg.playerName || 'مجهول'}</div>
