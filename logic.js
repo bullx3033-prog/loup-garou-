@@ -24,16 +24,6 @@ function getRoomCode() { return localStorage.getItem("roomCode"); }
 function setRoomCode(code) { localStorage.setItem("roomCode", code); }
 function clearRoomCode() { localStorage.removeItem("roomCode"); }
 
-// ===== دالة مسح ALL localStorage عند بدء التطبيق (حل جذري) =====
-function resetLocalStorage() {
-  try {
-    localStorage.clear();
-    console.log('🗑️ تم مسح localStorage بالكامل (حل جذري)');
-  } catch (e) {
-    console.error('❌ فشل مسح localStorage:', e);
-  }
-}
-
 // ===== دالة مسح الغرف المنتهية (24 ساعة) =====
 async function deleteAllStaleRooms() {
   const roomsRef = ref(db, 'rooms');
@@ -57,55 +47,40 @@ async function deleteAllStaleRooms() {
   return count;
 }
 
-// ===== إدارة الغرفة (مع حل جذري لمشكلة WebView) =====
+// ===== إنشاء غرفة جديدة =====
+async function createNewRoom() {
+  const roomCode = Math.floor(100 + Math.random() * 900).toString();
+  setRoomCode(roomCode);
+  await set(ref(db, `rooms/${roomCode}`), { 
+    started: false, 
+    createdAt: serverTimestamp() 
+  });
+  return roomCode;
+}
+
+// ===== إدارة الغرفة (مع حل جذري للصلاحية) =====
 async function createOrGetRoom() {
-  // الحل الجذري: مسح localStorage في كل مرة (للتطبيقات المحولة)
-  // ولكن نتحقق أولاً من وجود roomCode صالح
+  await deleteAllStaleRooms();
+
   let roomCode = getRoomCode();
-  
-  // إذا كان هناك كود غرفة، تحقق من صلاحيته
   if (roomCode) {
-    try {
-      const snap = await get(ref(db, `rooms/${roomCode}`));
-      if (snap.exists()) {
-        const data = snap.val();
-        const now = Date.now();
-        // إذا كانت الغرفة منتهية (أكثر من 24 ساعة)
-        if (data.createdAt && (now - data.createdAt > 24 * 60 * 60 * 1000)) {
-          console.log(`⏰ الغرفة ${roomCode} منتهية، سيتم مسح localStorage`);
-          resetLocalStorage(); // مسح شامل
-          roomCode = null;
-        } else {
-          // الغرفة صالحة، نعيدها
-          return roomCode;
-        }
-      } else {
-        // الغرفة غير موجودة في Firebase
-        console.log(`❌ الغرفة ${roomCode} غير موجودة في Firebase، سيتم مسح localStorage`);
-        resetLocalStorage();
-        roomCode = null;
+    const snap = await get(ref(db, `rooms/${roomCode}`));
+    if (snap.exists()) {
+      const data = snap.val();
+      const now = Date.now();
+      if (data.createdAt && (now - data.createdAt > 24 * 60 * 60 * 1000)) {
+        // الغرفة منتهية: نحذفها وننشئ جديدة
+        await deleteRoom(roomCode);
+        roomCode = await createNewRoom();
       }
-    } catch (error) {
-      console.error('⚠️ خطأ في التحقق من الغرفة:', error);
-      resetLocalStorage();
-      roomCode = null;
+      return roomCode;
+    } else {
+      clearRoomCode();
     }
   }
-
-  // إذا لم يكن هناك كود صالح، ننشئ غرفة جديدة
-  if (!roomCode) {
-    // مسح localStorage نهائياً قبل إنشاء غرفة جديدة
-    resetLocalStorage();
-    
-    roomCode = Math.floor(100 + Math.random() * 900).toString();
-    setRoomCode(roomCode);
-    await set(ref(db, `rooms/${roomCode}`), { 
-      started: false, 
-      createdAt: serverTimestamp() 
-    });
-    console.log(`✅ تم إنشاء غرفة جديدة: ${roomCode}`);
-    return roomCode;
-  }
+  
+  // إنشاء غرفة جديدة
+  return await createNewRoom();
 }
 
 async function deleteRoom(roomCode) { 
@@ -113,23 +88,34 @@ async function deleteRoom(roomCode) {
   clearRoomCode(); 
 }
 
+// ===== التحقق من صلاحية الغرفة (تعيد غرفة جديدة إذا انتهت) =====
 async function checkRoomExpiry(roomCode) {
   await deleteAllStaleRooms();
 
-  const snap = await get(ref(db, `rooms/${roomCode}`));
-  if (!snap.exists()) return false;
-  const data = snap.val();
-  if (data.createdAt) {
-    const now = Date.now();
-    if (now - data.createdAt > 24 * 60 * 60 * 1000) { 
-      await deleteRoom(roomCode); 
-      return false; 
-    }
+  // إذا لم يُمرر كود، ننشئ غرفة جديدة
+  if (!roomCode) {
+    return await createNewRoom();
   }
-  return true;
+
+  const snap = await get(ref(db, `rooms/${roomCode}`));
+  if (!snap.exists()) {
+    // الغرفة غير موجودة: ننشئ جديدة
+    return await createNewRoom();
+  }
+  
+  const data = snap.val();
+  const now = Date.now();
+  if (data.createdAt && (now - data.createdAt > 24 * 60 * 60 * 1000)) {
+    // الغرفة منتهية: نحذفها وننشئ جديدة
+    await deleteRoom(roomCode);
+    return await createNewRoom();
+  }
+  
+  // الغرفة صالحة
+  return roomCode;
 }
 
-// ===== باقي الدوال (بدون تغيير) =====
+// ===== جلب اللاعبين =====
 function listenToPlayers(roomCode, callback) {
   onValue(ref(db, `rooms/${roomCode}/players`), (s) => callback(s.val() || {}), (e) => console.error(e));
 }
@@ -139,6 +125,7 @@ async function getPlayers(roomCode) {
   catch (e) { console.error(e); return {}; }
 }
 
+// ===== دوال القتل والتحويل =====
 function killPlayer(roomCode, playerId) { update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true }); }
 function infectPlayer(roomCode, playerId) { update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isInfected: true }); }
 
@@ -148,6 +135,7 @@ async function addPlayer(roomCode, name) {
   return newRef.key;
 }
 
+// ===== دالة خلط عشوائية =====
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -156,6 +144,7 @@ function shuffleArray(array) {
   return array;
 }
 
+// ===== توزيع الأدوار =====
 async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRoles) {
   const playersObj = await getPlayers(roomCode);
   const players = Object.keys(playersObj).map(key => ({ id: key, ...playersObj[key] }));
@@ -209,6 +198,7 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
   return shuffledPlayers;
 }
 
+// ===== إدارة الأدوار =====
 function listenToRoles(callback) { onValue(ref(db, "global_roles"), (s) => callback(s.val())); }
 async function addRole(nameObj, imageUrl, description) { 
   const newRef = push(ref(db, "global_roles")); 
@@ -236,6 +226,7 @@ async function uploadImageToImgBB(file) {
   return json.data.url;
 }
 
+// ===== نظام الاقتراحات =====
 async function sendSuggestion(playerName, message, roomId) { 
   await push(ref(db, "suggestions"), { 
     playerName: playerName || "لاعب مجهول", 
@@ -254,6 +245,7 @@ async function deleteAllSuggestions() {
   await remove(ref(db, "suggestions")); 
 }
 
+// ===== إحصائيات التحميل =====
 async function incrementDownloadCount() { 
   await runTransaction(ref(db, "stats/downloadCount"), (curr) => curr ? { count: curr.count + 1 } : { count: 1 }); 
 }
@@ -262,6 +254,7 @@ async function getDownloadCount() {
   return s.val()?.count || 0; 
 }
 
+// ===== بيانات الاعتماد =====
 async function getCredentials() { 
   const s = await get(ref(db, "admin_credentials")); 
   return s.val(); 
@@ -278,6 +271,7 @@ async function getPlayer(roomCode, playerId) {
   return s.val(); 
 }
 
+// ===== تصدير كل شيء =====
 export { 
   db, ref, update, remove, get, set, push, onValue, serverTimestamp, runTransaction, child,
   getRoomCode, setRoomCode, clearRoomCode,
