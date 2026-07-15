@@ -47,6 +47,36 @@
       align-items: center; justify-content: center; font-weight: bold; border: 2px solid #000; }
     .role-circle.selected .check-mark { display: flex; }
 
+    /* ===== منطقة عرض وصف الدور (جديدة) ===== */
+    .role-description-box {
+      background: #0d0805;
+      border: 1px solid #d4a017;
+      border-radius: 12px;
+      padding: 12px 15px;
+      margin-top: 15px;
+      min-height: 50px;
+      color: #f0e0c0;
+      font-size: 14px;
+      line-height: 1.7;
+      text-align: right;
+      transition: 0.3s;
+      display: none;
+    }
+    .role-description-box .desc-title {
+      color: #d4a017;
+      font-weight: bold;
+      font-size: 16px;
+      display: block;
+      margin-bottom: 5px;
+    }
+    .role-description-box .desc-text {
+      color: #ccc;
+    }
+    .role-description-box .empty-desc {
+      color: #777;
+      font-style: italic;
+    }
+
     /* ===== عدادات الذئاب والقرويين ===== */
     .counter-group { display: flex; gap: 40px; flex-wrap: wrap; margin: 10px 0; justify-content: center; }
     .counter-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -59,7 +89,7 @@
       transition: 0.3s; }
     .counter-item input:focus { border-color: crimson; outline: none; box-shadow: 0 0 15px rgba(255, 0, 0, 0.3); }
 
-    /* ===== عداد التطابق (جديد) ===== */
+    /* ===== عداد التطابق ===== */
     .match-counter {
       background: #1a1a1a;
       border: 1px solid #555;
@@ -72,36 +102,12 @@
       flex-wrap: wrap;
       gap: 10px;
     }
-    .match-counter .info {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .match-counter .info span {
-      color: #ccc;
-      font-size: 14px;
-    }
-    .match-counter .info .count {
-      color: #f0e0c0;
-      font-weight: bold;
-      font-size: 18px;
-    }
-    .match-counter .status {
-      font-size: 14px;
-      font-weight: bold;
-      padding: 4px 12px;
-      border-radius: 20px;
-    }
-    .match-counter .status.ready {
-      background: #1a4a1a;
-      color: #66bb6a;
-      border: 1px solid #66bb6a;
-    }
-    .match-counter .status.not-ready {
-      background: #6b1a1a;
-      color: #ff6b6b;
-      border: 1px solid #ff6b6b;
-    }
+    .match-counter .info { display: flex; gap: 20px; flex-wrap: wrap; }
+    .match-counter .info span { color: #ccc; font-size: 14px; }
+    .match-counter .info .count { color: #f0e0c0; font-weight: bold; font-size: 18px; }
+    .match-counter .status { font-size: 14px; font-weight: bold; padding: 4px 12px; border-radius: 20px; }
+    .match-counter .status.ready { background: #1a4a1a; color: #66bb6a; border: 1px solid #66bb6a; }
+    .match-counter .status.not-ready { background: #6b1a1a; color: #ff6b6b; border: 1px solid #ff6b6b; }
 
     /* ===== قائمة اللاعبين ===== */
     .player-list { margin-top: 10px; }
@@ -124,6 +130,7 @@
       .match-counter { flex-direction: column; align-items: stretch; gap: 8px; }
       .match-counter .info { justify-content: center; }
       .match-counter .status { text-align: center; }
+      .role-description-box { font-size: 13px; }
     }
     @media (max-width: 400px) {
       .role-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
@@ -149,7 +156,12 @@
         <div id="rolesLoading" style="color:#777; text-align:center;">جاري التحميل...</div>
         <div id="rolesGrid" class="role-grid hidden"></div>
       </div>
-      <p style="color:#777; font-size:12px; margin-top:10px; text-align:center;">اضغط على الصورة لتحديد الدور (✔️)</p>
+      <!-- ===== منطقة عرض الوصف ===== -->
+      <div id="roleDescriptionBox" class="role-description-box">
+        <span class="desc-title" id="descTitle">📖 الوصف:</span>
+        <span class="desc-text" id="descText"></span>
+      </div>
+      <p style="color:#777; font-size:12px; margin-top:10px; text-align:center;">اضغط على الصورة لتحديد الدور (✔️) وسيظهر وصفه هنا</p>
     </div>
 
     <div class="section">
@@ -170,7 +182,7 @@
       </div>
     </div>
 
-    <!-- ===== عداد التطابق (جديد) ===== -->
+    <!-- ===== عداد التطابق ===== -->
     <div class="section">
       <span class="section-title">📊 حالة التجهيز</span>
       <div class="match-counter" id="matchCounter">
@@ -254,8 +266,41 @@
     const roleCountSpan = document.getElementById('roleCount');
     const matchStatus = document.getElementById('matchStatus');
 
+    // ===== عناصر عرض الوصف =====
+    const descBox = document.getElementById('roleDescriptionBox');
+    const descTitle = document.getElementById('descTitle');
+    const descText = document.getElementById('descText');
+
     let selectedRoles = {};
     let currentPlayers = [];
+
+    // ===== دالة عرض الوصف =====
+    function showRoleDescription(role) {
+      if (!role) {
+        descBox.style.display = 'none';
+        return;
+      }
+      const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
+      const lang = getCurrentLang();
+      let description = '';
+      if (role.description) {
+        if (typeof role.description === 'object') {
+          description = role.description[lang] || role.description.ar || role.description.fr || role.description.en || '';
+        } else {
+          description = role.description;
+        }
+      }
+      if (description) {
+        descTitle.textContent = `📖 ${nameAr}:`;
+        descText.textContent = description;
+        descBox.style.display = 'block';
+      } else {
+        // لا يوجد وصف للدور
+        descTitle.textContent = `📖 ${nameAr}:`;
+        descText.textContent = '⚠️ لا يوجد وصف لهذا الدور';
+        descBox.style.display = 'block';
+      }
+    }
 
     // ===== تحديث عداد التطابق =====
     function updateMatchCounter() {
@@ -324,9 +369,27 @@
         circle.addEventListener('click', () => {
           const isSelected = circle.classList.toggle('selected');
           if (isSelected) {
-            selectedRoles[index] = { name: nameAr, imageUrl };
+            selectedRoles[index] = { name: nameAr, imageUrl, description: role.description };
+            // عرض وصف هذا الدور
+            showRoleDescription(role);
           } else {
             delete selectedRoles[index];
+            // بعد إلغاء التحديد، نبحث عن أي دور محدد آخر لعرض وصفه
+            const remaining = Object.values(selectedRoles);
+            if (remaining.length > 0) {
+              // نعرض وصف أول دور متبقي (أو آخر دور تم إضافته)
+              const lastRoleKey = Object.keys(selectedRoles).pop();
+              const lastRoleData = selectedRoles[lastRoleKey];
+              // نبحث عن الدور الكامل من قائمة roles (لأن selectedRoles يحتوي على نسخة مبسطة)
+              const fullRole = roles.find(r => (typeof r.name === 'object' ? r.name.ar : r.name) === lastRoleData.name);
+              if (fullRole) {
+                showRoleDescription(fullRole);
+              } else {
+                descBox.style.display = 'none';
+              }
+            } else {
+              descBox.style.display = 'none';
+            }
           }
           updateMatchCounter();
         });
