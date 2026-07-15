@@ -103,6 +103,49 @@
       text-align: center;
       font-style: italic;
     }
+    /* ===== قسم الإشعارات (يظهر عند وجود بيانات) ===== */
+    .notice-container {
+      margin: 15px 0 10px;
+      text-align: right;
+      display: none; /* مخفي افتراضياً، يظهر بالجافا سكريبت */
+    }
+    .notice-box {
+      background: #2a1a0a;
+      border: 2px solid #d4a017;
+      border-radius: 12px;
+      padding: 15px 20px;
+    }
+    .notice-box h4 {
+      color: #d4a017;
+      margin-bottom: 8px;
+      font-size: 17px;
+    }
+    .notice-box p {
+      color: #ddd;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+    .notice-box .notice-image {
+      text-align: center;
+      margin: 10px 0;
+    }
+    .notice-box .notice-image img {
+      max-width: 100%;
+      border-radius: 8px;
+      border: 1px solid #555;
+    }
+    .notice-box .highlight-yellow {
+      color: #d4a017;
+      font-weight: bold;
+    }
+    .notice-box .tip {
+      font-size: 13px;
+      color: #aaa;
+      margin-top: 10px;
+      text-align: center;
+      font-style: italic;
+    }
     /* تخصيص شريط التمرير */
     .about-modal-content::-webkit-scrollbar {
       width: 6px;
@@ -171,11 +214,22 @@
   <div class="container">
     <h1 id="appName">🐺 لو ڨارو</h1>
     <div class="sub" id="welcome">مرحباً بك في عالم القرويين والذئاب</div>
+
     <div class="btn-group">
       <button class="btn btn-primary" id="hostBtn">👑 أنا الراوي</button>
       <button class="btn btn-primary" id="playerBtn">🎭 أنا اللاعب</button>
     </div>
     <button class="btn-about" id="aboutBtn">📖 عن اللعبة</button>
+
+    <!-- ===== قسم الإشعارات (يتم تعبئته من Firebase) ===== -->
+    <div id="noticeContainer" class="notice-container">
+      <div class="notice-box">
+        <h4 id="noticeTitle">⚠️ تنبيه مهم</h4>
+        <div id="noticeText"></div>
+        <div id="noticeImageContainer" class="notice-image"></div>
+        <div class="tip" id="noticeFooter">💡 نوصي دائماً بتحديث التطبيق إلى أحدث إصدار.</div>
+      </div>
+    </div>
   </div>
 
   <div class="footer-actions">
@@ -205,7 +259,7 @@
       <p id="aboutP3"><span class="highlight">الراوي</span> هو اللاعب الوحيد الذي يمتلك الصلاحية المطلقة في إدارة اللعبة، حيث يمكنه <span class="highlight">قتل</span> أو <span class="highlight">استذئاب</span> أي لاعب.</p>
       <p id="aboutP4">الهدف من هذه اللعبة هو توفير تجربة سلسة وعادلة لجميع اللاعبين، مع الحفاظ على السرية التامة ومنع أي محاولة للغش.</p>
 
-      <!-- ===== النص الجديد (مباشر بدون مفاتيح ترجمة) ===== -->
+      <!-- ===== النص الجديد (طريقة اللعب) ===== -->
       <hr />
       <h4 style="color:#d4a017; margin-bottom:10px; font-size:18px;">📖 كيف تلعب؟ (دليل المبتدئين)</h4>
       
@@ -240,9 +294,50 @@
     import {
       sendSuggestion,
       incrementDownloadCount,
-      getDownloadCount
+      getDownloadCount,
+      get, // ← استيراد دالة get لقراءة البيانات من Firebase
+      ref,
+      db,
+      onValue
     } from "./logic.js";
 
+    // ===== تحميل الإشعارات من Firebase =====
+    async function loadNotice() {
+      const noticeContainer = document.getElementById('noticeContainer');
+      const noticeTextDiv = document.getElementById('noticeText');
+      const noticeImageContainer = document.getElementById('noticeImageContainer');
+
+      try {
+        const snap = await get(ref(db, 'notifications/main'));
+        const data = snap.val();
+        if (data && (data.text || data.imageUrl)) {
+          // عرض الإشعار
+          noticeContainer.style.display = 'block';
+          // النص
+          if (data.text) {
+            // تحويل النص إلى فقرات (كل سطر جديد يتحول إلى <p>)
+            const paragraphs = data.text.split('\n').filter(p => p.trim() !== '');
+            noticeTextDiv.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+          } else {
+            noticeTextDiv.innerHTML = '';
+          }
+          // الصورة
+          if (data.imageUrl) {
+            noticeImageContainer.innerHTML = `<img src="${data.imageUrl}" alt="صورة الإشعار" />`;
+          } else {
+            noticeImageContainer.innerHTML = '';
+          }
+        } else {
+          // لا يوجد إشعار: إخفاء القسم
+          noticeContainer.style.display = 'none';
+        }
+      } catch (e) {
+        console.error('خطأ في تحميل الإشعار:', e);
+        noticeContainer.style.display = 'none';
+      }
+    }
+
+    // ===== ترجمة =====
     function applyTranslations() {
       document.title = t('appName');
       document.getElementById('appName').textContent = `🐺 ${t('appName')}`;
@@ -356,6 +451,12 @@
       }
       window.open(apkUrl, "_blank");
     });
+
+    // ===== تحميل الإشعارات عند بدء الصفحة =====
+    loadNotice();
+
+    // يمكن أيضاً الاستماع للتغييرات اللحظية (إذا أردت التحديث التلقائي)
+    // لكننا نكتفي بالتحميل مرة واحدة عند فتح الصفحة.
   </script>
 </body>
 </html>
