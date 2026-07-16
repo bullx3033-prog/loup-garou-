@@ -288,7 +288,7 @@
       transform: scale(1.2);
     }
 
-    /* ===== نافذة الإشعارات (مودال) ===== */
+    /* ===== معاينة الصور ===== */
     .notice-preview {
       margin-top: 10px;
       text-align: center;
@@ -305,7 +305,7 @@
       padding: 10px;
     }
 
-    /* ===== نافذة التعديل ===== */
+    /* ===== النوافذ المنبثقة ===== */
     .modal {
       display: none;
       position: fixed;
@@ -431,11 +431,18 @@
         </div>
       </div>
 
-      <!-- ===== زر إدارة الإشعارات (يظهر كزر فقط) ===== -->
+      <!-- ===== زر إدارة الإشعارات ===== -->
       <div class="section">
         <span class="section-title">📢 إدارة الإشعارات</span>
         <button class="btn btn-primary" id="openNoticeModalBtn" style="width:auto; padding:12px 20px;">📝 فتح محرر الإشعارات</button>
         <p style="color:#777; font-size:12px; margin-top:5px;">انقر لفتح نافذة تحرير الرسالة والصورة</p>
+      </div>
+
+      <!-- ===== زر إدارة الروابط الاجتماعية (جديد) ===== -->
+      <div class="section">
+        <span class="section-title">🔗 إدارة روابط التواصل الاجتماعي</span>
+        <button class="btn btn-primary" id="openSocialModalBtn" style="width:auto; padding:12px 20px;">📝 تحرير الروابط</button>
+        <p style="color:#777; font-size:12px; margin-top:5px;">أضف روابط حساباتك على منصات التواصل، ستظهر أيقوناتها في الصفحة الرئيسية.</p>
       </div>
 
       <!-- ===== إدارة الأدوار (شبكة دوائر) ===== -->
@@ -480,13 +487,11 @@
     </div>
   </div>
 
-  <!-- ===== نافذة الإشعارات (مودال) ===== -->
+  <!-- ===== نافذة الإشعارات ===== -->
   <div class="modal" id="noticeModal">
     <div class="modal-content">
       <h3 style="color:#d4a017;">📢 تحرير الإشعار</h3>
-      <p style="color:#aaa; font-size:13px; margin-bottom:10px;">
-        هذا الإشعار سيظهر في الصفحة الرئيسية للتطبيق (في الأسفل).
-      </p>
+      <p style="color:#aaa; font-size:13px; margin-bottom:10px;">هذا الإشعار سيظهر في الصفحة الرئيسية للتطبيق (في الأسفل).</p>
       <textarea id="noticeText" rows="6" placeholder="اكتب نص الإشعار هنا..." style="margin-bottom:5px;"></textarea>
       <input type="file" id="noticeImageInput" accept="image/*" />
       <div class="notice-preview" id="noticePreview">
@@ -498,6 +503,30 @@
       </div>
       <p id="noticeStatus" style="color:#7a4e2d; font-size:13px; margin-top:8px; text-align:center;"></p>
       <button class="btn" id="closeNoticeModal" style="margin-top:8px;">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- ===== نافذة الروابط الاجتماعية (جديدة) ===== -->
+  <div class="modal" id="socialModal">
+    <div class="modal-content">
+      <h3 style="color:#d4a017;">🔗 روابط التواصل الاجتماعي</h3>
+      <p style="color:#aaa; font-size:13px; margin-bottom:10px;">أدخل روابط حساباتك على المنصات التالية (اتركها فارغة إذا لا تريد ظهورها).</p>
+      
+      <input type="url" id="socialFacebook" placeholder="رابط فيسبوك (Facebook)" style="margin-bottom:5px;" />
+      <input type="url" id="socialInstagram" placeholder="رابط إنستغرام (Instagram)" style="margin-bottom:5px;" />
+      <input type="url" id="socialTwitter" placeholder="رابط إكس (X / Twitter)" style="margin-bottom:5px;" />
+      <input type="url" id="socialTiktok" placeholder="رابط تيك توك (TikTok)" style="margin-bottom:5px;" />
+      <input type="url" id="socialYoutube" placeholder="رابط يوتيوب (YouTube)" style="margin-bottom:5px;" />
+      <input type="url" id="socialWhatsapp" placeholder="رابط واتساب (WhatsApp)" style="margin-bottom:5px;" />
+      <input type="url" id="socialLinkedin" placeholder="رابط لينكد إن (LinkedIn)" style="margin-bottom:5px;" />
+      <input type="url" id="socialSnapchat" placeholder="رابط سناب شات (Snapchat)" style="margin-bottom:5px;" />
+      
+      <div class="flex" style="margin-top:10px;">
+        <button class="btn btn-success" id="saveSocialBtn">💾 حفظ الروابط</button>
+        <button class="btn btn-danger" id="deleteSocialBtn">🗑️ حذف الكل</button>
+      </div>
+      <p id="socialStatus" style="color:#7a4e2d; font-size:13px; margin-top:8px; text-align:center;"></p>
+      <button class="btn" id="closeSocialModal" style="margin-top:8px;">إغلاق</button>
     </div>
   </div>
 
@@ -563,6 +592,25 @@
     const saveNoticeBtn = document.getElementById('saveNoticeBtn');
     const deleteNoticeBtn = document.getElementById('deleteNoticeBtn');
     const noticeStatus = document.getElementById('noticeStatus');
+
+    // ===== عناصر الروابط الاجتماعية (جديدة) =====
+    const socialModal = document.getElementById('socialModal');
+    const openSocialModalBtn = document.getElementById('openSocialModalBtn');
+    const closeSocialModal = document.getElementById('closeSocialModal');
+    const saveSocialBtn = document.getElementById('saveSocialBtn');
+    const deleteSocialBtn = document.getElementById('deleteSocialBtn');
+    const socialStatus = document.getElementById('socialStatus');
+
+    const socialFields = {
+      facebook: document.getElementById('socialFacebook'),
+      instagram: document.getElementById('socialInstagram'),
+      twitter: document.getElementById('socialTwitter'),
+      tiktok: document.getElementById('socialTiktok'),
+      youtube: document.getElementById('socialYoutube'),
+      whatsapp: document.getElementById('socialWhatsapp'),
+      linkedin: document.getElementById('socialLinkedin'),
+      snapchat: document.getElementById('socialSnapchat')
+    };
 
     const suggestionsList = document.getElementById('suggestionsList');
     const suggestCounter = document.getElementById('suggestCounter');
@@ -652,6 +700,54 @@
       } catch (e) {
         noticeStatus.textContent = '❌ خطأ: ' + e.message;
         noticeStatus.style.color = '#e74c3c';
+      }
+    }
+
+    // ===== تحميل الروابط الاجتماعية (جديدة) =====
+    async function loadSocialLinks() {
+      try {
+        const snap = await get(ref(db, 'social_links'));
+        const data = snap.val() || {};
+        for (const [key, field] of Object.entries(socialFields)) {
+          field.value = data[key] || '';
+        }
+      } catch (e) {
+        console.error('خطأ في تحميل الروابط:', e);
+      }
+    }
+
+    // ===== حفظ الروابط الاجتماعية (جديدة) =====
+    async function saveSocialLinks() {
+      const data = {};
+      for (const [key, field] of Object.entries(socialFields)) {
+        const val = field.value.trim();
+        if (val) data[key] = val;
+      }
+      try {
+        await set(ref(db, 'social_links'), data);
+        socialStatus.textContent = '✅ تم حفظ الروابط بنجاح!';
+        socialStatus.style.color = '#2ecc71';
+        setTimeout(() => { socialStatus.textContent = ''; }, 3000);
+      } catch (e) {
+        socialStatus.textContent = '❌ خطأ: ' + e.message;
+        socialStatus.style.color = '#e74c3c';
+      }
+    }
+
+    // ===== حذف الروابط الاجتماعية (جديدة) =====
+    async function deleteSocialLinks() {
+      if (!confirm('⚠️ هل أنت متأكد من حذف جميع الروابط؟')) return;
+      try {
+        await remove(ref(db, 'social_links'));
+        for (const field of Object.values(socialFields)) {
+          field.value = '';
+        }
+        socialStatus.textContent = '🗑️ تم حذف جميع الروابط';
+        socialStatus.style.color = '#e74c3c';
+        setTimeout(() => { socialStatus.textContent = ''; }, 3000);
+      } catch (e) {
+        socialStatus.textContent = '❌ خطأ: ' + e.message;
+        socialStatus.style.color = '#e74c3c';
       }
     }
 
@@ -754,7 +850,7 @@
       }
     });
 
-    // ===== أحداث الإشعارات (مودال) =====
+    // ===== أحداث الإشعارات =====
     openNoticeModalBtn.addEventListener('click', () => {
       noticeModal.style.display = 'flex';
       loadNotice();
@@ -777,6 +873,20 @@
         reader.readAsDataURL(file);
       }
     });
+
+    // ===== أحداث الروابط الاجتماعية (جديدة) =====
+    openSocialModalBtn.addEventListener('click', () => {
+      socialModal.style.display = 'flex';
+      loadSocialLinks();
+    });
+    closeSocialModal.addEventListener('click', () => {
+      socialModal.style.display = 'none';
+    });
+    window.addEventListener('click', (e) => {
+      if (e.target === socialModal) socialModal.style.display = 'none';
+    });
+    saveSocialBtn.addEventListener('click', saveSocialLinks);
+    deleteSocialBtn.addEventListener('click', deleteSocialLinks);
 
     // ===== إدارة الأدوار =====
     let rolesData = {};
