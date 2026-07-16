@@ -151,7 +151,7 @@
       height: 24px;
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     }
-    /* تحسين خاص لأيقونة تويتر (سوداء على خلفية داكنة) */
+    /* تحسين خاص لأيقونة تويتر */
     #socialIcons a[href*="twitter"] svg,
     #socialIcons a[href*="x.com"] svg {
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)) brightness(1.2);
@@ -209,6 +209,50 @@
       margin-top: 10px;
       text-align: center;
       font-style: italic;
+    }
+
+    /* ===== نافذة QR Code ===== */
+    .qr-modal-content {
+      text-align: center;
+      max-width: 400px;
+    }
+    .qr-modal-content .qr-image {
+      margin: 15px 0;
+    }
+    .qr-modal-content .qr-image img {
+      max-width: 100%;
+      border-radius: 12px;
+      border: 2px solid #555;
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.15);
+    }
+    .qr-modal-content .qr-message {
+      color: #ddd;
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 15px;
+      text-align: right;
+    }
+    .qr-modal-content .qr-message strong {
+      color: #d4a017;
+    }
+    .qr-modal-content .btn-download {
+      background: #1a4a1a;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      box-shadow: 0 0 15px rgba(26, 74, 26, 0.3);
+    }
+    .qr-modal-content .btn-download:hover {
+      background: #2e7d32;
+      box-shadow: 0 0 25px #2e7d32;
+      transform: scale(1.02);
     }
 
     /* تخصيص شريط التمرير */
@@ -300,6 +344,8 @@
   <div class="footer-actions">
     <button class="btn btn-suggest" id="suggestBtn">💬 اقتراحات للمطور</button>
     <button class="btn btn-install" id="installBtn">📲 تحميل التطبيق (APK)</button>
+    <!-- ===== زر QR Code (جديد) ===== -->
+    <button class="btn btn-primary" id="qrBtn" style="background:#2c2c2c; border:1px solid #d4a017; margin-top:8px;">📷 مسح QR Code</button>
     <div class="download-count" id="downloadCounter">عدد مرات التحميل: 0</div>
   </div>
 
@@ -361,6 +407,28 @@
       </div>
 
       <button class="btn btn-danger btn-close-about" id="closeAboutBtn">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- ===== نافذة QR Code (جديدة) ===== -->
+  <div class="modal" id="qrModal">
+    <div class="modal-content qr-modal-content">
+      <h3 style="color:#d4a017;">📷 رمز الاستجابة السريعة (QR Code)</h3>
+      <div class="qr-message">
+        <p>
+          <strong>📌 وصول سريع إلى اللعبة:</strong><br />
+          يمكن للاعبين الجدد الانضمام إلى عالم <strong>"لو ڨارو"</strong> بمجرد مسح هذا الرمز بكاميرا هواتفهم،
+          دون الحاجة إلى نسخ الروابط أو الانتظار حتى يرسلها أحدهم عبر وسائل التواصل.
+        </p>
+        <p style="margin-top:8px;">
+          💡 <em>شارك هذا الرمز مع أصدقائك ليتمكنوا من الدخول إلى اللعبة بكل سهولة ويُسر، واستمتعوا بأجمل الأوقات!</em>
+        </p>
+      </div>
+      <div class="qr-image">
+        <img src="https://i.postimg.cc/DZc6JyFc/qrcode-600-(1).png" alt="QR Code للعبة لو ڨارو" />
+      </div>
+      <button class="btn-download" id="downloadQrBtn">📥 تحميل الصورة</button>
+      <button class="btn" id="closeQrModal" style="margin-top:8px;">إغلاق</button>
     </div>
   </div>
 
@@ -455,6 +523,7 @@
       document.getElementById('aboutBtn').textContent = `📖 ${t('aboutGame')}`;
       document.getElementById('suggestBtn').textContent = `💬 ${t('suggestions')}`;
       document.getElementById('installBtn').textContent = `📲 ${t('downloadApk')}`;
+      document.getElementById('qrBtn').textContent = `📷 ${t('qrCode') || 'مسح QR Code'}`;
       document.getElementById('suggestTitle').textContent = `📢 ${t('shareIdea')}`;
       document.getElementById('suggestDesc').textContent = t('shareDesc');
       document.getElementById('suggestName').placeholder = t('yourName');
@@ -540,6 +609,33 @@
     });
     window.addEventListener("click", (e) => {
       if (e.target === aboutModal) aboutModal.style.display = "none";
+    });
+
+    // ===== QR Code =====
+    const qrModal = document.getElementById('qrModal');
+    const qrBtn = document.getElementById('qrBtn');
+    const closeQrModal = document.getElementById('closeQrModal');
+    const downloadQrBtn = document.getElementById('downloadQrBtn');
+
+    qrBtn.addEventListener('click', () => {
+      qrModal.style.display = 'flex';
+    });
+
+    closeQrModal.addEventListener('click', () => {
+      qrModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === qrModal) qrModal.style.display = 'none';
+    });
+
+    downloadQrBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.href = 'https://i.postimg.cc/DZc6JyFc/qrcode-600-(1).png';
+      link.download = 'qrcode-lougarou.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     });
 
     // ===== عداد التحميلات =====
