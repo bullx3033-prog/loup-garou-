@@ -47,7 +47,7 @@
       align-items: center; justify-content: center; font-weight: bold; border: 2px solid #000; }
     .role-circle.selected .check-mark { display: flex; }
 
-    /* ===== منطقة عرض وصف الدور (جديدة) ===== */
+    /* ===== منطقة عرض وصف الدور ===== */
     .role-description-box {
       background: #0d0805;
       border: 1px solid #d4a017;
@@ -62,20 +62,9 @@
       transition: 0.3s;
       display: none;
     }
-    .role-description-box .desc-title {
-      color: #d4a017;
-      font-weight: bold;
-      font-size: 16px;
-      display: block;
-      margin-bottom: 5px;
-    }
-    .role-description-box .desc-text {
-      color: #ccc;
-    }
-    .role-description-box .empty-desc {
-      color: #777;
-      font-style: italic;
-    }
+    .role-description-box .desc-title { color: #d4a017; font-weight: bold; font-size: 16px; display: block; margin-bottom: 5px; }
+    .role-description-box .desc-text { color: #ccc; }
+    .role-description-box .empty-desc { color: #777; font-style: italic; }
 
     /* ===== عدادات الذئاب والقرويين ===== */
     .counter-group { display: flex; gap: 40px; flex-wrap: wrap; margin: 10px 0; justify-content: center; }
@@ -147,25 +136,24 @@
     <h2 id="hostTitle">🐺 لو ڨارو - الراوي</h2>
 
     <div class="room-code-display">
-      <span>🔑 رمز الغرفة:</span> <span id="roomCodeValue">---</span>
+      <span id="roomCodeLabel"></span> <span id="roomCodeValue">---</span>
     </div>
 
     <div class="section">
-      <span class="section-title">🃏 اختر الأدوار الإضافية</span>
+      <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية</span>
       <div id="rolesGridContainer">
         <div id="rolesLoading" style="color:#777; text-align:center;">جاري التحميل...</div>
         <div id="rolesGrid" class="role-grid hidden"></div>
       </div>
-      <!-- ===== منطقة عرض الوصف ===== -->
       <div id="roleDescriptionBox" class="role-description-box">
         <span class="desc-title" id="descTitle">📖 الوصف:</span>
         <span class="desc-text" id="descText"></span>
       </div>
-      <p style="color:#777; font-size:12px; margin-top:10px; text-align:center;">اضغط على الصورة لتحديد الدور (✔️) وسيظهر وصفه هنا</p>
+      <p id="clickHint" style="color:#777; font-size:12px; margin-top:10px; text-align:center;">اضغط على الصورة لتحديد الدور (✔️) وسيظهر وصفه هنا</p>
     </div>
 
     <div class="section">
-      <span class="section-title">⚙️ إعدادات الغرفة</span>
+      <span class="section-title" id="roomSettingsTitle">⚙️ إعدادات الغرفة</span>
       <div class="counter-group">
         <div class="counter-item">
           <div class="counter-circle">
@@ -184,20 +172,20 @@
 
     <!-- ===== عداد التطابق ===== -->
     <div class="section">
-      <span class="section-title">📊 حالة التجهيز</span>
+      <span class="section-title" id="readyStatusTitle">📊 حالة التجهيز</span>
       <div class="match-counter" id="matchCounter">
         <div class="info">
-          <span>👥 اللاعبون: <span class="count" id="playerCount">0</span></span>
-          <span>🃏 الأدوار: <span class="count" id="roleCount">0</span></span>
+          <span id="playersLabel"></span> <span class="count" id="playerCount">0</span>
+          <span id="rolesLabel"></span> <span class="count" id="roleCount">0</span>
         </div>
         <div class="status not-ready" id="matchStatus">⛔ غير متطابق</div>
       </div>
     </div>
 
     <div class="section">
-      <span class="section-title">👥 اللاعبون في الغرفة</span>
+      <span class="section-title" id="playersTitle">👥 اللاعبون في الغرفة</span>
       <div id="playersList" class="player-list">
-        <p style="color:#777; text-align:center;">لا يوجد لاعبون بعد</p>
+        <p id="noPlayersMsg" style="color:#777; text-align:center;">لا يوجد لاعبون بعد</p>
       </div>
       <div class="flex" style="margin-top:10px;">
         <button class="btn btn-secondary" id="backBtn">🔙 رجوع</button>
@@ -229,6 +217,15 @@
       document.getElementById('refreshBtn').textContent = '🔄 ' + t('refresh');
       document.getElementById('startGameBtn').textContent = '🚀 ' + t('startGame');
       document.getElementById('backBtn').textContent = '🔙 ' + t('back');
+      document.getElementById('extraRolesTitle').textContent = '🃏 ' + t('chooseExtraRoles');
+      document.getElementById('roomSettingsTitle').textContent = t('roomSettings');
+      document.getElementById('playersTitle').textContent = '👥 ' + t('playersInRoom');
+      document.getElementById('roomCodeLabel').textContent = t('roomCodeLabel');
+      document.getElementById('clickHint').textContent = t('clickToSelectRole');
+      document.getElementById('readyStatusTitle').textContent = t('readyStatus');
+      document.getElementById('playersLabel').innerHTML = t('playersLabel');
+      document.getElementById('rolesLabel').innerHTML = t('rolesLabel');
+      document.getElementById('noPlayersMsg').textContent = t('noPlayersYet');
 
       const lang = getCurrentLang();
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
@@ -266,7 +263,6 @@
     const roleCountSpan = document.getElementById('roleCount');
     const matchStatus = document.getElementById('matchStatus');
 
-    // ===== عناصر عرض الوصف =====
     const descBox = document.getElementById('roleDescriptionBox');
     const descTitle = document.getElementById('descTitle');
     const descText = document.getElementById('descText');
@@ -274,7 +270,6 @@
     let selectedRoles = {};
     let currentPlayers = [];
 
-    // ===== دالة عرض الوصف =====
     function showRoleDescription(role) {
       if (!role) {
         descBox.style.display = 'none';
@@ -295,14 +290,12 @@
         descText.textContent = description;
         descBox.style.display = 'block';
       } else {
-        // لا يوجد وصف للدور
         descTitle.textContent = `📖 ${nameAr}:`;
         descText.textContent = '⚠️ لا يوجد وصف لهذا الدور';
         descBox.style.display = 'block';
       }
     }
 
-    // ===== تحديث عداد التطابق =====
     function updateMatchCounter() {
       const wolves = parseInt(wolvesInput.value) || 0;
       const villagers = parseInt(villagersInput.value) || 0;
@@ -314,15 +307,14 @@
       roleCountSpan.textContent = totalRoles;
 
       if (playerCount === totalRoles && playerCount > 0) {
-        matchStatus.textContent = '✅ جاهز!';
+        matchStatus.textContent = t('ready');
         matchStatus.className = 'status ready';
       } else {
-        matchStatus.textContent = `⛔ غير متطابق (${playerCount} / ${totalRoles})`;
+        matchStatus.textContent = t('notMatched') + ` (${playerCount} / ${totalRoles})`;
         matchStatus.className = 'status not-ready';
       }
     }
 
-    // ===== تحميل الأدوار =====
     async function loadRoles() {
       try {
         const snap = await get(ref(db, 'global_roles'));
@@ -370,23 +362,16 @@
           const isSelected = circle.classList.toggle('selected');
           if (isSelected) {
             selectedRoles[index] = { name: nameAr, imageUrl, description: role.description };
-            // عرض وصف هذا الدور
             showRoleDescription(role);
           } else {
             delete selectedRoles[index];
-            // بعد إلغاء التحديد، نبحث عن أي دور محدد آخر لعرض وصفه
             const remaining = Object.values(selectedRoles);
             if (remaining.length > 0) {
-              // نعرض وصف أول دور متبقي (أو آخر دور تم إضافته)
               const lastRoleKey = Object.keys(selectedRoles).pop();
               const lastRoleData = selectedRoles[lastRoleKey];
-              // نبحث عن الدور الكامل من قائمة roles (لأن selectedRoles يحتوي على نسخة مبسطة)
               const fullRole = roles.find(r => (typeof r.name === 'object' ? r.name.ar : r.name) === lastRoleData.name);
-              if (fullRole) {
-                showRoleDescription(fullRole);
-              } else {
-                descBox.style.display = 'none';
-              }
+              if (fullRole) showRoleDescription(fullRole);
+              else descBox.style.display = 'none';
             } else {
               descBox.style.display = 'none';
             }
@@ -398,10 +383,9 @@
       });
     }
 
-    // ===== عرض اللاعبين =====
     function renderPlayers(playersData) {
       if (!playersData || Object.keys(playersData).length === 0) {
-        playersList.innerHTML = `<p style="color:#777; text-align:center;">لا يوجد لاعبون</p>`;
+        playersList.innerHTML = `<p style="color:#777; text-align:center;">${t('noPlayersYet')}</p>`;
         currentPlayers = [];
         updateMatchCounter();
         return;
@@ -424,11 +408,9 @@
       renderPlayers(data);
     });
 
-    // ===== مستمعي التغيير على حقول الذئاب والقرويين =====
     wolvesInput.addEventListener('input', updateMatchCounter);
     villagersInput.addEventListener('input', updateMatchCounter);
 
-    // ===== بدء اللعبة =====
     startBtn.addEventListener('click', async () => {
       const wolves = parseInt(wolvesInput.value) || 0;
       const villagers = parseInt(villagersInput.value) || 0;
@@ -458,7 +440,6 @@
       }
     });
 
-    // ===== خروج =====
     exitBtn.addEventListener('click', async () => {
       if (confirm('هل أنت متأكد من الخروج؟ سيتم حذف الغرفة.')) {
         await deleteRoom(roomCode);
@@ -467,15 +448,12 @@
       }
     });
 
-    // ===== رجوع =====
     backBtn.addEventListener('click', () => {
       window.location.href = 'index.html';
     });
 
-    // ===== تحديث =====
     refreshBtn.addEventListener('click', loadRoles);
 
-    // ===== تحميل الأدوار =====
     await loadRoles();
     updateMatchCounter();
 
