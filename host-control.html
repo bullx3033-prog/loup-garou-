@@ -6,7 +6,6 @@
   <title>لو ڨارو - تحكم الراوي</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <style>
-    /* ===== جميع الأنماط السابقة ===== */
     *[class*="discord"], *[id*="discord"] { display: none !important; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -96,10 +95,7 @@
       font-size: 16px;
       box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
     }
-    #exitBtn:hover {
-      background: #8b0000;
-      box-shadow: 0 0 25px #8b0000;
-    }
+    #exitBtn:hover { background: #8b0000; box-shadow: 0 0 25px #8b0000; }
     .infected-badge {
       background: #6b1a1a;
       color: #ff6b6b;
@@ -130,101 +126,27 @@
       min-height: 38px;
       height: 38px;
     }
-    .player-card:hover {
-      border-color: crimson;
-      box-shadow: 0 0 8px rgba(255, 0, 0, 0.2);
-    }
-    .player-card.dead {
-      opacity: 0.4;
-      border-color: #555;
-      background: #111;
-    }
-    .player-card .info {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex: 1;
-      min-width: 0;
-      height: 100%;
-    }
-    .player-card .avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: 2px solid crimson;
-      object-fit: cover;
-      background: #0d0805;
-      flex-shrink: 0;
-    }
-    .player-card .details {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .player-card .details .name {
-      font-size: 14px;
-      color: #f2f2f2;
-      font-weight: 700;
-    }
-    .player-card .details .role {
-      font-size: 11px;
-      color: #aaa;
-    }
-    .player-card .details .role strong {
-      color: #fff;
-    }
-
-    .player-card .actions {
-      display: flex;
-      gap: 4px;
-      flex-shrink: 0;
-    }
+    .player-card:hover { border-color: crimson; box-shadow: 0 0 8px rgba(255, 0, 0, 0.2); }
+    .player-card.dead { opacity: 0.4; border-color: #555; background: #111; }
+    .player-card .info { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; height: 100%; }
+    .player-card .avatar { width: 28px; height: 28px; border-radius: 50%; border: 2px solid crimson; object-fit: cover; background: #0d0805; flex-shrink: 0; }
+    .player-card .details { display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .player-card .details .name { font-size: 14px; color: #f2f2f2; font-weight: 700; }
+    .player-card .details .role { font-size: 11px; color: #aaa; }
+    .player-card .details .role strong { color: #fff; }
+    .player-card .actions { display: flex; gap: 4px; flex-shrink: 0; }
     .player-card .actions button {
-      padding: 2px 8px;
-      border: none;
-      border-radius: 4px;
-      font-family: 'Cinzel', serif;
-      font-weight: bold;
-      font-size: 10px;
-      cursor: pointer;
-      transition: 0.3s;
-      background: #2c2c2c;
-      color: #fff;
-      white-space: nowrap;
-      height: 24px;
-      line-height: 1;
+      padding: 2px 8px; border: none; border-radius: 4px; font-family: 'Cinzel', serif; font-weight: bold;
+      font-size: 10px; cursor: pointer; transition: 0.3s; background: #2c2c2c; color: #fff;
+      white-space: nowrap; height: 24px; line-height: 1;
     }
-    .player-card .actions button:hover:not(:disabled) {
-      transform: scale(1.05);
-    }
-    .player-card .actions .kill {
-      background: #6b1a1a;
-      color: #fff;
-    }
-    .player-card .actions .kill:hover:not(:disabled) {
-      background: #8b0000;
-      box-shadow: 0 0 12px #8b0000;
-    }
-    .player-card .actions .infect {
-      background: #1a4a1a;
-      color: #fff;
-    }
-    .player-card .actions .infect:hover:not(:disabled) {
-      background: #2e7d32;
-      box-shadow: 0 0 12px #2e7d32;
-    }
-    .player-card .actions button:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-      transform: none !important;
-    }
-    .player-card.dead .actions button {
-      opacity: 0.3;
-      pointer-events: none;
-    }
+    .player-card .actions button:hover:not(:disabled) { transform: scale(1.05); }
+    .player-card .actions .kill { background: #6b1a1a; color: #fff; }
+    .player-card .actions .kill:hover:not(:disabled) { background: #8b0000; box-shadow: 0 0 12px #8b0000; }
+    .player-card .actions .infect { background: #1a4a1a; color: #fff; }
+    .player-card .actions .infect:hover:not(:disabled) { background: #2e7d32; box-shadow: 0 0 12px #2e7d32; }
+    .player-card .actions button:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
+    .player-card.dead .actions button { opacity: 0.3; pointer-events: none; }
 
     @media (max-width: 500px) {
       .player-card { height: auto; min-height: 44px; padding: 6px 8px; flex-wrap: wrap; gap: 4px; }
@@ -314,10 +236,8 @@
       fetchPlayers();
     };
 
-    // ===== دالة التحويل مع التأكيد =====
     window.infectPlayer = (id, playerName) => {
-      // عرض رسالة تأكيد
-      const confirmMessage = `⚠️ هل أنت متأكد من تحويل "${playerName || 'هذا اللاعب'}" إلى مستذئب؟\nهذا الإجراء لا يمكن التراجع عنه!`;
+      const confirmMessage = `⚠️ ${t('confirmInfect')} "${playerName || t('unknown')}"؟\n${t('irreversible')}`;
       if (confirm(confirmMessage)) {
         infectPlayer(roomCode, id);
         fetchPlayers();
@@ -335,7 +255,6 @@
       const entries = Object.entries(data);
       statusDisplay.textContent = `✅ ${entries.length} ${t('playersInRoom')}`;
 
-      // التحقق من وجود لاعب مصاب حي
       const infectedPlayer = entries.find(([id, p]) => p.isInfected && !p.isDead);
 
       entries.forEach(([id, player]) => {
@@ -354,7 +273,7 @@
             <img src="${avatarUrl}" class="avatar" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
             <div class="details">
               <span class="name">${player.name} ${infectedBadge}</span>
-              <span class="role">${t('role')}: <strong>${roleDisplay}</strong></span>
+              <span class="role">${t('role')} <strong>${roleDisplay}</strong></span>
             </div>
           </div>
           <div class="actions">
@@ -366,17 +285,14 @@
         const killBtn = card.querySelector('.kill');
         const infectBtn = card.querySelector('.infect');
 
-        // ===== زر القتل =====
         killBtn.addEventListener('click', () => {
           window.killPlayer(id);
         });
 
-        // ===== زر التحويل مع التأكيد =====
         infectBtn.addEventListener('click', () => {
           window.infectPlayer(id, player.name);
         });
 
-        // ===== تعطيل زر التحويل إذا كان هناك لاعب مصاب بالفعل =====
         if (infectedPlayer && infectedPlayer[0] !== id) {
           infectBtn.disabled = true;
         }
