@@ -434,15 +434,15 @@
       <!-- ===== زر إدارة الإشعارات ===== -->
       <div class="section">
         <span class="section-title">📢 إدارة الإشعارات</span>
-        <button class="btn btn-primary" id="openNoticeModalBtn" style="width:auto; padding:12px 20px;">📝 فتح محرر الإشعارات</button>
-        <p style="color:#777; font-size:12px; margin-top:5px;">انقر لفتح نافذة تحرير الرسالة والصورة</p>
+        <button class="btn btn-primary" id="openNoticeModalBtn" style="width:auto; padding:12px 20px;"></button>
+        <p id="noticeHint" style="color:#777; font-size:12px; margin-top:5px;">انقر لفتح نافذة تحرير الرسالة والصورة</p>
       </div>
 
-      <!-- ===== زر إدارة الروابط الاجتماعية (جديد) ===== -->
+      <!-- ===== زر إدارة الروابط الاجتماعية ===== -->
       <div class="section">
         <span class="section-title">🔗 إدارة روابط التواصل الاجتماعي</span>
-        <button class="btn btn-primary" id="openSocialModalBtn" style="width:auto; padding:12px 20px;">📝 تحرير الروابط</button>
-        <p style="color:#777; font-size:12px; margin-top:5px;">أضف روابط حساباتك على منصات التواصل، ستظهر أيقوناتها في الصفحة الرئيسية.</p>
+        <button class="btn btn-primary" id="openSocialModalBtn" style="width:auto; padding:12px 20px;"></button>
+        <p id="socialHint" style="color:#777; font-size:12px; margin-top:5px;">أضف روابط حساباتك على منصات التواصل، ستظهر أيقوناتها في الصفحة الرئيسية.</p>
       </div>
 
       <!-- ===== إدارة الأدوار (شبكة دوائر) ===== -->
@@ -450,7 +450,7 @@
         <span class="section-title" id="manageRolesTitle">🃏 إدارة الأدوار</span>
         <div class="toolbar">
           <span class="count-badge" id="rolesCounter">عدد الأدوار: 0</span>
-          <button class="btn btn-primary" id="addRoleBtn" style="width:auto; padding:8px 16px;">➕ إضافة</button>
+          <button class="btn btn-primary" id="addRoleBtn" style="width:auto; padding:8px 16px;"></button>
         </div>
         <div id="rolesGrid" class="role-grid"></div>
       </div>
@@ -460,7 +460,7 @@
         <span class="section-title" id="suggestionsListTitle">📬 اقتراحات اللاعبين</span>
         <div class="toolbar">
           <span class="count-badge" id="suggestCounter">عدد الاقتراحات: 0</span>
-          <button class="btn btn-danger" id="deleteAllSuggestBtn" style="width:auto; padding:8px 16px;">🗑️ حذف الكل</button>
+          <button class="btn btn-danger" id="deleteAllSuggestBtn" style="width:auto; padding:8px 16px;"></button>
         </div>
         <div id="suggestionsList"></div>
       </div>
@@ -490,8 +490,8 @@
   <!-- ===== نافذة الإشعارات ===== -->
   <div class="modal" id="noticeModal">
     <div class="modal-content">
-      <h3 style="color:#d4a017;">📢 تحرير الإشعار</h3>
-      <p style="color:#aaa; font-size:13px; margin-bottom:10px;">هذا الإشعار سيظهر في الصفحة الرئيسية للتطبيق (في الأسفل).</p>
+      <h3 id="noticeModalTitle" style="color:#d4a017;">📢 تحرير الإشعار</h3>
+      <p id="noticeModalHint" style="color:#aaa; font-size:13px; margin-bottom:10px;">هذا الإشعار سيظهر في الصفحة الرئيسية للتطبيق (في الأسفل).</p>
       <textarea id="noticeText" rows="6" placeholder="اكتب نص الإشعار هنا..." style="margin-bottom:5px;"></textarea>
       <input type="file" id="noticeImageInput" accept="image/*" />
       <div class="notice-preview" id="noticePreview">
@@ -506,11 +506,11 @@
     </div>
   </div>
 
-  <!-- ===== نافذة الروابط الاجتماعية (جديدة) ===== -->
+  <!-- ===== نافذة الروابط الاجتماعية ===== -->
   <div class="modal" id="socialModal">
     <div class="modal-content">
-      <h3 style="color:#d4a017;">🔗 روابط التواصل الاجتماعي</h3>
-      <p style="color:#aaa; font-size:13px; margin-bottom:10px;">أدخل روابط حساباتك على المنصات التالية (اتركها فارغة إذا لا تريد ظهورها).</p>
+      <h3 id="socialModalTitle" style="color:#d4a017;">🔗 روابط التواصل الاجتماعي</h3>
+      <p id="socialModalHint" style="color:#aaa; font-size:13px; margin-bottom:10px;">أدخل روابط حساباتك على المنصات التالية (اتركها فارغة إذا لا تريد ظهورها).</p>
       
       <input type="url" id="socialFacebook" placeholder="رابط فيسبوك (Facebook)" style="margin-bottom:5px;" />
       <input type="url" id="socialInstagram" placeholder="رابط إنستغرام (Instagram)" style="margin-bottom:5px;" />
@@ -592,14 +592,18 @@
     const saveNoticeBtn = document.getElementById('saveNoticeBtn');
     const deleteNoticeBtn = document.getElementById('deleteNoticeBtn');
     const noticeStatus = document.getElementById('noticeStatus');
+    const noticeModalTitle = document.getElementById('noticeModalTitle');
+    const noticeModalHint = document.getElementById('noticeModalHint');
 
-    // ===== عناصر الروابط الاجتماعية (جديدة) =====
+    // ===== عناصر الروابط الاجتماعية =====
     const socialModal = document.getElementById('socialModal');
     const openSocialModalBtn = document.getElementById('openSocialModalBtn');
     const closeSocialModal = document.getElementById('closeSocialModal');
     const saveSocialBtn = document.getElementById('saveSocialBtn');
     const deleteSocialBtn = document.getElementById('deleteSocialBtn');
     const socialStatus = document.getElementById('socialStatus');
+    const socialModalTitle = document.getElementById('socialModalTitle');
+    const socialModalHint = document.getElementById('socialModalHint');
 
     const socialFields = {
       facebook: document.getElementById('socialFacebook'),
@@ -672,7 +676,7 @@
           imageUrl: imageUrl,
           updatedAt: serverTimestamp()
         });
-        noticeStatus.textContent = '✅ تم حفظ الإشعار بنجاح!';
+        noticeStatus.textContent = '✅ ' + t('updateSuccess');
         noticeStatus.style.color = '#2ecc71';
         if (imageUrl) {
           noticePreview.innerHTML = `<img src="${imageUrl}" alt="صورة الإشعار" />`;
@@ -682,28 +686,28 @@
         noticeImageInput.value = '';
         setTimeout(() => { noticeStatus.textContent = ''; }, 3000);
       } catch (e) {
-        noticeStatus.textContent = '❌ خطأ: ' + e.message;
+        noticeStatus.textContent = '❌ ' + t('errorOccurred') + ': ' + e.message;
         noticeStatus.style.color = '#e74c3c';
       }
     }
 
     // ===== حذف الإشعار =====
     async function deleteNotice() {
-      if (!confirm('⚠️ هل أنت متأكد من حذف الإشعار؟')) return;
+      if (!confirm(t('deleteAllConfirm'))) return;
       try {
         await remove(ref(db, 'notifications/main'));
         noticeText.value = '';
         noticePreview.innerHTML = `<div class="empty">📷 لا توجد صورة مرفوعة</div>`;
-        noticeStatus.textContent = '🗑️ تم حذف الإشعار';
+        noticeStatus.textContent = '🗑️ ' + t('deleteAll');
         noticeStatus.style.color = '#e74c3c';
         setTimeout(() => { noticeStatus.textContent = ''; }, 3000);
       } catch (e) {
-        noticeStatus.textContent = '❌ خطأ: ' + e.message;
+        noticeStatus.textContent = '❌ ' + t('errorOccurred') + ': ' + e.message;
         noticeStatus.style.color = '#e74c3c';
       }
     }
 
-    // ===== تحميل الروابط الاجتماعية (جديدة) =====
+    // ===== تحميل الروابط الاجتماعية =====
     async function loadSocialLinks() {
       try {
         const snap = await get(ref(db, 'social_links'));
@@ -716,7 +720,7 @@
       }
     }
 
-    // ===== حفظ الروابط الاجتماعية (جديدة) =====
+    // ===== حفظ الروابط الاجتماعية =====
     async function saveSocialLinks() {
       const data = {};
       for (const [key, field] of Object.entries(socialFields)) {
@@ -725,28 +729,28 @@
       }
       try {
         await set(ref(db, 'social_links'), data);
-        socialStatus.textContent = '✅ تم حفظ الروابط بنجاح!';
+        socialStatus.textContent = '✅ ' + t('updateSuccess');
         socialStatus.style.color = '#2ecc71';
         setTimeout(() => { socialStatus.textContent = ''; }, 3000);
       } catch (e) {
-        socialStatus.textContent = '❌ خطأ: ' + e.message;
+        socialStatus.textContent = '❌ ' + t('errorOccurred') + ': ' + e.message;
         socialStatus.style.color = '#e74c3c';
       }
     }
 
-    // ===== حذف الروابط الاجتماعية (جديدة) =====
+    // ===== حذف الروابط الاجتماعية =====
     async function deleteSocialLinks() {
-      if (!confirm('⚠️ هل أنت متأكد من حذف جميع الروابط؟')) return;
+      if (!confirm(t('deleteAllConfirm'))) return;
       try {
         await remove(ref(db, 'social_links'));
         for (const field of Object.values(socialFields)) {
           field.value = '';
         }
-        socialStatus.textContent = '🗑️ تم حذف جميع الروابط';
+        socialStatus.textContent = '🗑️ ' + t('deleteAll');
         socialStatus.style.color = '#e74c3c';
         setTimeout(() => { socialStatus.textContent = ''; }, 3000);
       } catch (e) {
-        socialStatus.textContent = '❌ خطأ: ' + e.message;
+        socialStatus.textContent = '❌ ' + t('errorOccurred') + ': ' + e.message;
         socialStatus.style.color = '#e74c3c';
       }
     }
@@ -771,9 +775,27 @@
       document.getElementById('roleNameAr').placeholder = t('roleName') + ' (العربية)';
       document.getElementById('roleNameFr').placeholder = t('roleName') + ' (Français)';
       document.getElementById('roleNameEn').placeholder = t('roleName') + ' (English)';
-      document.getElementById('roleDescription').placeholder = '📝 وصف الدور (كيف يلعب؟)';
+      document.getElementById('roleDescription').placeholder = t('roleDescriptionPlaceholder');
       document.getElementById('saveRoleBtn').textContent = '💾 ' + t('save');
       document.getElementById('closeRoleModal').textContent = t('cancel');
+
+      // إدارة الإشعارات
+      document.getElementById('openNoticeModalBtn').textContent = '📝 ' + t('openNoticeEditor');
+      document.getElementById('noticeHint').textContent = t('noticeEditorHint');
+      document.getElementById('noticeModalTitle').textContent = '📢 ' + t('editNotice');
+      document.getElementById('noticeModalHint').textContent = t('noticeEditorHint');
+      document.getElementById('saveNoticeBtn').textContent = '💾 ' + t('save');
+      document.getElementById('deleteNoticeBtn').textContent = '🗑️ ' + t('deleteAll');
+      document.getElementById('closeNoticeModal').textContent = t('close');
+
+      // إدارة الروابط الاجتماعية
+      document.getElementById('openSocialModalBtn').textContent = '📝 ' + t('editLinks');
+      document.getElementById('socialHint').textContent = t('socialLinksHint');
+      document.getElementById('socialModalTitle').textContent = '🔗 ' + t('socialLinksTitle');
+      document.getElementById('socialModalHint').textContent = t('socialLinksHint');
+      document.getElementById('saveSocialBtn').textContent = '💾 ' + t('saveLinks');
+      document.getElementById('deleteSocialBtn').textContent = '🗑️ ' + t('deleteAll');
+      document.getElementById('closeSocialModal').textContent = t('close');
 
       const lang = getCurrentLang();
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
@@ -819,7 +841,7 @@
           loginError.textContent = t('wrongCredentials');
         }
       } catch (err) {
-        loginError.textContent = '❌ خطأ في الاتصال: ' + err.message;
+        loginError.textContent = '❌ ' + t('errorOccurred') + ': ' + err.message;
       }
     });
 
@@ -845,7 +867,7 @@
         newUsername.value = '';
         newPassword.value = '';
       } catch (err) {
-        updateCredMsg.textContent = '❌ خطأ: ' + err.message;
+        updateCredMsg.textContent = '❌ ' + t('errorOccurred') + ': ' + err.message;
         updateCredMsg.style.color = '#e74c3c';
       }
     });
@@ -874,7 +896,7 @@
       }
     });
 
-    // ===== أحداث الروابط الاجتماعية (جديدة) =====
+    // ===== أحداث الروابط الاجتماعية =====
     openSocialModalBtn.addEventListener('click', () => {
       socialModal.style.display = 'flex';
       loadSocialLinks();
@@ -941,11 +963,11 @@
 
     async function deleteRoleHandler(id) {
       const roleName = typeof rolesData[id]?.name === 'object' ? rolesData[id].name.ar : rolesData[id]?.name;
-      if (!confirm(`⚠️ هل أنت متأكد من حذف دور "${roleName}"؟`)) return;
+      if (!confirm(`⚠️ ${t('deleteConfirm')} "${roleName}"؟`)) return;
       try {
         await remove(ref(db, `global_roles/${id}`));
       } catch (e) {
-        alert('❌ خطأ: ' + e.message);
+        alert('❌ ' + t('errorOccurred') + ': ' + e.message);
       }
     }
 
@@ -1045,7 +1067,7 @@
         imagePreview.innerHTML = '';
         editingRoleId.value = '';
       } catch (err) {
-        alert('❌ خطأ: ' + err.message);
+        alert('❌ ' + t('errorOccurred') + ': ' + err.message);
       }
     });
 
@@ -1059,13 +1081,13 @@
       entries.forEach(([key, sugg]) => {
         const card = document.createElement('div');
         card.className = 'suggestion-card';
-        const date = sugg.timestamp ? new Date(sugg.timestamp).toLocaleString('en-US') : 'وقت غير معروف';
+        const date = sugg.timestamp ? new Date(sugg.timestamp).toLocaleString('en-US') : t('unknown');
         card.innerHTML = `
-          <div class="name">👤 ${sugg.playerName || 'مجهول'}</div>
+          <div class="name">👤 ${sugg.playerName || t('unknown')}</div>
           <div class="msg">💬 ${sugg.message}</div>
-          <div class="meta">📍 ${sugg.roomId || 'غير معروفة'} | 🕒 ${date}</div>
+          <div class="meta">📍 ${sugg.roomId || t('unknown')} | 🕒 ${date}</div>
           <div class="actions">
-            <button class="del-single" onclick="deleteSuggestion('${key}')">🗑️ حذف</button>
+            <button class="del-single" onclick="deleteSuggestion('${key}')">🗑️ ${t('deleteSuggestion')}</button>
           </div>
         `;
         suggestionsList.appendChild(card);
@@ -1073,12 +1095,12 @@
     }
 
     window.deleteSuggestion = async (key) => {
-      if (!confirm('حذف هذا الاقتراح؟')) return;
+      if (!confirm(t('deleteConfirm'))) return;
       await remove(ref(db, `suggestions/${key}`));
     };
 
     deleteAllSuggestBtn.addEventListener('click', async () => {
-      if (!confirm('⚠️ حذف جميع الاقتراحات نهائياً؟')) return;
+      if (!confirm(t('deleteAllConfirm'))) return;
       await remove(ref(db, 'suggestions'));
     });
   </script>
