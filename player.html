@@ -55,7 +55,6 @@
       object-fit: contain;
       pointer-events: none;
     }
-    /* تنسيق وصف الدور */
     .role-description {
       background: #1a1a1a;
       border: 1px solid #555;
@@ -129,7 +128,6 @@
       box-shadow: 0 0 15px #5865F2;
     }
 
-    /* ===== زر الرجوع ===== */
     .btn-secondary {
       background: #2c2c2c;
       color: #fff;
@@ -271,7 +269,6 @@
       });
     }
 
-    // ===== دالة جلب وصف الدور حسب اللغة الحالية =====
     async function fetchRoleDescription(roleNameInput) {
       try {
         let targetName = roleNameInput;
@@ -311,7 +308,6 @@
       }
     }
 
-    // ===== عرض البطاقة مع الوصف المترجم =====
     async function renderRoleContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const roleText = t('yourRole') + ' ' + roleDisplay;
@@ -322,7 +318,7 @@
         <div class="role-image-wrapper">
           <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
         </div>
-        ${description ? `<div class="role-description"><strong>📖 الوصف:</strong> ${description}</div>` : ''}
+        ${description ? `<div class="role-description"><strong>📖 ${t('roleDescription')}:</strong> ${description}</div>` : ''}
         <div class="btn-group-vertical">
           <button class="btn btn-primary" id="hideRoleBtn">🔒 ${t('hideCard')}</button>
           <button class="btn btn-danger" id="suicideBtn">💀 ${t('suicide')}</button>
@@ -349,12 +345,11 @@
             window.location.href = "index.html";
           };
         } catch (err) {
-          alert("حدث خطأ: " + err.message);
+          alert("❌ " + t('errorOccurred') + ": " + err.message);
         }
       };
     }
 
-    // ===== عرض البطاقة للاعب المصاب =====
     async function renderInfectedContent(player) {
       const description = await fetchRoleDescription(player.role);
       roleBox.innerHTML = `
@@ -363,7 +358,7 @@
           <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
           <img src="https://i.postimg.cc/y8Dhy5VS/IMG-20260708-204243.png" class="blood-overlay" />
         </div>
-        ${description ? `<div class="role-description"><strong>📖 الوصف:</strong> ${description}</div>` : ''}
+        ${description ? `<div class="role-description"><strong>📖 ${t('roleDescription')}:</strong> ${description}</div>` : ''}
         <div class="btn-group-vertical">
           <button class="btn btn-primary" id="hideInfectedBtn">🔒 ${t('hideCard')}</button>
           <button class="btn btn-danger" id="suicideInfectedBtn">💀 ${t('suicide')}</button>
@@ -390,12 +385,11 @@
             window.location.href = "index.html";
           };
         } catch (err) {
-          alert("حدث خطأ: " + err.message);
+          alert("❌ " + t('errorOccurred') + ": " + err.message);
         }
       };
     }
 
-    // ===== التحقق من حالة اللاعب =====
     async function checkPlayerStatus() {
       if (!playerId || !roomCode) return;
       const player = await getPlayer(roomCode, playerId);
@@ -451,7 +445,6 @@
       });
     }
 
-    // ===== الانضمام إلى الغرفة =====
     joinBtn.addEventListener("click", async () => {
       const name = nameInput.value.trim();
       const enteredRoom = codeInput.value.trim();
@@ -470,16 +463,14 @@
         updateDiscordLink(roomCode);
         checkPlayerStatus();
       } catch (err) {
-        alert("خطأ: " + err.message);
+        alert("❌ " + t('errorOccurred') + ": " + err.message);
       }
     });
 
-    // ===== زر الرجوع (جديد) =====
     backBtn.addEventListener("click", () => {
       window.location.href = "index.html";
     });
 
-    // ===== مغادرة =====
     leaveBtn.onclick = async () => {
       await deleteRoom(roomCode);
       localStorage.clear();
@@ -495,7 +486,6 @@
       }
     });
 
-    // ===== نظام الاقتراحات =====
     const modal = document.getElementById("suggestModal");
     document.getElementById("suggestBtn").addEventListener("click", () => {
       modal.style.display = "flex";
@@ -515,16 +505,15 @@
         return;
       }
       try {
-        await sendSuggestion(name, message, roomCode || "خارج الغرفة");
+        await sendSuggestion(name, message, roomCode || t('unknown'));
         alert("✅ " + t('suggestionSent'));
         document.getElementById("suggestMessage").value = "";
         modal.style.display = "none";
       } catch (err) {
-        alert("❌ خطأ: " + err.message);
+        alert("❌ " + t('errorOccurred') + ": " + err.message);
       }
     });
 
-    // ===== استعادة الجلسة =====
     if (playerId && roomCode) {
       joinForm.classList.add("hidden");
       statusDiv.classList.remove("hidden");
