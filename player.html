@@ -269,6 +269,7 @@
       });
     }
 
+    // ===== جلب وصف الدور (يدعم النصوص والكائنات الثلاثية) =====
     async function fetchRoleDescription(roleNameInput) {
       try {
         let targetName = roleNameInput;
@@ -295,6 +296,7 @@
           if (match) {
             const desc = role.description;
             if (typeof desc === 'object') {
+              // إرجاع الوصف حسب اللغة الحالية، أو العربية كافتراضي
               return desc[lang] || desc.ar || desc.fr || desc.en || '';
             } else {
               return desc || '';
@@ -308,6 +310,7 @@
       }
     }
 
+    // ===== عرض البطاقة مع الوصف المترجم =====
     async function renderRoleContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const roleText = t('yourRole') + ' ' + roleDisplay;
@@ -350,6 +353,7 @@
       };
     }
 
+    // ===== عرض البطاقة للاعب المصاب =====
     async function renderInfectedContent(player) {
       const description = await fetchRoleDescription(player.role);
       roleBox.innerHTML = `
@@ -390,6 +394,7 @@
       };
     }
 
+    // ===== التحقق من حالة اللاعب =====
     async function checkPlayerStatus() {
       if (!playerId || !roomCode) return;
       const player = await getPlayer(roomCode, playerId);
