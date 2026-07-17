@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -7,310 +7,61 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    .container {
-      text-align: center;
-      padding: 40px 20px;
-    }
-    h1 {
-      font-size: 38px;
-      color: crimson;
-      text-shadow: 0 0 20px red, 0 0 40px darkred;
-      letter-spacing: 4px;
-      font-weight: 900;
-    }
-    .sub {
-      color: #ccc;
-      font-size: 14px;
-      margin-bottom: 30px;
-      border-bottom: 1px solid #222;
-      padding-bottom: 10px;
-    }
-    .footer-actions {
-      max-width: 500px;
-      width: 100%;
-      margin: 0 auto;
-    }
-    .download-count {
-      color: #aaa;
-      font-size: 14px;
-      text-align: center;
-      margin-top: 5px;
-    }
-    .btn-about {
-      background: transparent;
-      border: 1px solid crimson;
-      color: #ccc;
-      padding: 10px 20px;
-      border-radius: 30px;
-      font-family: 'Cinzel', serif;
-      font-size: 14px;
-      cursor: pointer;
-      transition: 0.3s;
-      width: auto;
-      margin: 10px auto 0;
-      display: inline-block;
-    }
-    .btn-about:hover {
-      background: crimson;
-      color: #fff;
-      box-shadow: 0 0 20px crimson;
-    }
-    .about-modal-content {
-      max-width: 500px;
-      width: 95%;
-      max-height: 80vh;
-      overflow-y: auto;
-      text-align: right;
-      line-height: 1.8;
-      padding: 25px 20px;
-    }
-    .about-modal-content h3 {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    .about-modal-content p {
-      color: #ddd;
-      font-size: 15px;
-      margin-bottom: 12px;
-    }
-    .about-modal-content .highlight {
-      color: crimson;
-      font-weight: bold;
-    }
-    .about-modal-content .btn-close-about {
-      margin-top: 15px;
-    }
-    .about-modal-content hr {
-      border-color: #d4a017;
-      margin: 15px 0;
-    }
-    .about-modal-content h4 {
-      color: #d4a017;
-      margin-bottom: 10px;
-      font-size: 18px;
-    }
-    .about-modal-content .how-to-play p {
-      font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 8px;
-    }
-    .about-modal-content .how-to-play strong {
-      color: #d4a017;
-    }
-    .about-modal-content .tip {
-      font-size: 13px;
-      color: #aaa;
-      margin-top: 15px;
-      text-align: center;
-      font-style: italic;
-    }
+    /* الأنماط كما في النسخة السابقة (لا تغيير) */
+    .container { text-align: center; padding: 40px 20px; }
+    h1 { font-size: 38px; color: crimson; text-shadow: 0 0 20px red, 0 0 40px darkred; letter-spacing: 4px; font-weight: 900; }
+    .sub { color: #ccc; font-size: 14px; margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+    .footer-actions { max-width: 500px; width: 100%; margin: 0 auto; }
+    .download-count { color: #aaa; font-size: 14px; text-align: center; margin-top: 5px; }
+    .btn-about { background: transparent; border: 1px solid crimson; color: #ccc; padding: 10px 20px; border-radius: 30px; font-family: 'Cinzel', serif; font-size: 14px; cursor: pointer; transition: 0.3s; width: auto; margin: 10px auto 0; display: inline-block; }
+    .btn-about:hover { background: crimson; color: #fff; box-shadow: 0 0 20px crimson; }
+    .about-modal-content { max-width: 500px; width: 95%; max-height: 80vh; overflow-y: auto; text-align: right; line-height: 1.8; padding: 25px 20px; }
+    .about-modal-content h3 { text-align: center; margin-bottom: 15px; }
+    .about-modal-content p { color: #ddd; font-size: 15px; margin-bottom: 12px; }
+    .about-modal-content .highlight { color: crimson; font-weight: bold; }
+    .about-modal-content .btn-close-about { margin-top: 15px; }
+    .about-modal-content hr { border-color: #d4a017; margin: 15px 0; }
+    .about-modal-content h4 { color: #d4a017; margin-bottom: 10px; font-size: 18px; }
+    .about-modal-content .how-to-play p { font-size: 14px; line-height: 1.7; margin-bottom: 8px; }
+    .about-modal-content .how-to-play strong { color: #d4a017; }
+    .about-modal-content .tip { font-size: 13px; color: #aaa; margin-top: 15px; text-align: center; font-style: italic; }
 
-    /* ===== أيقونات التواصل الاجتماعي ===== */
-    #socialIconsContainer {
-      text-align: center;
-      margin: 15px 0 5px;
-      display: none;
-    }
-    #socialIconsContainer p {
-      color: #ccc;
-      font-size: 14px;
-      margin-bottom: 10px;
-      font-family: 'Cinzel', serif;
-      letter-spacing: 1px;
-    }
-    #socialIcons {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-    #socialIcons a {
-      display: inline-block;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(212, 160, 23, 0.05);
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 0;
-      text-decoration: none;
-    }
-    #socialIcons a:hover {
-      transform: translateY(-3px) scale(1.08);
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(212, 160, 23, 0.5);
-      box-shadow: 0 6px 25px rgba(212, 160, 23, 0.25), 0 0 40px rgba(212, 160, 23, 0.08);
-    }
-    #socialIcons a svg {
-      width: 24px;
-      height: 24px;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-    }
-    /* تحسين خاص لأيقونة تويتر */
-    #socialIcons a[href*="twitter"] svg,
-    #socialIcons a[href*="x.com"] svg {
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)) brightness(1.2);
-    }
-    #socialIcons a[href*="twitter"]:hover svg,
-    #socialIcons a[href*="x.com"]:hover svg {
-      filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.3)) brightness(1.5);
-    }
-    /* أيقونة تيك توك */
-    #socialIcons a[href*="tiktok"] svg {
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)) brightness(1.1);
-    }
+    #socialIconsContainer { text-align: center; margin: 15px 0 5px; display: none; }
+    #socialIconsContainer p { color: #ccc; font-size: 14px; margin-bottom: 10px; font-family: 'Cinzel', serif; letter-spacing: 1px; }
+    #socialIcons { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    #socialIcons a { display: inline-block; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.08); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.4), 0 0 20px rgba(212,160,23,0.05); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; line-height: 0; text-decoration: none; }
+    #socialIcons a:hover { transform: translateY(-3px) scale(1.08); background: rgba(255,255,255,0.15); border-color: rgba(212,160,23,0.5); box-shadow: 0 6px 25px rgba(212,160,23,0.25), 0 0 40px rgba(212,160,23,0.08); }
+    #socialIcons a svg { width: 24px; height: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+    #socialIcons a[href*="twitter"] svg, #socialIcons a[href*="x.com"] svg { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)) brightness(1.2); }
+    #socialIcons a[href*="twitter"]:hover svg, #socialIcons a[href*="x.com"]:hover svg { filter: drop-shadow(0 2px 8px rgba(255,255,255,0.3)) brightness(1.5); }
+    #socialIcons a[href*="tiktok"] svg { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)) brightness(1.1); }
 
-    /* ===== قسم الإشعارات ===== */
-    .notice-container {
-      max-width: 500px;
-      width: 100%;
-      margin: 20px auto 0;
-      text-align: right;
-      display: none;
-    }
-    .notice-box {
-      background: #2a1a0a;
-      border: 2px solid #d4a017;
-      border-radius: 12px;
-      padding: 15px 20px;
-    }
-    .notice-box h4 {
-      color: #d4a017;
-      margin-bottom: 8px;
-      font-size: 17px;
-    }
-    .notice-box p {
-      color: #ddd;
-      font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 10px;
-    }
-    .notice-box .notice-image {
-      text-align: center;
-      margin: 10px 0;
-    }
-    .notice-box .notice-image img {
-      max-width: 100%;
-      border-radius: 8px;
-      border: 1px solid #555;
-    }
-    .notice-box .highlight-yellow {
-      color: #d4a017;
-      font-weight: bold;
-    }
-    .notice-box .tip {
-      font-size: 13px;
-      color: #aaa;
-      margin-top: 10px;
-      text-align: center;
-      font-style: italic;
-    }
+    .notice-container { max-width: 500px; width: 100%; margin: 20px auto 0; text-align: right; display: none; }
+    .notice-box { background: #2a1a0a; border: 2px solid #d4a017; border-radius: 12px; padding: 15px 20px; }
+    .notice-box h4 { color: #d4a017; margin-bottom: 8px; font-size: 17px; }
+    .notice-box p { color: #ddd; font-size: 14px; line-height: 1.7; margin-bottom: 10px; }
+    .notice-box .notice-image { text-align: center; margin: 10px 0; }
+    .notice-box .notice-image img { max-width: 100%; border-radius: 8px; border: 1px solid #555; }
+    .notice-box .highlight-yellow { color: #d4a017; font-weight: bold; }
+    .notice-box .tip { font-size: 13px; color: #aaa; margin-top: 10px; text-align: center; font-style: italic; }
 
-    /* ===== نافذة QR Code ===== */
-    .qr-modal-content {
-      text-align: center;
-      max-width: 400px;
-    }
-    .qr-modal-content .qr-image {
-      margin: 15px 0;
-    }
-    .qr-modal-content .qr-image img {
-      max-width: 100%;
-      border-radius: 12px;
-      border: 2px solid #555;
-      box-shadow: 0 0 30px rgba(212, 160, 23, 0.15);
-    }
-    .qr-modal-content .qr-message {
-      color: #ddd;
-      font-size: 14px;
-      line-height: 1.8;
-      margin-bottom: 15px;
-      text-align: right;
-    }
-    .qr-modal-content .qr-message strong {
-      color: #d4a017;
-    }
-    .qr-modal-content .btn-download {
-      background: #1a4a1a;
-      color: #fff;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-family: 'Cinzel', serif;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-      width: 100%;
-      box-shadow: 0 0 15px rgba(26, 74, 26, 0.3);
-    }
-    .qr-modal-content .btn-download:hover {
-      background: #2e7d32;
-      box-shadow: 0 0 25px #2e7d32;
-      transform: scale(1.02);
-    }
+    .qr-modal-content { text-align: center; max-width: 400px; }
+    .qr-modal-content .qr-image { margin: 15px 0; }
+    .qr-modal-content .qr-image img { max-width: 100%; border-radius: 12px; border: 2px solid #555; box-shadow: 0 0 30px rgba(212,160,23,0.15); }
+    .qr-modal-content .qr-message { color: #ddd; font-size: 14px; line-height: 1.8; margin-bottom: 15px; text-align: right; }
+    .qr-modal-content .qr-message strong { color: #d4a017; }
+    .qr-modal-content .btn-download { background: #1a4a1a; color: #fff; border: none; padding: 12px 24px; border-radius: 10px; font-family: 'Cinzel', serif; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; width: 100%; box-shadow: 0 0 15px rgba(26,74,26,0.3); }
+    .qr-modal-content .btn-download:hover { background: #2e7d32; box-shadow: 0 0 25px #2e7d32; transform: scale(1.02); }
 
-    .about-modal-content::-webkit-scrollbar {
-      width: 6px;
-    }
-    .about-modal-content::-webkit-scrollbar-track {
-      background: #1a1a1a;
-      border-radius: 10px;
-    }
-    .about-modal-content::-webkit-scrollbar-thumb {
-      background: #d4a017;
-      border-radius: 10px;
-    }
-    .about-modal-content::-webkit-scrollbar-thumb:hover {
-      background: #b8860b;
-    }
+    .about-modal-content::-webkit-scrollbar { width: 6px; }
+    .about-modal-content::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 10px; }
+    .about-modal-content::-webkit-scrollbar-thumb { background: #d4a017; border-radius: 10px; }
+    .about-modal-content::-webkit-scrollbar-thumb:hover { background: #b8860b; }
 
-    .lang-flags {
-      position: fixed;
-      top: 8px;
-      left: 8px;
-      display: flex;
-      gap: 4px;
-      z-index: 999;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 4px 6px;
-      border-radius: 30px;
-      border: 1px solid #444;
-      backdrop-filter: blur(4px);
-    }
-    .lang-flags button {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-      background: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      filter: grayscale(0.6);
-      opacity: 0.7;
-      padding: 0;
-    }
-    .lang-flags button.active-flag {
-      border-color: #d4a017;
-      filter: grayscale(0);
-      opacity: 1;
-      box-shadow: 0 0 12px #d4a017;
-      transform: scale(1.1);
-    }
-    .lang-flags button:hover {
-      filter: grayscale(0);
-      opacity: 1;
-      transform: scale(1.1);
-    }
+    .lang-flags { position: fixed; top: 8px; left: 8px; display: flex; gap: 4px; z-index: 999; background: rgba(0,0,0,0.5); padding: 4px 6px; border-radius: 30px; border: 1px solid #444; backdrop-filter: blur(4px); }
+    .lang-flags button { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; font-size: 16px; cursor: pointer; transition: 0.3s; background: transparent; display: flex; align-items: center; justify-content: center; filter: grayscale(0.6); opacity: 0.7; padding: 0; }
+    .lang-flags button.active-flag { border-color: #d4a017; filter: grayscale(0); opacity: 1; box-shadow: 0 0 12px #d4a017; transform: scale(1.1); }
+    .lang-flags button:hover { filter: grayscale(0); opacity: 1; transform: scale(1.1); }
   </style>
 </head>
 <body>
@@ -346,7 +97,7 @@
     <div class="download-count" id="downloadCounter">عدد مرات التحميل: 0</div>
   </div>
 
-  <!-- ===== قسم الإشعارات (يتم تعبئته من Firebase) ===== -->
+  <!-- ===== قسم الإشعارات ===== -->
   <div id="noticeContainer" class="notice-container">
     <div class="notice-box">
       <h4 id="noticeTitle">⚠️ تنبيه مهم</h4>
@@ -372,15 +123,12 @@
   <div class="modal" id="aboutModal">
     <div class="modal-content about-modal-content">
       <h3 id="aboutTitle" style="color:crimson;">📖 ما هي لعبة لو ڨارو؟</h3>
-      
       <p id="aboutP1"><span class="highlight">لو ڨارو</span> هي نسخة رقمية ذكية من لعبة الورق الشهيرة <span class="highlight">"القرويون والذئاب"</span>.</p>
       <p id="aboutP2">بدلاً من توزيع البطاقات الورقية التقليدية، يقوم هذا التطبيق بتوزيع الأدوار <span class="highlight">عشوائياً</span> على جميع اللاعبين، مما يضمن <span class="highlight">الخصوصية التامة</span> لكل لاعب.</p>
       <p id="aboutP3"><span class="highlight">الراوي</span> هو اللاعب الوحيد الذي يمتلك الصلاحية المطلقة في إدارة اللعبة، حيث يمكنه <span class="highlight">قتل</span> أو <span class="highlight">استذئاب</span> أي لاعب.</p>
       <p id="aboutP4">الهدف من هذه اللعبة هو توفير تجربة سلسة وعادلة لجميع اللاعبين، مع الحفاظ على السرية التامة ومنع أي محاولة للغش.</p>
-
       <hr />
       <h4 style="color:#d4a017; margin-bottom:10px; font-size:18px;">📖 كيف تلعب؟ (دليل المبتدئين)</h4>
-      
       <div class="how-to-play">
         <p style="font-size:14px; line-height:1.7; margin-bottom:8px;">
           <strong style="color:#d4a017;">🔹 الراوي (المضيف):</strong><br />
@@ -398,11 +146,8 @@
           • اضغط <strong>"انضم"</strong> وانتظر حتى يبدأ الراوي اللعبة.<br />
           • بعد البدء، ستظهر لك بطاقة دورك – لا تُظهرها لأحد! 🤫
         </p>
-        <p class="tip" style="font-size:13px; color:#aaa; margin-top:15px; text-align:center; font-style:italic;">
-          💡 نصيحة: الراوي هو المسؤول الوحيد عن إدارة الجولة، واللاعبون يتبعون توجيهاته.
-        </p>
+        <p class="tip" style="font-size:13px; color:#aaa; margin-top:15px; text-align:center; font-style:italic;">💡 نصيحة: الراوي هو المسؤول الوحيد عن إدارة الجولة، واللاعبون يتبعون توجيهاته.</p>
       </div>
-
       <button class="btn btn-danger btn-close-about" id="closeAboutBtn">إغلاق</button>
     </div>
   </div>
@@ -436,7 +181,6 @@
       onValue
     } from "./logic.js";
 
-    // ===== أيقونات التواصل الاجتماعي =====
     const socialIconsConfig = {
       facebook: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' },
       instagram: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>' },
@@ -448,7 +192,6 @@
       snapchat: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#FFFC00"><path d="M12.027 22.046c-1.147 0-2.232-.27-3.256-.792a12.992 12.992 0 01-2.227-1.422 9.822 9.822 0 01-1.322-1.322c-.354-.44-.585-.816-.693-1.127-.089-.254-.093-.485-.014-.694.09-.237.28-.441.554-.601.242-.142.551-.252.915-.332a6.76 6.76 0 011.729-.216c.162 0 .324.007.485.021.149.014.298.033.447.057.536.089 1.07.155 1.604.197.921.073 1.83.046 2.726-.077.229-.031.458-.069.687-.113.223-.041.445-.09.664-.146.199-.05.394-.109.583-.175.13-.045.252-.097.368-.155.088-.045.166-.1.234-.167.071-.067.117-.151.137-.251.03-.153-.03-.312-.15-.39-.215-.14-.553-.228-.994-.272-.977-.097-1.879-.262-2.633-.483-1.024-.3-1.69-.72-1.927-1.095-.264-.425-.124-.812.06-1.067.241-.334.74-.635 1.635-.987.296-.117.606-.236.928-.356.749-.277 1.563-.578 2.33-.952.709-.344 1.344-.77 1.886-1.271.482-.445.847-.97 1.079-1.556.254-.635.308-1.32.152-1.934-.15-.581-.498-1.033-.914-1.287-.31-.19-.666-.277-1.009-.299-.194-.012-.387-.005-.578.017-.196.023-.39.065-.58.123-.326.102-.646.226-.956.368-.18.082-.358.172-.533.269-.259.143-.502.305-.724.486-.179.146-.331.314-.455.5-.102.153-.173.307-.21.458-.029.119-.01.232.059.34.072.109.195.2.358.292.111.063.245.125.4.185.354.137.648.258.832.37.232.142.325.282.343.388.015.086.006.158-.028.219-.063.113-.207.184-.471.241-.188.041-.432.055-.718.046a6.068 6.068 0 01-.862-.102c-.355-.064-.749-.189-1.166-.368a6.452 6.452 0 01-1.214-.701c-.092-.068-.176-.14-.253-.217-.084-.08-.15-.168-.201-.265-.048-.091-.073-.189-.074-.293a.483.483 0 01.033-.179c.036-.113.103-.24.2-.383.145-.215.343-.432.588-.647.247-.214.537-.413.863-.594.273-.153.555-.29.839-.412.284-.122.573-.229.862-.322.282-.09.561-.169.833-.234.266-.064.525-.112.772-.143.24-.032.47-.047.687-.047.637 0 1.169.086 1.586.25.365.145.626.336.763.516.104.136.152.26.143.371-.008.111-.061.206-.157.286-.055.045-.122.076-.2.092a.62.62 0 01-.235-.001.496.496 0 01-.157-.068.807.807 0 01-.099-.076 1.62 1.62 0 00-.141-.094c-.065-.039-.171-.084-.315-.131-.395-.13-.908-.195-1.523-.195-.848 0-1.604.079-2.24.207-.607.122-1.115.302-1.454.513-.307.192-.493.387-.562.59-.043.134-.01.244.098.334.138.114.378.229.706.353.276.104.584.222.914.35.387.149.771.333 1.135.55.398.238.733.495.975.758.258.279.431.596.493.931.075.41-.004.814-.238 1.154-.265.384-.776.669-1.609.908-.68.195-1.414.346-2.136.451-.417.061-.83.108-1.234.139-.4.033-.788.05-1.161.05z"/></svg>' }
     };
 
-    // ===== تحميل أيقونات التواصل الاجتماعي =====
     async function loadSocialIcons() {
       const container = document.getElementById('socialIconsContainer');
       const iconsDiv = document.getElementById('socialIcons');
@@ -473,12 +216,11 @@
           document.getElementById('followUsLabel').textContent = t('followUs');
         }
       } catch (e) {
-        console.error('خطأ في تحميل روابط التواصل:', e);
+        console.error(e);
         container.style.display = 'none';
       }
     }
 
-    // ===== تحميل الإشعارات =====
     async function loadNotice() {
       const noticeContainer = document.getElementById('noticeContainer');
       const noticeTextDiv = document.getElementById('noticeText');
@@ -506,12 +248,11 @@
           noticeContainer.style.display = 'none';
         }
       } catch (e) {
-        console.error('خطأ في تحميل الإشعار:', e);
+        console.error(e);
         noticeContainer.style.display = 'none';
       }
     }
 
-    // ===== ترجمة =====
     function applyTranslations() {
       document.title = t('appName');
       document.getElementById('appName').textContent = `🐺 ${t('appName')}`;
@@ -555,7 +296,6 @@
       document.documentElement.lang = lang;
     }
 
-    // ===== أزرار الأعلام =====
     document.querySelectorAll('.flag-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const lang = btn.dataset.lang;
@@ -567,11 +307,9 @@
       });
     });
 
-    // ===== أحداث الأزرار =====
     document.getElementById('hostBtn').addEventListener('click', () => {
       window.location.href = 'host.html';
     });
-
     document.getElementById('playerBtn').addEventListener('click', () => {
       window.location.href = 'player.html';
     });
@@ -580,7 +318,6 @@
     document.querySelector(`.flag-btn[data-lang="${currentLang}"]`)?.classList.add('active-flag');
     applyTranslations();
 
-    // ===== الاقتراحات =====
     const suggestModal = document.getElementById("suggestModal");
     document.getElementById("suggestBtn").addEventListener("click", () => {
       suggestModal.style.display = "flex";
@@ -609,7 +346,6 @@
       }
     });
 
-    // ===== عن اللعبة =====
     const aboutModal = document.getElementById("aboutModal");
     document.getElementById("aboutBtn").addEventListener("click", () => {
       aboutModal.style.display = "flex";
@@ -621,7 +357,6 @@
       if (e.target === aboutModal) aboutModal.style.display = "none";
     });
 
-    // ===== QR Code =====
     const qrModal = document.getElementById('qrModal');
     const qrBtn = document.getElementById('qrBtn');
     const closeQrModal = document.getElementById('closeQrModal');
@@ -630,11 +365,9 @@
     qrBtn.addEventListener('click', () => {
       qrModal.style.display = 'flex';
     });
-
     closeQrModal.addEventListener('click', () => {
       qrModal.style.display = 'none';
     });
-
     window.addEventListener('click', (e) => {
       if (e.target === qrModal) qrModal.style.display = 'none';
     });
@@ -658,7 +391,6 @@
       }
     });
 
-    // ===== عداد التحميلات =====
     async function updateCounter() {
       const count = await getDownloadCount();
       document.getElementById("downloadCounter").textContent = t('downloads') + count;
@@ -676,15 +408,12 @@
       window.open(apkUrl, "_blank");
     });
 
-    // ===== تحميل الإشعارات والأيقونات =====
     loadNotice();
     loadSocialIcons();
 
-    // ===== الاستماع للتغييرات =====
     onValue(ref(db, 'social_links'), () => {
       loadSocialIcons();
     });
-
     onValue(ref(db, 'notifications/main'), () => {
       loadNotice();
     });
