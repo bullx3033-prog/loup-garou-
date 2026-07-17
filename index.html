@@ -333,7 +333,7 @@
 
     <!-- ===== أيقونات التواصل الاجتماعي ===== -->
     <div id="socialIconsContainer">
-      <p>📱 تابعنا على</p>
+      <p id="followUsLabel"></p>
       <div id="socialIcons"></div>
     </div>
 
@@ -344,8 +344,7 @@
   <div class="footer-actions">
     <button class="btn btn-suggest" id="suggestBtn">💬 اقتراحات للمطور</button>
     <button class="btn btn-install" id="installBtn">📲 تحميل التطبيق (APK)</button>
-    <!-- ===== زر QR Code (جديد) ===== -->
-    <button class="btn btn-primary" id="qrBtn" style="background:#2c2c2c; border:1px solid #d4a017; margin-top:8px;">📷 مسح QR Code</button>
+    <button class="btn btn-primary" id="qrBtn" style="background:#2c2c2c; border:1px solid #d4a017; margin-top:8px;"></button>
     <div class="download-count" id="downloadCounter">عدد مرات التحميل: 0</div>
   </div>
 
@@ -410,25 +409,20 @@
     </div>
   </div>
 
-  <!-- ===== نافذة QR Code (جديدة) ===== -->
+  <!-- ===== نافذة QR Code ===== -->
   <div class="modal" id="qrModal">
     <div class="modal-content qr-modal-content">
-      <h3 style="color:#d4a017;">📷 رمز الاستجابة السريعة (QR Code)</h3>
+      <h3 id="qrModalTitle" style="color:#d4a017;">📷 رمز الاستجابة السريعة (QR Code)</h3>
       <div class="qr-message">
-        <p>
-          <strong>📌 وصول سريع إلى اللعبة:</strong><br />
-          يمكن للاعبين الجدد الانضمام إلى عالم <strong>"لو ڨارو"</strong> بمجرد مسح هذا الرمز بكاميرا هواتفهم،
-          دون الحاجة إلى نسخ الروابط أو الانتظار حتى يرسلها أحدهم عبر وسائل التواصل.
-        </p>
-        <p style="margin-top:8px;">
-          💡 <em>شارك هذا الرمز مع أصدقائك ليتمكنوا من الدخول إلى اللعبة بكل سهولة ويُسر، واستمتعوا بأجمل الأوقات!</em>
-        </p>
+        <p id="qrFastAccessP"><strong>📌 وصول سريع إلى اللعبة:</strong><br /></p>
+        <p id="qrDescriptionP">يمكن للاعبين الجدد الانضمام إلى عالم "لو ڨارو" بمجرد مسح هذا الرمز بكاميرا هواتفهم، دون الحاجة إلى نسخ الروابط أو الانتظار حتى يرسلها أحدهم عبر وسائل التواصل.</p>
+        <p id="qrShareP" style="margin-top:8px;">💡 شارك هذا الرمز مع أصدقائك ليتمكنوا من الدخول إلى اللعبة بكل سهولة ويُسر، واستمتعوا بأجمل الأوقات!</p>
       </div>
       <div class="qr-image">
         <img src="https://i.postimg.cc/DZc6JyFc/qrcode-600-(1).png" alt="QR Code للعبة لو ڨارو" />
       </div>
       <button class="btn-download" id="downloadQrBtn">📥 تحميل الصورة</button>
-      <button class="btn" id="closeQrModal" style="margin-top:8px;">إغلاق</button>
+      <button class="btn" id="closeQrModal" style="margin-top:8px;">إلغاء</button>
     </div>
   </div>
 
@@ -477,6 +471,9 @@
           }
         }
         container.style.display = hasLinks ? 'block' : 'none';
+        if (hasLinks) {
+          document.getElementById('followUsLabel').textContent = t('followUs');
+        }
       } catch (e) {
         console.error('خطأ في تحميل روابط التواصل:', e);
         container.style.display = 'none';
@@ -522,8 +519,8 @@
       document.getElementById('playerBtn').textContent = `🎭 ${t('iAmPlayer')}`;
       document.getElementById('aboutBtn').textContent = `📖 ${t('aboutGame')}`;
       document.getElementById('suggestBtn').textContent = `💬 ${t('suggestions')}`;
-      document.getElementById('installBtn').textContent = `📲 ${t('downloadApk')}`;
-      document.getElementById('qrBtn').textContent = `📷 ${t('qrCode') || 'مسح QR Code'}`;
+      document.getElementById('installBtn').textContent = t('downloadApk');
+      document.getElementById('qrBtn').textContent = t('qrCode');
       document.getElementById('suggestTitle').textContent = `📢 ${t('shareIdea')}`;
       document.getElementById('suggestDesc').textContent = t('shareDesc');
       document.getElementById('suggestName').placeholder = t('yourName');
@@ -536,6 +533,19 @@
       document.getElementById('aboutP3').innerHTML = t('aboutP3');
       document.getElementById('aboutP4').innerHTML = t('aboutP4');
       document.getElementById('closeAboutBtn').textContent = t('close');
+
+      // QR Modal
+      document.getElementById('qrModalTitle').textContent = `📷 ${t('qrCode')}`;
+      document.getElementById('qrFastAccessP').innerHTML = `<strong>${t('qrFastAccess')}</strong><br />`;
+      document.getElementById('qrDescriptionP').textContent = t('qrDescription');
+      document.getElementById('qrShareP').textContent = t('qrShare');
+      document.getElementById('downloadQrBtn').textContent = t('downloadImage');
+      document.getElementById('closeQrModal').textContent = t('cancel');
+
+      // Follow us label (updated inside loadSocialIcons)
+      if (document.getElementById('followUsLabel').textContent) {
+        document.getElementById('followUsLabel').textContent = t('followUs');
+      }
 
       const counter = document.getElementById('downloadCounter');
       const count = counter.textContent.replace(/[^0-9]/g, '');
@@ -554,6 +564,7 @@
         document.querySelectorAll('.flag-btn').forEach(b => b.classList.remove('active-flag'));
         btn.classList.add('active-flag');
         applyTranslations();
+        loadSocialIcons(); // تحديث النص
       });
     });
 
@@ -629,7 +640,6 @@
       if (e.target === qrModal) qrModal.style.display = 'none';
     });
 
-    // ===== تحميل الصورة بشكل صحيح باستخدام fetch =====
     downloadQrBtn.addEventListener('click', async () => {
       try {
         const response = await fetch('https://i.postimg.cc/DZc6JyFc/qrcode-600-(1).png');
