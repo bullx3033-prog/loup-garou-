@@ -165,7 +165,7 @@
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)) brightness(1.1);
     }
 
-    /* ===== قسم الإشعارات (في الأسفل) ===== */
+    /* ===== قسم الإشعارات ===== */
     .notice-container {
       max-width: 500px;
       width: 100%;
@@ -255,7 +255,6 @@
       transform: scale(1.02);
     }
 
-    /* تخصيص شريط التمرير */
     .about-modal-content::-webkit-scrollbar {
       width: 6px;
     }
@@ -331,7 +330,6 @@
       <button class="btn btn-primary" id="playerBtn">🎭 أنا اللاعب</button>
     </div>
 
-    <!-- ===== أيقونات التواصل الاجتماعي ===== -->
     <div id="socialIconsContainer">
       <p id="followUsLabel"></p>
       <div id="socialIcons"></div>
@@ -348,7 +346,7 @@
     <div class="download-count" id="downloadCounter">عدد مرات التحميل: 0</div>
   </div>
 
-  <!-- ===== قسم الإشعارات (في الأسفل) ===== -->
+  <!-- ===== قسم الإشعارات (يتم تعبئته من Firebase) ===== -->
   <div id="noticeContainer" class="notice-container">
     <div class="notice-box">
       <h4 id="noticeTitle">⚠️ تنبيه مهم</h4>
@@ -490,8 +488,11 @@
         const data = snap.val();
         if (data && (data.text || data.imageUrl)) {
           noticeContainer.style.display = 'block';
-          if (data.text) {
-            const paragraphs = data.text.split('\n').filter(p => p.trim() !== '');
+          const lang = getCurrentLang();
+          const textObj = data.text || {};
+          const text = textObj[lang] || textObj.ar || '';
+          if (text) {
+            const paragraphs = text.split('\n').filter(p => p.trim() !== '');
             noticeTextDiv.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
           } else {
             noticeTextDiv.innerHTML = '';
@@ -519,8 +520,8 @@
       document.getElementById('playerBtn').textContent = `🎭 ${t('iAmPlayer')}`;
       document.getElementById('aboutBtn').textContent = `📖 ${t('aboutGame')}`;
       document.getElementById('suggestBtn').textContent = `💬 ${t('suggestions')}`;
-      document.getElementById('installBtn').textContent = t('downloadApk');
-      document.getElementById('qrBtn').textContent = t('qrCode');
+      document.getElementById('installBtn').textContent = `📲 ${t('downloadApk')}`;
+      document.getElementById('qrBtn').textContent = `📷 ${t('qrCode')}`;
       document.getElementById('suggestTitle').textContent = `📢 ${t('shareIdea')}`;
       document.getElementById('suggestDesc').textContent = t('shareDesc');
       document.getElementById('suggestName').placeholder = t('yourName');
@@ -534,7 +535,6 @@
       document.getElementById('aboutP4').innerHTML = t('aboutP4');
       document.getElementById('closeAboutBtn').textContent = t('close');
 
-      // QR Modal
       document.getElementById('qrModalTitle').textContent = `📷 ${t('qrCode')}`;
       document.getElementById('qrFastAccessP').innerHTML = `<strong>${t('qrFastAccess')}</strong><br />`;
       document.getElementById('qrDescriptionP').textContent = t('qrDescription');
@@ -542,7 +542,6 @@
       document.getElementById('downloadQrBtn').textContent = t('downloadImage');
       document.getElementById('closeQrModal').textContent = t('cancel');
 
-      // Follow us label (updated inside loadSocialIcons)
       if (document.getElementById('followUsLabel').textContent) {
         document.getElementById('followUsLabel').textContent = t('followUs');
       }
@@ -564,7 +563,7 @@
         document.querySelectorAll('.flag-btn').forEach(b => b.classList.remove('active-flag'));
         btn.classList.add('active-flag');
         applyTranslations();
-        loadSocialIcons(); // تحديث النص
+        loadSocialIcons();
       });
     });
 
@@ -606,7 +605,7 @@
         document.getElementById("suggestMessage").value = "";
         suggestModal.style.display = "none";
       } catch (err) {
-        alert("❌ خطأ: " + err.message);
+        alert("❌ " + t('errorOccurred') + ": " + err.message);
       }
     });
 
@@ -654,7 +653,7 @@
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       } catch (error) {
-        alert('❌ حدث خطأ أثناء تحميل الصورة. يرجى المحاولة مرة أخرى.');
+        alert('❌ ' + t('errorOccurred') + ': ' + error.message);
         console.error(error);
       }
     });
@@ -681,12 +680,11 @@
     loadNotice();
     loadSocialIcons();
 
-    // ===== الاستماع للتغييرات في روابط التواصل (تحديث تلقائي) =====
+    // ===== الاستماع للتغييرات =====
     onValue(ref(db, 'social_links'), () => {
       loadSocialIcons();
     });
 
-    // ===== الاستماع للتغييرات في الإشعارات (تحديث تلقائي) =====
     onValue(ref(db, 'notifications/main'), () => {
       loadNotice();
     });
@@ -694,4 +692,4 @@
     console.log('🚀 تم تحميل الصفحة الرئيسية');
   </script>
 </body>
-</html> 
+</html>
