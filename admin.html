@@ -76,40 +76,15 @@
       box-shadow: 0 0 15px crimson;
       transform: scale(1.02);
     }
-    .btn-primary {
-      background: #2c2c2c;
-      color: #fff;
-    }
-    .btn-primary:hover {
-      background: #3a3a3a;
-    }
-    .btn-danger {
-      background: #a10d0d;
-      color: #fff;
-    }
-    .btn-danger:hover {
-      background: #8b0000;
-      box-shadow: 0 0 25px #8b0000;
-    }
-    .btn-success {
-      background: #1a4a1a;
-      color: #fff;
-    }
-    .btn-success:hover {
-      background: #2e7d32;
-      box-shadow: 0 0 25px #2e7d32;
-    }
-    .btn-secondary {
-      background: #2c2c2c;
-      color: #fff;
-      border: 1px solid #555;
-    }
-    .btn-secondary:hover {
-      background: #3a3a3a;
-      border-color: #777;
-    }
-    input,
-    textarea {
+    .btn-primary { background: #2c2c2c; color: #fff; }
+    .btn-primary:hover { background: #3a3a3a; }
+    .btn-danger { background: #a10d0d; color: #fff; }
+    .btn-danger:hover { background: #8b0000; box-shadow: 0 0 25px #8b0000; }
+    .btn-success { background: #1a4a1a; color: #fff; }
+    .btn-success:hover { background: #2e7d32; box-shadow: 0 0 25px #2e7d32; }
+    .btn-secondary { background: #2c2c2c; color: #fff; border: 1px solid #555; }
+    .btn-secondary:hover { background: #3a3a3a; border-color: #777; }
+    input, textarea {
       width: 100%;
       padding: 14px;
       margin: 10px 0;
@@ -120,23 +95,14 @@
       font-family: 'Cinzel', serif;
       font-size: 16px;
     }
-    input:focus,
-    textarea:focus {
+    input:focus, textarea:focus {
       border-color: crimson;
       outline: none;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
     }
-    .hidden {
-      display: none !important;
-    }
-    .flex {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .flex .btn {
-      flex: 1;
-    }
+    .hidden { display: none !important; }
+    .flex { display: flex; gap: 10px; flex-wrap: wrap; }
+    .flex .btn { flex: 1; }
     .login-box {
       background: #111;
       border: 2px solid crimson;
@@ -147,22 +113,10 @@
       text-align: center;
       margin: auto;
     }
-    .login-box h2 {
-      color: crimson;
-      text-shadow: 0 0 10px red;
-      margin-bottom: 20px;
-    }
-    .login-box input {
-      text-align: center;
-    }
-    .login-box .btn {
-      margin-top: 10px;
-    }
-    .login-error {
-      color: #e74c3c;
-      margin-top: 10px;
-      font-size: 14px;
-    }
+    .login-box h2 { color: crimson; text-shadow: 0 0 10px red; margin-bottom: 20px; }
+    .login-box input { text-align: center; }
+    .login-box .btn { margin-top: 10px; }
+    .login-error { color: #e74c3c; margin-top: 10px; font-size: 14px; }
     .cred-toggle {
       background: transparent;
       border: 1px solid crimson;
@@ -175,11 +129,7 @@
       transition: 0.3s;
       width: auto;
     }
-    .cred-toggle:hover {
-      background: crimson;
-      color: #fff;
-      box-shadow: 0 0 20px crimson;
-    }
+    .cred-toggle:hover { background: crimson; color: #fff; box-shadow: 0 0 20px crimson; }
     .cred-box {
       background: #1a1a1a;
       border: 1px solid #333;
@@ -187,12 +137,8 @@
       padding: 15px;
       margin-top: 10px;
     }
-    .cred-box input {
-      margin: 5px 0;
-    }
-    .cred-box .btn {
-      margin-top: 8px;
-    }
+    .cred-box input { margin: 5px 0; }
+    .cred-box .btn { margin-top: 8px; }
     .count-badge {
       background: #2c2c2c;
       padding: 4px 14px;
@@ -232,15 +178,8 @@
       justify-content: center;
       position: relative;
     }
-    .role-circle img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .role-circle:hover {
-      border-color: #d4a017;
-      transform: scale(1.05);
-    }
+    .role-circle img { width: 100%; height: 100%; object-fit: cover; }
+    .role-circle:hover { border-color: #d4a017; transform: scale(1.05); }
     .role-circle .role-name-tooltip {
       position: absolute;
       bottom: -25px;
@@ -257,9 +196,7 @@
       pointer-events: none;
       font-family: 'Cinzel', serif;
     }
-    .role-circle:hover .role-name-tooltip {
-      opacity: 1;
-    }
+    .role-circle:hover .role-name-tooltip { opacity: 1; }
     .role-circle .delete-btn {
       position: absolute;
       top: -6px;
@@ -280,13 +217,8 @@
       transition: 0.3s;
       font-family: 'Cinzel', serif;
     }
-    .role-circle:hover .delete-btn {
-      opacity: 1;
-    }
-    .role-circle .delete-btn:hover {
-      background: #ff0000;
-      transform: scale(1.2);
-    }
+    .role-circle:hover .delete-btn { opacity: 1; }
+    .role-circle .delete-btn:hover { background: #ff0000; transform: scale(1.2); }
 
     /* ===== معاينة الصور ===== */
     .notice-preview {
@@ -299,11 +231,7 @@
       border-radius: 8px;
       border: 1px solid #555;
     }
-    .notice-preview .empty {
-      color: #777;
-      font-size: 14px;
-      padding: 10px;
-    }
+    .notice-preview .empty { color: #777; font-size: 14px; padding: 10px; }
 
     /* ===== النوافذ المنبثقة ===== */
     .modal {
@@ -345,25 +273,10 @@
       padding: 12px;
       margin-bottom: 10px;
     }
-    .suggestion-card .name {
-      color: crimson;
-      font-size: 16px;
-      font-weight: bold;
-    }
-    .suggestion-card .msg {
-      color: #ccc;
-      font-size: 14px;
-      margin: 5px 0;
-    }
-    .suggestion-card .meta {
-      color: #777;
-      font-size: 12px;
-    }
-    .suggestion-card .actions {
-      margin-top: 8px;
-      display: flex;
-      gap: 8px;
-    }
+    .suggestion-card .name { color: crimson; font-size: 16px; font-weight: bold; }
+    .suggestion-card .msg { color: #ccc; font-size: 14px; margin: 5px 0; }
+    .suggestion-card .meta { color: #777; font-size: 12px; }
+    .suggestion-card .actions { margin-top: 8px; display: flex; gap: 8px; }
     .suggestion-card .actions button {
       padding: 6px 14px;
       border-radius: 20px;
@@ -373,34 +286,16 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    .suggestion-card .actions .del-single {
-      background: #6b1a1a;
-      color: #fff;
-    }
-    .suggestion-card .actions .del-single:hover {
-      background: #8b0000;
-      box-shadow: 0 0 15px #8b0000;
-    }
+    .suggestion-card .actions .del-single { background: #6b1a1a; color: #fff; }
+    .suggestion-card .actions .del-single:hover { background: #8b0000; box-shadow: 0 0 15px #8b0000; }
 
     @media (max-width: 600px) {
-      .role-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-      }
-      .role-circle {
-        width: 60px;
-        height: 60px;
-      }
+      .role-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+      .role-circle { width: 60px; height: 60px; }
     }
     @media (max-width: 400px) {
-      .role-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-      }
-      .role-circle {
-        width: 55px;
-        height: 55px;
-      }
+      .role-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .role-circle { width: 55px; height: 55px; }
     }
   </style>
 </head>
@@ -431,21 +326,21 @@
         </div>
       </div>
 
-      <!-- ===== زر إدارة الإشعارات ===== -->
+      <!-- ===== إدارة الإشعارات (ثلاثية اللغات) ===== -->
       <div class="section">
         <span class="section-title">📢 إدارة الإشعارات</span>
         <button class="btn btn-primary" id="openNoticeModalBtn" style="width:auto; padding:12px 20px;"></button>
-        <p id="noticeHint" style="color:#777; font-size:12px; margin-top:5px;">انقر لفتح نافذة تحرير الرسالة والصورة</p>
+        <p id="noticeHint" style="color:#777; font-size:12px; margin-top:5px;"></p>
       </div>
 
-      <!-- ===== زر إدارة الروابط الاجتماعية ===== -->
+      <!-- ===== إدارة الروابط الاجتماعية ===== -->
       <div class="section">
         <span class="section-title">🔗 إدارة روابط التواصل الاجتماعي</span>
         <button class="btn btn-primary" id="openSocialModalBtn" style="width:auto; padding:12px 20px;"></button>
-        <p id="socialHint" style="color:#777; font-size:12px; margin-top:5px;">أضف روابط حساباتك على منصات التواصل، ستظهر أيقوناتها في الصفحة الرئيسية.</p>
+        <p id="socialHint" style="color:#777; font-size:12px; margin-top:5px;"></p>
       </div>
 
-      <!-- ===== إدارة الأدوار (شبكة دوائر) ===== -->
+      <!-- ===== إدارة الأدوار ===== -->
       <div class="section">
         <span class="section-title" id="manageRolesTitle">🃏 إدارة الأدوار</span>
         <div class="toolbar">
@@ -487,12 +382,16 @@
     </div>
   </div>
 
-  <!-- ===== نافذة الإشعارات ===== -->
+  <!-- ===== نافذة الإشعارات (ثلاثية اللغات) ===== -->
   <div class="modal" id="noticeModal">
     <div class="modal-content">
       <h3 id="noticeModalTitle" style="color:#d4a017;">📢 تحرير الإشعار</h3>
       <p id="noticeModalHint" style="color:#aaa; font-size:13px; margin-bottom:10px;">هذا الإشعار سيظهر في الصفحة الرئيسية للتطبيق (في الأسفل).</p>
-      <textarea id="noticeText" rows="6" placeholder="اكتب نص الإشعار هنا..." style="margin-bottom:5px;"></textarea>
+      
+      <textarea id="noticeTextAr" placeholder="نص الإشعار (عربي)" rows="3" style="margin-bottom:5px;"></textarea>
+      <textarea id="noticeTextFr" placeholder="Texte de notification (Français)" rows="3" style="margin-bottom:5px;"></textarea>
+      <textarea id="noticeTextEn" placeholder="Notification text (English)" rows="3" style="margin-bottom:5px;"></textarea>
+      
       <input type="file" id="noticeImageInput" accept="image/*" />
       <div class="notice-preview" id="noticePreview">
         <div class="empty">📷 لا توجد صورة مرفوعة</div>
@@ -502,7 +401,7 @@
         <button class="btn btn-danger" id="deleteNoticeBtn">🗑️ حذف</button>
       </div>
       <p id="noticeStatus" style="color:#7a4e2d; font-size:13px; margin-top:8px; text-align:center;"></p>
-      <button class="btn" id="closeNoticeModal" style="margin-top:8px;">إغلاق</button>
+      <button class="btn" id="closeNoticeModal" style="margin-top:8px;">إلغاء</button>
     </div>
   </div>
 
@@ -526,7 +425,7 @@
         <button class="btn btn-danger" id="deleteSocialBtn">🗑️ حذف الكل</button>
       </div>
       <p id="socialStatus" style="color:#7a4e2d; font-size:13px; margin-top:8px; text-align:center;"></p>
-      <button class="btn" id="closeSocialModal" style="margin-top:8px;">إغلاق</button>
+      <button class="btn" id="closeSocialModal" style="margin-top:8px;">إلغاء</button>
     </div>
   </div>
 
@@ -586,7 +485,9 @@
     const noticeModal = document.getElementById('noticeModal');
     const openNoticeModalBtn = document.getElementById('openNoticeModalBtn');
     const closeNoticeModal = document.getElementById('closeNoticeModal');
-    const noticeText = document.getElementById('noticeText');
+    const noticeTextAr = document.getElementById('noticeTextAr');
+    const noticeTextFr = document.getElementById('noticeTextFr');
+    const noticeTextEn = document.getElementById('noticeTextEn');
     const noticeImageInput = document.getElementById('noticeImageInput');
     const noticePreview = document.getElementById('noticePreview');
     const saveNoticeBtn = document.getElementById('saveNoticeBtn');
@@ -642,14 +543,18 @@
         const snap = await get(ref(db, 'notifications/main'));
         const data = snap.val();
         if (data) {
-          noticeText.value = data.text || '';
+          noticeTextAr.value = data.text?.ar || '';
+          noticeTextFr.value = data.text?.fr || '';
+          noticeTextEn.value = data.text?.en || '';
           if (data.imageUrl) {
             noticePreview.innerHTML = `<img src="${data.imageUrl}" alt="صورة الإشعار" />`;
           } else {
             noticePreview.innerHTML = `<div class="empty">📷 لا توجد صورة مرفوعة</div>`;
           }
         } else {
-          noticeText.value = '';
+          noticeTextAr.value = '';
+          noticeTextFr.value = '';
+          noticeTextEn.value = '';
           noticePreview.innerHTML = `<div class="empty">📷 لا توجد صورة مرفوعة</div>`;
         }
       } catch (e) {
@@ -657,9 +562,11 @@
       }
     }
 
-    // ===== حفظ الإشعار =====
+    // ===== حفظ الإشعار (ثلاثي اللغات) =====
     async function saveNotice() {
-      const text = noticeText.value.trim();
+      const textAr = noticeTextAr.value.trim();
+      const textFr = noticeTextFr.value.trim();
+      const textEn = noticeTextEn.value.trim();
       const file = noticeImageInput.files[0];
       let imageUrl = '';
       try {
@@ -672,7 +579,11 @@
           imageUrl = await uploadImageToImgBB(file);
         }
         await set(ref(db, 'notifications/main'), {
-          text: text,
+          text: {
+            ar: textAr,
+            fr: textFr || textAr,
+            en: textEn || textAr
+          },
           imageUrl: imageUrl,
           updatedAt: serverTimestamp()
         });
@@ -696,7 +607,9 @@
       if (!confirm(t('deleteAllConfirm'))) return;
       try {
         await remove(ref(db, 'notifications/main'));
-        noticeText.value = '';
+        noticeTextAr.value = '';
+        noticeTextFr.value = '';
+        noticeTextEn.value = '';
         noticePreview.innerHTML = `<div class="empty">📷 لا توجد صورة مرفوعة</div>`;
         noticeStatus.textContent = '🗑️ ' + t('deleteAll');
         noticeStatus.style.color = '#e74c3c';
@@ -786,7 +699,7 @@
       document.getElementById('noticeModalHint').textContent = t('noticeEditorHint');
       document.getElementById('saveNoticeBtn').textContent = '💾 ' + t('save');
       document.getElementById('deleteNoticeBtn').textContent = '🗑️ ' + t('deleteAll');
-      document.getElementById('closeNoticeModal').textContent = t('close');
+      document.getElementById('closeNoticeModal').textContent = t('cancel');
 
       // إدارة الروابط الاجتماعية
       document.getElementById('openSocialModalBtn').textContent = '📝 ' + t('editLinks');
@@ -795,7 +708,7 @@
       document.getElementById('socialModalHint').textContent = t('socialLinksHint');
       document.getElementById('saveSocialBtn').textContent = '💾 ' + t('saveLinks');
       document.getElementById('deleteSocialBtn').textContent = '🗑️ ' + t('deleteAll');
-      document.getElementById('closeSocialModal').textContent = t('close');
+      document.getElementById('closeSocialModal').textContent = t('cancel');
 
       const lang = getCurrentLang();
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
