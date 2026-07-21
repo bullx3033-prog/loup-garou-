@@ -173,13 +173,14 @@
     .player-card .actions button:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
     .player-card.dead .actions button { opacity: 0.3; pointer-events: none; }
 
-    /* ===== رسائل اللاعبين (مع تمرير) ===== */
+    /* ===== رسائل اللاعبين (مع تمرير محسّن) ===== */
     #messagesContainer {
       margin-top: 10px;
       background: #0d0805;
       border: 1px solid #d4a017;
       border-radius: 12px;
       padding: 12px;
+      touch-action: none; /* منع تمرير الصفحة عند التمرير داخل القائمة */
     }
     #messagesContainer .title {
       color: #d4a017;
@@ -222,6 +223,9 @@
       flex-direction: column;
       gap: 4px;
       padding-left: 4px;
+      touch-action: pan-y; /* يسمح بالسحب العمودي فقط داخل القائمة */
+      -webkit-overflow-scrolling: touch; /* تحسين التمرير على iOS */
+      overscroll-behavior: contain; /* منع تمرير الصفحة عند الوصول للنهاية */
     }
     #messagesList::-webkit-scrollbar {
       width: 5px;
@@ -250,13 +254,23 @@
       flex-shrink: 0;
     }
     .message-item .sender {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       color: #d4a017;
       font-size: 12px;
       font-weight: bold;
-      min-width: 80px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      min-width: 70px;
+    }
+    /* ===== دائرة صغيرة تحتوي على صورة بطاقة الدور ===== */
+    .message-item .sender-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #d4a017;
+      object-fit: cover;
+      background: #1a1a1a;
+      flex-shrink: 0;
     }
     .message-item .sender .role-tag {
       color: #aaa;
@@ -287,6 +301,7 @@
       font-size: 10px;
       min-width: 50px;
       text-align: left;
+      font-feature-settings: "tnum"; /* أرقام متساوية العرض */
     }
     .message-item .delete-msg {
       background: #6b1a1a;
@@ -411,6 +426,7 @@
       #messagesList { max-height: 150px; }
       .message-item { flex-wrap: wrap; gap: 4px; }
       .message-item .sender { min-width: 60px; font-size: 11px; }
+      .message-item .sender-avatar { width: 24px; height: 24px; }
       .message-item .text { font-size: 12px; width: 100%; order: 3; }
       .message-item .time { font-size: 9px; min-width: 50px; }
     }
@@ -419,6 +435,7 @@
       .player-card .details .name { font-size: 12px; }
       .player-card .details .role { font-size: 9px; }
       #messagesList { max-height: 120px; }
+      .message-item .sender-avatar { width: 20px; height: 20px; }
     }
   </style>
 </head>
@@ -434,7 +451,7 @@
 
     <div id="players"></div>
 
-    <!-- ===== رسائل اللاعبين ===== -->
+    <!-- ===== رسائل اللاعبين (مع تمرير محسّن) ===== -->
     <div id="messagesContainer">
       <div class="title">
         <span>📩 رسائل اللاعبين</span>
@@ -564,6 +581,15 @@
     // ===== تخزين بيانات اللاعبين =====
     let playersData = {};
 
+    // ===== دالة تنسيق الوقت (بأرقام إنجليزية/فرنسية) =====
+    function formatTime(timestamp) {
+      if (!timestamp) return '--:--';
+      const date = new Date(timestamp);
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return hours + ':' + minutes;
+    }
+
     // ===== عرض رسائل اللاعبين =====
     function renderMessages(messagesData) {
       messagesList.innerHTML = '';
@@ -596,15 +622,17 @@
           const player = playersData[msg.playerId] || {};
           const playerName = player.name || msg.playerName || 'لاعب مجهول';
           const roleDisplay = translateDynamicRole(player.role) || t('unknown');
+          const roleImage = player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
           senderHTML = `
             <span class="sender">
-              👤 ${playerName}
+              <img src="${roleImage}" class="sender-avatar" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
+              ${playerName}
               <span class="role-tag">🎭 ${roleDisplay}</span>
             </span>
           `;
         }
 
-        const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+        const time = formatTime(msg.timestamp);
 
         div.innerHTML = `
           ${senderHTML}
