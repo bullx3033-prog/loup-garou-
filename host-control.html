@@ -107,11 +107,12 @@
       display: inline-block;
     }
 
+    /* ===== قائمة اللاعبين ===== */
     #players {
       display: flex;
       flex-direction: column;
       gap: 4px;
-      padding-bottom: 80px;
+      padding-bottom: 20px;
     }
 
     .player-card {
@@ -148,6 +149,111 @@
     .player-card .actions button:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
     .player-card.dead .actions button { opacity: 0.3; pointer-events: none; }
 
+    /* ===== رسائل اللاعبين ===== */
+    #messagesContainer {
+      margin-top: 15px;
+      background: #0d0805;
+      border: 1px solid #d4a017;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    #messagesContainer .title {
+      color: #d4a017;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    #messagesContainer .title .badge {
+      background: #d4a017;
+      color: #0d0805;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+    #messagesContainer .title .clear-btn {
+      background: #6b1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #messagesContainer .title .clear-btn:hover {
+      background: #8b0000;
+      box-shadow: 0 0 15px #8b0000;
+    }
+    .message-item {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .message-item .sender {
+      color: #d4a017;
+      font-size: 12px;
+      font-weight: bold;
+      min-width: 80px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .message-item .sender .role-tag {
+      color: #aaa;
+      font-size: 10px;
+      font-weight: normal;
+      background: #1a1a1a;
+      padding: 0 6px;
+      border-radius: 10px;
+      border: 1px solid #333;
+    }
+    .message-item .text {
+      color: #ccc;
+      font-size: 13px;
+      flex: 1;
+      min-width: 100px;
+    }
+    .message-item .time {
+      color: #777;
+      font-size: 10px;
+      min-width: 50px;
+      text-align: left;
+    }
+    .message-item .delete-msg {
+      background: #6b1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .message-item .delete-msg:hover {
+      background: #8b0000;
+      box-shadow: 0 0 10px #8b0000;
+    }
+    .no-messages {
+      color: #777;
+      font-size: 13px;
+      text-align: center;
+      padding: 10px;
+      font-style: italic;
+    }
+
     @media (max-width: 500px) {
       .player-card { height: auto; min-height: 44px; padding: 6px 8px; flex-wrap: wrap; gap: 4px; }
       .player-card .info { flex: 1 1 100%; }
@@ -156,6 +262,10 @@
       .player-card .avatar { width: 24px; height: 24px; }
       .player-card .details .name { font-size: 13px; }
       .player-card .details .role { font-size: 10px; }
+      .message-item { flex-wrap: wrap; gap: 4px; }
+      .message-item .sender { min-width: 60px; font-size: 11px; }
+      .message-item .text { font-size: 12px; width: 100%; order: 3; }
+      .message-item .time { font-size: 9px; min-width: 50px; }
     }
     @media (max-width: 380px) {
       .player-card .avatar { width: 20px; height: 20px; }
@@ -176,6 +286,18 @@
 
     <div id="players"></div>
 
+    <!-- ===== رسائل اللاعبين ===== -->
+    <div id="messagesContainer">
+      <div class="title">
+        <span>📩 رسائل اللاعبين</span>
+        <span class="badge" id="messagesCount">0</span>
+        <button class="clear-btn" id="clearMessagesBtn">🗑️ مسح الكل</button>
+      </div>
+      <div id="messagesList">
+        <div class="no-messages">📭 لا توجد رسائل</div>
+      </div>
+    </div>
+
     <button id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
   </div>
 
@@ -190,6 +312,10 @@
       killPlayer,
       infectPlayer,
       deleteRoom,
+      db,
+      ref,
+      remove,
+      onValue
     } from "./logic.js";
 
     // ===== ترجمة =====
@@ -211,6 +337,9 @@
     const roomDisplay = document.getElementById("roomCodeDisplay");
     const statusDisplay = document.getElementById("statusDisplay");
     const refreshBtn = document.getElementById("refreshBtn");
+    const messagesList = document.getElementById("messagesList");
+    const messagesCount = document.getElementById("messagesCount");
+    const clearMessagesBtn = document.getElementById("clearMessagesBtn");
 
     if (!roomCode) {
       roomDisplay.textContent = "⚠️ " + t('unknown');
@@ -244,14 +373,85 @@
       }
     };
 
+    // ===== تخزين بيانات اللاعبين (لجلب أسمائهم وأدوارهم) =====
+    let playersData = {};
+
+    // ===== عرض رسائل اللاعبين =====
+    function renderMessages(messagesData) {
+      messagesList.innerHTML = '';
+      if (!messagesData || Object.keys(messagesData).length === 0) {
+        messagesList.innerHTML = `<div class="no-messages">📭 لا توجد رسائل</div>`;
+        messagesCount.textContent = '0';
+        return;
+      }
+
+      // ترتيب الرسائل من الأحدث إلى الأقدم
+      const entries = Object.entries(messagesData).reverse();
+      messagesCount.textContent = entries.length;
+
+      entries.forEach(([key, msg]) => {
+        const div = document.createElement('div');
+        div.className = 'message-item';
+
+        // جلب اسم اللاعب ودوره من البيانات المخزنة
+        const player = playersData[msg.playerId] || {};
+        const playerName = player.name || msg.playerName || 'لاعب مجهول';
+        const roleDisplay = translateDynamicRole(player.role) || t('unknown');
+
+        const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+
+        div.innerHTML = `
+          <span class="sender">
+            👤 ${playerName}
+            <span class="role-tag">🎭 ${roleDisplay}</span>
+          </span>
+          <span class="text">💬 ${msg.message}</span>
+          <span class="time">🕒 ${time}</span>
+          <button class="delete-msg" data-key="${key}">✕</button>
+        `;
+
+        const deleteBtn = div.querySelector('.delete-msg');
+        deleteBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          if (confirm('حذف هذه الرسالة؟')) {
+            await remove(ref(db, `rooms/${roomCode}/messages/${key}`));
+          }
+        });
+
+        messagesList.appendChild(div);
+      });
+    }
+
+    // ===== الاستماع لرسائل اللاعبين =====
+    function listenToMessages(roomCode) {
+      const messagesRef = ref(db, `rooms/${roomCode}/messages`);
+      onValue(messagesRef, (snapshot) => {
+        const data = snapshot.val();
+        renderMessages(data);
+      });
+    }
+
+    // ===== مسح جميع الرسائل =====
+    clearMessagesBtn.addEventListener('click', async () => {
+      if (confirm('⚠️ هل أنت متأكد من مسح جميع الرسائل؟')) {
+        await remove(ref(db, `rooms/${roomCode}/messages`));
+      }
+    });
+
     // ===== عرض اللاعبين =====
     function renderPlayers(data) {
       playerContainer.innerHTML = "";
       if (!data || Object.keys(data).length === 0) {
         playerContainer.innerHTML = `<p style="color:#b8a08a; text-align:center;">📭 ${t('noPlayersInRoom')}</p>`;
         statusDisplay.textContent = "⏳ " + t('waitingPlayers');
+        // تحديث بيانات اللاعبين
+        playersData = {};
         return;
       }
+
+      // تخزين بيانات اللاعبين للاستخدام في الرسائل
+      playersData = data;
+
       const entries = Object.entries(data);
       statusDisplay.textContent = `✅ ${entries.length} ${t('playersInRoom')}`;
 
@@ -316,6 +516,9 @@
     listenToPlayers(roomCode, (data) => {
       renderPlayers(data);
     });
+
+    // ===== الاستماع للرسائل =====
+    listenToMessages(roomCode);
 
     refreshBtn.addEventListener("click", fetchPlayers);
     setInterval(fetchPlayers, 5000);
