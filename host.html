@@ -37,15 +37,44 @@
       cursor: pointer; transition: 0.3s; background: #1a1a1a; display: flex; align-items: center;
       justify-content: center; position: relative; }
     .role-circle img { width: 100%; height: 100%; object-fit: cover; }
-    .role-circle.selected { border-color: #d4a017; box-shadow: 0 0 20px #d4a017; transform: scale(1.05); }
+    .role-circle:hover { border-color: crimson; transform: scale(1.03); }
     .role-circle .role-name-tooltip { position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%);
       background: #111; color: #ccc; font-size: 9px; padding: 2px 6px; border-radius: 8px;
       white-space: nowrap; opacity: 0; transition: 0.3s; pointer-events: none; font-family: 'Cinzel', serif; }
     .role-circle:hover .role-name-tooltip { opacity: 1; }
-    .role-circle .check-mark { position: absolute; top: -6px; right: -6px; background: #d4a017; color: #000;
-      border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: none;
-      align-items: center; justify-content: center; font-weight: bold; border: 2px solid #000; }
+
+    /* 🔴 التعديل الرئيسي: لون التحديد أحمر دموي متوهج */
+    .role-circle.selected {
+      border-color: #ff1a1a;
+      box-shadow: 0 0 30px #ff1a1a, 0 0 60px rgba(255, 0, 0, 0.4);
+      transform: scale(1.08);
+      animation: pulseRed 1.2s ease-in-out infinite;
+    }
+    .role-circle .check-mark {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #8b0000;
+      color: #fff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border: 2px solid #ff1a1a;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+    }
     .role-circle.selected .check-mark { display: flex; }
+
+    /* حركة نبض الدم */
+    @keyframes pulseRed {
+      0% { box-shadow: 0 0 20px #ff1a1a, 0 0 40px rgba(255, 0, 0, 0.2); }
+      50% { box-shadow: 0 0 40px #ff1a1a, 0 0 80px rgba(255, 0, 0, 0.5); }
+      100% { box-shadow: 0 0 20px #ff1a1a, 0 0 40px rgba(255, 0, 0, 0.2); }
+    }
 
     /* ===== منطقة عرض وصف الدور ===== */
     .role-description-box {
@@ -62,20 +91,9 @@
       transition: 0.3s;
       display: none;
     }
-    .role-description-box .desc-title {
-      color: #d4a017;
-      font-weight: bold;
-      font-size: 16px;
-      display: block;
-      margin-bottom: 5px;
-    }
-    .role-description-box .desc-text {
-      color: #ccc;
-    }
-    .role-description-box .empty-desc {
-      color: #777;
-      font-style: italic;
-    }
+    .role-description-box .desc-title { color: #d4a017; font-weight: bold; font-size: 16px; display: block; margin-bottom: 5px; }
+    .role-description-box .desc-text { color: #ccc; }
+    .role-description-box .empty-desc { color: #777; font-style: italic; }
 
     /* ===== عدادات الذئاب والقرويين ===== */
     .counter-group { display: flex; gap: 40px; flex-wrap: wrap; margin: 10px 0; justify-content: center; }
@@ -283,7 +301,7 @@
     let selectedRoles = {};
     let currentPlayers = [];
 
-    // ===== دالة عرض الوصف (اسم الدور مترجم) =====
+    // ===== دالة عرض الوصف =====
     function showRoleDescription(role) {
       if (!role) {
         descBox.style.display = 'none';
