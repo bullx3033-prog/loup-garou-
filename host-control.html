@@ -112,7 +112,7 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
-      padding-bottom: 20px;
+      padding-bottom: 10px;
     }
 
     .player-card {
@@ -149,9 +149,9 @@
     .player-card .actions button:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
     .player-card.dead .actions button { opacity: 0.3; pointer-events: none; }
 
-    /* ===== رسائل اللاعبين ===== */
+    /* ===== رسائل اللاعبين (مع تمرير) ===== */
     #messagesContainer {
-      margin-top: 15px;
+      margin-top: 10px;
       background: #0d0805;
       border: 1px solid #d4a017;
       border-radius: 12px;
@@ -190,16 +190,42 @@
       background: #8b0000;
       box-shadow: 0 0 15px #8b0000;
     }
+
+    /* ===== منطقة الرسائل القابلة للتمرير ===== */
+    #messagesList {
+      max-height: 200px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-left: 4px;
+    }
+    /* تخصيص شريط التمرير */
+    #messagesList::-webkit-scrollbar {
+      width: 5px;
+    }
+    #messagesList::-webkit-scrollbar-track {
+      background: #1a1a1a;
+      border-radius: 10px;
+    }
+    #messagesList::-webkit-scrollbar-thumb {
+      background: #d4a017;
+      border-radius: 10px;
+    }
+    #messagesList::-webkit-scrollbar-thumb:hover {
+      background: #b8860b;
+    }
+
     .message-item {
       background: #1a1a1a;
       border: 1px solid #333;
       border-radius: 6px;
       padding: 6px 10px;
-      margin-bottom: 5px;
       display: flex;
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
+      flex-shrink: 0;
     }
     .message-item .sender {
       color: #d4a017;
@@ -250,7 +276,7 @@
       color: #777;
       font-size: 13px;
       text-align: center;
-      padding: 10px;
+      padding: 15px 10px;
       font-style: italic;
     }
 
@@ -262,6 +288,7 @@
       .player-card .avatar { width: 24px; height: 24px; }
       .player-card .details .name { font-size: 13px; }
       .player-card .details .role { font-size: 10px; }
+      #messagesList { max-height: 150px; }
       .message-item { flex-wrap: wrap; gap: 4px; }
       .message-item .sender { min-width: 60px; font-size: 11px; }
       .message-item .text { font-size: 12px; width: 100%; order: 3; }
@@ -271,6 +298,7 @@
       .player-card .avatar { width: 20px; height: 20px; }
       .player-card .details .name { font-size: 12px; }
       .player-card .details .role { font-size: 9px; }
+      #messagesList { max-height: 120px; }
     }
   </style>
 </head>
@@ -286,7 +314,7 @@
 
     <div id="players"></div>
 
-    <!-- ===== رسائل اللاعبين ===== -->
+    <!-- ===== رسائل اللاعبين (مع تمرير) ===== -->
     <div id="messagesContainer">
       <div class="title">
         <span>📩 رسائل اللاعبين</span>
@@ -373,10 +401,10 @@
       }
     };
 
-    // ===== تخزين بيانات اللاعبين (لجلب أسمائهم وأدوارهم) =====
+    // ===== تخزين بيانات اللاعبين =====
     let playersData = {};
 
-    // ===== عرض رسائل اللاعبين =====
+    // ===== عرض رسائل اللاعبين (من الأحدث إلى الأقدم) =====
     function renderMessages(messagesData) {
       messagesList.innerHTML = '';
       if (!messagesData || Object.keys(messagesData).length === 0) {
@@ -386,14 +414,15 @@
       }
 
       // ترتيب الرسائل من الأحدث إلى الأقدم
-      const entries = Object.entries(messagesData).reverse();
+      const entries = Object.entries(messagesData).sort((a, b) => {
+        return (b[1].timestamp || 0) - (a[1].timestamp || 0);
+      });
       messagesCount.textContent = entries.length;
 
       entries.forEach(([key, msg]) => {
         const div = document.createElement('div');
         div.className = 'message-item';
 
-        // جلب اسم اللاعب ودوره من البيانات المخزنة
         const player = playersData[msg.playerId] || {};
         const playerName = player.name || msg.playerName || 'لاعب مجهول';
         const roleDisplay = translateDynamicRole(player.role) || t('unknown');
@@ -444,12 +473,10 @@
       if (!data || Object.keys(data).length === 0) {
         playerContainer.innerHTML = `<p style="color:#b8a08a; text-align:center;">📭 ${t('noPlayersInRoom')}</p>`;
         statusDisplay.textContent = "⏳ " + t('waitingPlayers');
-        // تحديث بيانات اللاعبين
         playersData = {};
         return;
       }
 
-      // تخزين بيانات اللاعبين للاستخدام في الرسائل
       playersData = data;
 
       const entries = Object.entries(data);
