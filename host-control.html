@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -136,7 +136,7 @@
     .player-card .details .role { font-size: 11px; color: #aaa; }
     .player-card .details .role strong { color: #fff; }
 
-    /* ===== أزرار الإجراءات (قتل، تحويل، رسالة) ===== */
+    /* ===== أزرار الإجراءات ===== */
     .player-card .actions {
       display: flex;
       gap: 4px;
@@ -481,7 +481,8 @@
       onValue,
       push,
       update,
-      get
+      get,
+      getPlayer
     } from "./logic.js";
 
     // ===== ترجمة =====
@@ -763,7 +764,7 @@
           playerName: playerName,
           message: message,
           timestamp: Date.now(),
-          fromNarrator: true // علامة تميز أن الرسالة من الراوي
+          fromNarrator: true
         });
         modalStatus.textContent = '✅ تم إرسال الرسالة!';
         modalStatus.style.color = '#2ecc71';
