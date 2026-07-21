@@ -135,17 +135,41 @@
     .player-card .details .name { font-size: 14px; color: #f2f2f2; font-weight: 700; }
     .player-card .details .role { font-size: 11px; color: #aaa; }
     .player-card .details .role strong { color: #fff; }
-    .player-card .actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+    /* ===== أزرار الإجراءات (قتل، تحويل، رسالة) ===== */
+    .player-card .actions {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
     .player-card .actions button {
-      padding: 2px 8px; border: none; border-radius: 4px; font-family: 'Cinzel', serif; font-weight: bold;
-      font-size: 10px; cursor: pointer; transition: 0.3s; background: #2c2c2c; color: #fff;
-      white-space: nowrap; height: 24px; line-height: 1;
+      padding: 2px 8px;
+      border: none;
+      border-radius: 4px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      font-size: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      background: #2c2c2c;
+      color: #fff;
+      white-space: nowrap;
+      height: 24px;
+      line-height: 1;
     }
     .player-card .actions button:hover:not(:disabled) { transform: scale(1.05); }
     .player-card .actions .kill { background: #6b1a1a; color: #fff; }
     .player-card .actions .kill:hover:not(:disabled) { background: #8b0000; box-shadow: 0 0 12px #8b0000; }
     .player-card .actions .infect { background: #1a4a1a; color: #fff; }
     .player-card .actions .infect:hover:not(:disabled) { background: #2e7d32; box-shadow: 0 0 12px #2e7d32; }
+    .player-card .actions .message-btn {
+      background: #b8860b;
+      color: #fff;
+    }
+    .player-card .actions .message-btn:hover:not(:disabled) {
+      background: #d4a017;
+      box-shadow: 0 0 12px #d4a017;
+    }
     .player-card .actions button:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
     .player-card.dead .actions button { opacity: 0.3; pointer-events: none; }
 
@@ -191,7 +215,6 @@
       box-shadow: 0 0 15px #8b0000;
     }
 
-    /* ===== منطقة الرسائل القابلة للتمرير ===== */
     #messagesList {
       max-height: 200px;
       overflow-y: auto;
@@ -200,7 +223,6 @@
       gap: 4px;
       padding-left: 4px;
     }
-    /* تخصيص شريط التمرير */
     #messagesList::-webkit-scrollbar {
       width: 5px;
     }
@@ -245,6 +267,15 @@
       border-radius: 10px;
       border: 1px solid #333;
     }
+    .message-item .sender .narrator-tag {
+      color: #d4a017;
+      font-size: 10px;
+      font-weight: normal;
+      background: #2a1a0a;
+      padding: 0 6px;
+      border-radius: 10px;
+      border: 1px solid #d4a017;
+    }
     .message-item .text {
       color: #ccc;
       font-size: 13px;
@@ -278,6 +309,95 @@
       text-align: center;
       padding: 15px 10px;
       font-style: italic;
+    }
+
+    /* ===== نافذة إرسال رسالة من الراوي ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #111;
+      border: 2px solid crimson;
+      border-radius: 16px;
+      padding: 30px 25px;
+      max-width: 400px;
+      width: 90%;
+      color: #fff;
+    }
+    .modal-content h3 {
+      color: #d4a017;
+      font-size: 20px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .modal-content p {
+      color: #aaa;
+      font-size: 13px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .modal-content textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #1a1a1a;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 80px;
+    }
+    .modal-content textarea:focus {
+      border-color: #d4a017;
+      outline: none;
+      box-shadow: 0 0 15px rgba(212, 160, 23, 0.2);
+    }
+    .modal-content .flex {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .modal-content .flex .btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .modal-content .flex .btn-success {
+      background: #1a4a1a;
+      color: #fff;
+    }
+    .modal-content .flex .btn-success:hover {
+      background: #2e7d32;
+      box-shadow: 0 0 15px #2e7d32;
+    }
+    .modal-content .flex .btn-cancel {
+      background: #2c2c2c;
+      color: #fff;
+    }
+    .modal-content .flex .btn-cancel:hover {
+      background: #3a3a3a;
+    }
+    .modal-content .status-msg {
+      color: #7a4e2d;
+      font-size: 13px;
+      margin-top: 8px;
+      text-align: center;
     }
 
     @media (max-width: 500px) {
@@ -314,7 +434,7 @@
 
     <div id="players"></div>
 
-    <!-- ===== رسائل اللاعبين (مع تمرير) ===== -->
+    <!-- ===== رسائل اللاعبين ===== -->
     <div id="messagesContainer">
       <div class="title">
         <span>📩 رسائل اللاعبين</span>
@@ -327,6 +447,21 @@
     </div>
 
     <button id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
+  </div>
+
+  <!-- ===== نافذة إرسال رسالة من الراوي إلى لاعب ===== -->
+  <div class="modal" id="messageModal">
+    <div class="modal-content">
+      <h3 id="modalTitle">📩 إرسال رسالة</h3>
+      <p id="modalSubtitle">إلى: <span id="targetPlayerName">---</span></p>
+      <textarea id="messageInput" placeholder="اكتب رسالتك هنا..."></textarea>
+      <div class="flex">
+        <button class="btn btn-success" id="sendMessageBtn">📤 إرسال</button>
+        <button class="btn btn-cancel" id="closeMessageModal">إلغاء</button>
+      </div>
+      <p class="status-msg" id="modalStatus"></p>
+      <input type="hidden" id="targetPlayerId" value="" />
+    </div>
   </div>
 
   <script type="module">
@@ -343,7 +478,10 @@
       db,
       ref,
       remove,
-      onValue
+      onValue,
+      push,
+      update,
+      get
     } from "./logic.js";
 
     // ===== ترجمة =====
@@ -368,6 +506,17 @@
     const messagesList = document.getElementById("messagesList");
     const messagesCount = document.getElementById("messagesCount");
     const clearMessagesBtn = document.getElementById("clearMessagesBtn");
+
+    // عناصر نافذة الرسائل
+    const messageModal = document.getElementById("messageModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalSubtitle = document.getElementById("modalSubtitle");
+    const targetPlayerName = document.getElementById("targetPlayerName");
+    const targetPlayerId = document.getElementById("targetPlayerId");
+    const messageInput = document.getElementById("messageInput");
+    const sendMessageBtn = document.getElementById("sendMessageBtn");
+    const closeMessageModal = document.getElementById("closeMessageModal");
+    const modalStatus = document.getElementById("modalStatus");
 
     if (!roomCode) {
       roomDisplay.textContent = "⚠️ " + t('unknown');
@@ -401,10 +550,20 @@
       }
     };
 
+    // ===== دالة إرسال رسالة من الراوي إلى لاعب =====
+    window.sendMessageToPlayer = (playerId, playerName) => {
+      targetPlayerId.value = playerId;
+      targetPlayerName.textContent = playerName || 'لاعب مجهول';
+      modalSubtitle.textContent = 'إلى: ' + (playerName || 'لاعب مجهول');
+      messageInput.value = '';
+      modalStatus.textContent = '';
+      messageModal.style.display = 'flex';
+    };
+
     // ===== تخزين بيانات اللاعبين =====
     let playersData = {};
 
-    // ===== عرض رسائل اللاعبين (من الأحدث إلى الأقدم) =====
+    // ===== عرض رسائل اللاعبين =====
     function renderMessages(messagesData) {
       messagesList.innerHTML = '';
       if (!messagesData || Object.keys(messagesData).length === 0) {
@@ -413,7 +572,6 @@
         return;
       }
 
-      // ترتيب الرسائل من الأحدث إلى الأقدم
       const entries = Object.entries(messagesData).sort((a, b) => {
         return (b[1].timestamp || 0) - (a[1].timestamp || 0);
       });
@@ -423,17 +581,32 @@
         const div = document.createElement('div');
         div.className = 'message-item';
 
-        const player = playersData[msg.playerId] || {};
-        const playerName = player.name || msg.playerName || 'لاعب مجهول';
-        const roleDisplay = translateDynamicRole(player.role) || t('unknown');
+        const isNarrator = msg.fromNarrator === true;
+
+        let senderHTML = '';
+        if (isNarrator) {
+          senderHTML = `
+            <span class="sender">
+              🎙️ الراوي
+              <span class="narrator-tag">📢</span>
+            </span>
+          `;
+        } else {
+          const player = playersData[msg.playerId] || {};
+          const playerName = player.name || msg.playerName || 'لاعب مجهول';
+          const roleDisplay = translateDynamicRole(player.role) || t('unknown');
+          senderHTML = `
+            <span class="sender">
+              👤 ${playerName}
+              <span class="role-tag">🎭 ${roleDisplay}</span>
+            </span>
+          `;
+        }
 
         const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '--:--';
 
         div.innerHTML = `
-          <span class="sender">
-            👤 ${playerName}
-            <span class="role-tag">🎭 ${roleDisplay}</span>
-          </span>
+          ${senderHTML}
           <span class="text">💬 ${msg.message}</span>
           <span class="time">🕒 ${time}</span>
           <button class="delete-msg" data-key="${key}">✕</button>
@@ -506,11 +679,13 @@
           <div class="actions">
             <button class="kill" data-id="${id}">🗡️ ${t('kill')}</button>
             <button class="infect" data-id="${id}">🐺 ${t('infect')}</button>
+            <button class="message-btn" data-id="${id}" data-name="${player.name}">📩</button>
           </div>
         `;
 
         const killBtn = card.querySelector('.kill');
         const infectBtn = card.querySelector('.infect');
+        const messageBtn = card.querySelector('.message-btn');
 
         killBtn.addEventListener('click', () => {
           window.killPlayer(id);
@@ -518,6 +693,10 @@
 
         infectBtn.addEventListener('click', () => {
           window.infectPlayer(id, player.name);
+        });
+
+        messageBtn.addEventListener('click', () => {
+          window.sendMessageToPlayer(id, player.name);
         });
 
         if (infectedPlayer && infectedPlayer[0] !== id) {
@@ -529,6 +708,7 @@
         if (player.isDead) {
           killBtn.disabled = true;
           infectBtn.disabled = true;
+          messageBtn.disabled = true;
         }
 
         playerContainer.appendChild(card);
@@ -550,6 +730,53 @@
     refreshBtn.addEventListener("click", fetchPlayers);
     setInterval(fetchPlayers, 5000);
     await fetchPlayers();
+
+    // ===== أحداث نافذة إرسال الرسالة =====
+    closeMessageModal.addEventListener('click', () => {
+      messageModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === messageModal) messageModal.style.display = 'none';
+    });
+
+    sendMessageBtn.addEventListener('click', async () => {
+      const playerId = targetPlayerId.value;
+      const message = messageInput.value.trim();
+      if (!message) {
+        modalStatus.textContent = '⚠️ الرجاء كتابة رسالة!';
+        modalStatus.style.color = '#e74c3c';
+        return;
+      }
+      if (!playerId) {
+        modalStatus.textContent = '❌ لم يتم تحديد لاعب!';
+        modalStatus.style.color = '#e74c3c';
+        return;
+      }
+
+      try {
+        const player = await getPlayer(roomCode, playerId);
+        const playerName = player?.name || 'لاعب مجهول';
+        const messagesRef = ref(db, `rooms/${roomCode}/messages`);
+        await push(messagesRef, {
+          playerId: playerId,
+          playerName: playerName,
+          message: message,
+          timestamp: Date.now(),
+          fromNarrator: true // علامة تميز أن الرسالة من الراوي
+        });
+        modalStatus.textContent = '✅ تم إرسال الرسالة!';
+        modalStatus.style.color = '#2ecc71';
+        messageInput.value = '';
+        setTimeout(() => {
+          modalStatus.textContent = '';
+          messageModal.style.display = 'none';
+        }, 1500);
+      } catch (err) {
+        modalStatus.textContent = '❌ خطأ: ' + err.message;
+        modalStatus.style.color = '#e74c3c';
+      }
+    });
 
     document.getElementById("exitBtn").addEventListener("click", async () => {
       if (!confirm(t('confirmEndRound'))) return;
