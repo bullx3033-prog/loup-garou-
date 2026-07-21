@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
+    /* ===== جميع الأنماط السابقة ===== */
     .btn-suggest {
       position: fixed;
       bottom: 20px;
@@ -147,6 +148,50 @@
       flex: 1;
       min-width: 100px;
     }
+
+    /* ===== زر إرسال رسالة للراوي ===== */
+    .btn-message-narrator {
+      background: #b8860b;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 30px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      margin-top: 10px;
+      box-shadow: 0 0 15px rgba(184, 134, 11, 0.3);
+    }
+    .btn-message-narrator:hover {
+      background: #d4a017;
+      box-shadow: 0 0 30px #d4a017;
+      transform: scale(1.02);
+    }
+
+    /* نافذة إرسال رسالة للراوي */
+    .modal-message .modal-content {
+      max-width: 400px;
+    }
+    .modal-message textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #1a1a1a;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 100px;
+    }
+    .modal-message textarea:focus {
+      border-color: #d4a017;
+      outline: none;
+      box-shadow: 0 0 15px rgba(212, 160, 23, 0.2);
+    }
   </style>
 </head>
 <body>
@@ -179,7 +224,24 @@
     <div id="roleBox" class="hidden"></div>
   </div>
 
+  <!-- ===== زر إرسال رسالة للراوي (يظهر بعد بدء اللعبة) ===== -->
+  <button class="btn-message-narrator" id="messageNarratorBtn" style="display:none;">📩 إرسال رسالة للراوي</button>
+
   <button class="btn-suggest" id="suggestBtn">💬 اقتراحات للمطور</button>
+
+  <!-- ===== نافذة إرسال رسالة للراوي ===== -->
+  <div class="modal modal-message" id="messageModal">
+    <div class="modal-content">
+      <h3 style="color:#d4a017;">📩 إرسال رسالة إلى الراوي</h3>
+      <p style="color:#aaa; font-size:13px; margin-bottom:10px;">اكتب رسالتك، سيتمكن الراوي من رؤيتها في صفحة التحكم.</p>
+      <textarea id="messageText" placeholder="اكتب رسالتك هنا..."></textarea>
+      <div class="flex" style="margin-top:10px;">
+        <button class="btn btn-success" id="sendMessageBtn">📤 إرسال</button>
+        <button class="btn" id="closeMessageModal">إلغاء</button>
+      </div>
+      <p id="messageStatus" style="color:#7a4e2d; font-size:13px; margin-top:8px; text-align:center;"></p>
+    </div>
+  </div>
 
   <div class="modal" id="suggestModal">
     <div class="modal-content">
@@ -208,7 +270,8 @@
       update,
       remove,
       onValue,
-      get
+      get,
+      push
     } from "./logic.js";
 
     function applyTranslations() {
@@ -230,6 +293,9 @@
       document.getElementById('suggestMessage').placeholder = t('yourSuggestion');
       document.getElementById('sendSuggest').textContent = t('send');
       document.getElementById('closeSuggest').textContent = t('cancel');
+      document.getElementById('messageNarratorBtn').textContent = '📩 ' + t('sendToNarrator');
+      document.getElementById('sendMessageBtn').textContent = '📤 ' + t('send');
+      document.getElementById('closeMessageModal').textContent = t('cancel');
 
       const lang = getCurrentLang();
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
@@ -247,6 +313,12 @@
     const roleBox = document.getElementById("roleBox");
     const leaveBtn = document.getElementById("leaveBtn");
     const waitingText = document.getElementById("waitingText");
+    const messageNarratorBtn = document.getElementById("messageNarratorBtn");
+    const messageModal = document.getElementById("messageModal");
+    const messageText = document.getElementById("messageText");
+    const sendMessageBtn = document.getElementById("sendMessageBtn");
+    const closeMessageModal = document.getElementById("closeMessageModal");
+    const messageStatus = document.getElementById("messageStatus");
 
     const discordSection = document.getElementById("discordPlayerSection");
     const discordLinkInput = document.getElementById("discordPlayerLink");
@@ -269,7 +341,7 @@
       });
     }
 
-    // ===== جلب وصف الدور (يدعم النصوص والكائنات الثلاثية) =====
+    // ===== جلب وصف الدور =====
     async function fetchRoleDescription(roleNameInput) {
       try {
         let targetName = roleNameInput;
@@ -296,7 +368,6 @@
           if (match) {
             const desc = role.description;
             if (typeof desc === 'object') {
-              // إرجاع الوصف حسب اللغة الحالية، أو العربية كافتراضي
               return desc[lang] || desc.ar || desc.fr || desc.en || '';
             } else {
               return desc || '';
@@ -310,7 +381,42 @@
       }
     }
 
-    // ===== عرض البطاقة مع الوصف المترجم =====
+    // ===== إرسال رسالة إلى الراوي =====
+    async function sendMessageToNarrator() {
+      const message = messageText.value.trim();
+      if (!message) {
+        messageStatus.textContent = '⚠️ الرجاء كتابة رسالة!';
+        messageStatus.style.color = '#e74c3c';
+        return;
+      }
+      if (!roomCode || !playerId) {
+        messageStatus.textContent = '❌ لا توجد غرفة أو لاعب!';
+        messageStatus.style.color = '#e74c3c';
+        return;
+      }
+      try {
+        const player = await getPlayer(roomCode, playerId);
+        const playerName = player?.name || 'لاعب مجهول';
+        const messagesRef = ref(db, `rooms/${roomCode}/messages`);
+        await push(messagesRef, {
+          playerId: playerId,
+          playerName: playerName,
+          message: message,
+          timestamp: Date.now(),
+          read: false
+        });
+        messageStatus.textContent = '✅ تم إرسال الرسالة!';
+        messageStatus.style.color = '#2ecc71';
+        messageText.value = '';
+        setTimeout(() => { messageStatus.textContent = ''; }, 3000);
+        messageModal.style.display = 'none';
+      } catch (e) {
+        messageStatus.textContent = '❌ خطأ: ' + e.message;
+        messageStatus.style.color = '#e74c3c';
+      }
+    }
+
+    // ===== عرض البطاقة =====
     async function renderRoleContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const roleText = t('yourRole') + ' ' + roleDisplay;
@@ -328,9 +434,13 @@
         </div>
       `;
 
+      // إظهار زر إرسال رسالة للراوي
+      messageNarratorBtn.style.display = 'block';
+
       document.getElementById("hideRoleBtn").onclick = () => {
         roleBox.innerHTML = `<button class="btn btn-primary" id="showRoleBtn">🃏 ${t('showCard')}</button>`;
         document.getElementById("showRoleBtn").onclick = () => renderRoleContent(player);
+        messageNarratorBtn.style.display = 'block';
       };
 
       document.getElementById("suicideBtn").onclick = async () => {
@@ -342,6 +452,7 @@
             <p id="death-text">${t('deathMessage')}</p>
             <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
           `;
+          messageNarratorBtn.style.display = 'none';
           document.getElementById("exitBtn").onclick = async () => {
             await deleteRoom(roomCode);
             localStorage.clear();
@@ -369,9 +480,12 @@
         </div>
       `;
 
+      messageNarratorBtn.style.display = 'block';
+
       document.getElementById("hideInfectedBtn").onclick = () => {
         roleBox.innerHTML = `<button class="btn btn-primary" id="showInfectedBtn">🃏 ${t('showCard')}</button>`;
         document.getElementById("showInfectedBtn").onclick = () => renderInfectedContent(player);
+        messageNarratorBtn.style.display = 'block';
       };
 
       document.getElementById("suicideInfectedBtn").onclick = async () => {
@@ -383,6 +497,7 @@
             <p id="death-text">${t('infectedDeathMessage')}</p>
             <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
           `;
+          messageNarratorBtn.style.display = 'none';
           document.getElementById("exitBtn").onclick = async () => {
             await deleteRoom(roomCode);
             localStorage.clear();
@@ -414,6 +529,7 @@
           <p id="death-text">${player.isInfected ? t('infectedDeathMessage') : t('deathMessage')}</p>
           <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
         `;
+        messageNarratorBtn.style.display = 'none';
         document.getElementById("exitBtn").onclick = async () => {
           await deleteRoom(roomCode);
           localStorage.clear();
@@ -450,6 +566,7 @@
       });
     }
 
+    // ===== الانضمام إلى الغرفة =====
     joinBtn.addEventListener("click", async () => {
       const name = nameInput.value.trim();
       const enteredRoom = codeInput.value.trim();
@@ -491,15 +608,33 @@
       }
     });
 
-    const modal = document.getElementById("suggestModal");
+    // ===== أحداث نافذة الرسائل =====
+    messageNarratorBtn.addEventListener('click', () => {
+      messageModal.style.display = 'flex';
+      messageText.value = '';
+      messageStatus.textContent = '';
+    });
+
+    closeMessageModal.addEventListener('click', () => {
+      messageModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === messageModal) messageModal.style.display = 'none';
+    });
+
+    sendMessageBtn.addEventListener('click', sendMessageToNarrator);
+
+    // ===== نظام الاقتراحات =====
+    const suggestModal = document.getElementById("suggestModal");
     document.getElementById("suggestBtn").addEventListener("click", () => {
-      modal.style.display = "flex";
+      suggestModal.style.display = "flex";
     });
     document.getElementById("closeSuggest").addEventListener("click", () => {
-      modal.style.display = "none";
+      suggestModal.style.display = "none";
     });
     window.addEventListener("click", (e) => {
-      if (e.target === modal) modal.style.display = "none";
+      if (e.target === suggestModal) suggestModal.style.display = "none";
     });
 
     document.getElementById("sendSuggest").addEventListener("click", async () => {
@@ -513,7 +648,7 @@
         await sendSuggestion(name, message, roomCode || t('unknown'));
         alert("✅ " + t('suggestionSent'));
         document.getElementById("suggestMessage").value = "";
-        modal.style.display = "none";
+        suggestModal.style.display = "none";
       } catch (err) {
         alert("❌ " + t('errorOccurred') + ": " + err.message);
       }
