@@ -151,6 +151,26 @@
       margin-right: 5px;
       display: inline-block;
     }
+    .wolf-badge {
+      background: #1a3a1a;
+      color: #66bb6a;
+      padding: 1px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      border: 1px solid #66bb6a;
+      margin-right: 5px;
+      display: inline-block;
+    }
+    .convertible-badge {
+      background: #4a3a0a;
+      color: #d4a017;
+      padding: 1px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      border: 1px solid #d4a017;
+      margin-right: 5px;
+      display: inline-block;
+    }
 
     #players {
       display: flex;
@@ -205,6 +225,15 @@
     .player-card .actions .kill:hover:not(:disabled) { background: #8b0000; box-shadow: 0 0 12px #8b0000; }
     .player-card .actions .infect { background: #1a4a1a; color: #fff; }
     .player-card .actions .infect:hover:not(:disabled) { background: #2e7d32; box-shadow: 0 0 12px #2e7d32; }
+    .player-card .actions .convert-to-wolf {
+      background: #4a3a0a;
+      color: #d4a017;
+      border: 1px solid #d4a017;
+    }
+    .player-card .actions .convert-to-wolf:hover:not(:disabled) {
+      background: #6a5a1a;
+      box-shadow: 0 0 12px #d4a017;
+    }
     .player-card .actions .message-btn {
       background: #b8860b;
       color: #fff;
@@ -525,7 +554,9 @@
       update,
       get,
       getPlayer,
-      clearWolfMessages
+      clearWolfMessages,
+      convertToWolf, // دالة جديدة
+      isPlayerWolf
     } from "./logic.js";
 
     // ===== ترجمة =====
@@ -590,7 +621,6 @@
     async function updateGameState(nightMode) {
       isNight = nightMode;
       await update(ref(db, `rooms/${roomCode}/gameState`), { isNight: nightMode });
-      // تحديث واجهة الأزرار
       nightBtn.classList.toggle('active', nightMode);
       dayBtn.classList.toggle('active', !nightMode);
       if (nightMode) {
@@ -609,11 +639,10 @@
 
     dayBtn.addEventListener('click', async () => {
       await updateGameState(false);
-      await clearWolfMessages(roomCode); // مسح رسائل الذئاب عند حلول النهار
+      await clearWolfMessages(roomCode);
       alert('☀️ حل النهار!');
     });
 
-    // الاستماع لحالة الليل/النهار
     function listenToGameState(roomCode) {
       const stateRef = ref(db, `rooms/${roomCode}/gameState`);
       onValue(stateRef, (snapshot) => {
@@ -625,7 +654,7 @@
     }
     listenToGameState(roomCode);
 
-    // ===== دوال القتل والتحويل =====
+    // ===== دوال القتل والتحويل والاستذئاب =====
     window.killPlayer = (id) => {
       killPlayer(roomCode, id);
       fetchPlayers();
@@ -635,7 +664,25 @@
       const confirmMessage = `⚠️ ${t('confirmInfect')} "${playerName || t('unknown')}"؟\n${t('irreversible')}`;
       if (confirm(confirmMessage)) {
         infectPlayer(roomCode, id);
+        // بعد الاستذئاب، نحول اللاعب إلى ذئب فوراً وندخله للدردشة
+        convertToWolf(roomCode, id);
         fetchPlayers();
+        // إشعار للراوي
+        alert(`✅ تم تحويل ${playerName || 'اللاعب'} إلى ذئب وأضيف إلى دردشة الذئاب!`);
+      }
+    };
+
+    // ===== دالة تحويل إلى ذئب (للأدوار القابلة للتحويل) =====
+    window.convertToWolfHandler = async (id, playerName) => {
+      const confirmMessage = `⚠️ هل أنت متأكد من تحويل "${playerName || t('unknown')}" إلى ذئب؟\nهذا الدور قابل للتحويل (مثل فتى البريه).`;
+      if (confirm(confirmMessage)) {
+        try {
+          await convertToWolf(roomCode, id);
+          fetchPlayers();
+          alert(`✅ تم تحويل ${playerName || 'اللاعب'} إلى ذئب وأضيف إلى دردشة الذئاب!`);
+        } catch (err) {
+          alert('❌ ' + t('errorOccurred') + ': ' + err.message);
+        }
       }
     };
 
@@ -651,6 +698,29 @@
 
     // ===== تخزين بيانات اللاعبين =====
     let playersData = {};
+    let rolesData = {};
+
+    // ===== تحميل الأدوار لتحديد من هو قابل للتحويل =====
+    async function loadRolesData() {
+      const snap = await get(ref(db, 'global_roles'));
+      rolesData = snap.val() || {};
+    }
+    await loadRolesData();
+
+    // ===== دالة التحقق مما إذا كان الدور قابلاً للتحويل =====
+    function isRoleConvertible(role) {
+      if (!role) return false;
+      // نبحث عن الدور في rolesData
+      for (const key in rolesData) {
+        const r = rolesData[key];
+        const roleName = typeof r.name === 'object' ? r.name.ar : r.name;
+        const playerRoleName = typeof role === 'object' ? role.ar : role;
+        if (roleName === playerRoleName || roleName === role) {
+          return r.isConvertible === true;
+        }
+      }
+      return false;
+    }
 
     // ===== دالة تنسيق الوقت =====
     function formatTime(timestamp) {
@@ -705,9 +775,7 @@
 
         const time = formatTime(msg.timestamp);
 
-        // تمييز رسائل التصويت من الذئاب
         const isWolfVote = msg.isWolfVote === true;
-        const textClass = isWolfVote ? 'text' : 'text';
         const textStyle = isWolfVote ? 'color:#ff6b6b;' : '';
 
         div.innerHTML = `
@@ -781,28 +849,52 @@
         if (player.isDead) card.classList.add("dead");
 
         const avatarUrl = player.roleImage || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png";
-        const infectedBadge = player.isInfected && !player.isDead
-          ? `<span class="infected-badge">🐺 ${t('infected')}</span>`
-          : "";
+        
+        // تحديد نوع البادج
+        let badge = '';
+        if (player.isInfected && !player.isDead) {
+          badge = `<span class="infected-badge">🐺 ${t('infected')}</span>`;
+        } else if (player.isWolf && !player.isDead) {
+          badge = `<span class="wolf-badge">🐺 ${t('role_wolf')}</span>`;
+        }
+        
+        // التحقق إذا كان الدور قابلاً للتحويل
+        const convertible = isRoleConvertible(player.role);
+        if (convertible && !player.isDead && !player.isInfected && !player.isWolf) {
+          badge += `<span class="convertible-badge">🔄 قابل للتحويل</span>`;
+        }
+
         const roleDisplay = translateDynamicRole(player.role) || t('unknown');
+
+        // بناء الأزرار
+        let actionsHTML = `
+          <button class="kill" data-id="${id}">🗡️ ${t('kill')}</button>
+          <button class="infect" data-id="${id}">🐺 ${t('infect')}</button>
+        `;
+
+        // زر تحويل إلى ذئب (يظهر فقط إذا كان الدور قابلاً للتحويل)
+        if (convertible && !player.isDead && !player.isInfected && !player.isWolf) {
+          actionsHTML += `<button class="convert-to-wolf" data-id="${id}">🔄 تحويل إلى ذئب</button>`;
+        }
+
+        actionsHTML += `<button class="message-btn" data-id="${id}" data-name="${player.name}">📩</button>`;
 
         card.innerHTML = `
           <div class="info">
             <img src="${avatarUrl}" class="avatar" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
             <div class="details">
-              <span class="name">${player.name} ${infectedBadge}</span>
+              <span class="name">${player.name} ${badge}</span>
               <span class="role">${t('role')} <strong>${roleDisplay}</strong></span>
             </div>
           </div>
           <div class="actions">
-            <button class="kill" data-id="${id}">🗡️ ${t('kill')}</button>
-            <button class="infect" data-id="${id}">🐺 ${t('infect')}</button>
-            <button class="message-btn" data-id="${id}" data-name="${player.name}">📩</button>
+            ${actionsHTML}
           </div>
         `;
 
         const killBtn = card.querySelector('.kill');
         const infectBtn = card.querySelector('.infect');
+        const convertBtn = card.querySelector('.convert-to-wolf');
         const messageBtn = card.querySelector('.message-btn');
 
         killBtn.addEventListener('click', () => {
@@ -812,6 +904,12 @@
         infectBtn.addEventListener('click', () => {
           window.infectPlayer(id, player.name);
         });
+
+        if (convertBtn) {
+          convertBtn.addEventListener('click', () => {
+            window.convertToWolfHandler(id, player.name);
+          });
+        }
 
         messageBtn.addEventListener('click', () => {
           window.sendMessageToPlayer(id, player.name);
@@ -826,6 +924,7 @@
         if (player.isDead) {
           killBtn.disabled = true;
           infectBtn.disabled = true;
+          if (convertBtn) convertBtn.disabled = true;
           messageBtn.disabled = true;
         }
 
