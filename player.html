@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -331,7 +331,12 @@
       font-size: 13px;
     }
     #wolfMessagesList .wolf-msg .wolf-name { color: #ff6b6b; font-weight: bold; }
-    #wolfMessagesList .wolf-msg .wolf-time { color: #555; font-size: 10px; float: left; }
+    #wolfMessagesList .wolf-msg .wolf-time {
+      color: #555;
+      font-size: 10px;
+      float: left;
+      direction: ltr;
+    }
     .wolf-input-row {
       display: flex;
       gap: 8px;
@@ -457,7 +462,7 @@
 
     <div id="roleBox" class="hidden"></div>
 
-    <!-- ===== غرفة الذئاب (تظهر فقط للذئاب والمستذئبين) ===== -->
+    <!-- ===== غرفة الذئاب ===== -->
     <div id="wolfChatContainer">
       <div class="wolf-title">
         <span>🐺 غرفة الذئاب</span>
@@ -592,6 +597,15 @@
     let shownDeaths = new Set();
     let shownNarratorNotifs = new Set();
 
+    // ===== دالة تنسيق الوقت (بأرقام غربية) =====
+    function formatTime(timestamp) {
+      if (!timestamp) return '--:--';
+      const date = new Date(timestamp);
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return hours + ':' + minutes;
+    }
+
     // ===== تحديث شريط حالة الوقت =====
     function updateTimeStatus(isNight) {
       timeStatusBar.style.display = 'block';
@@ -687,7 +701,6 @@
         return;
       }
 
-      // عرض الإشعارات الجديدة فقط
       let hasNew = false;
       entries.forEach(([key, msg]) => {
         if (!shownNarratorNotifs.has(key)) {
@@ -711,7 +724,6 @@
       closeBtn.addEventListener('click', async () => {
         await remove(ref(db, `rooms/${roomCode}/messages/${key}`));
         notif.remove();
-        // إزالة من الذاكرة
         shownNarratorNotifs.delete(key);
         if (narratorNotifContainer.children.length === 0) {
           narratorNotifContainer.innerHTML = '';
@@ -832,7 +844,7 @@
       entries.forEach(([key, msg]) => {
         const div = document.createElement('div');
         div.className = 'wolf-msg';
-        const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : '--:--';
+        const time = formatTime(msg.timestamp);
         div.innerHTML = `
           <span class="wolf-name">🐺 ${msg.playerName}:</span>
           ${msg.message}
@@ -886,7 +898,7 @@
       });
     }
 
-    // ===== إرسال اسم الضحية =====
+    // ===== إرسال اسم الضحية (مع تغيير العبارة) =====
     if (wolfVoteBtn) {
       wolfVoteBtn.addEventListener('click', async () => {
         const victim = wolfVictimInput.value.trim();
@@ -905,7 +917,7 @@
           await push(messagesRef, {
             playerId: playerId,
             playerName: player?.name || 'ذئب',
-            message: `🐺 الذئاب تريد قتل: ${victim}`,
+            message: `🐺 قرار الذئاب: ${victim}`,
             timestamp: Date.now(),
             fromNarrator: false,
             isWolfVote: true
