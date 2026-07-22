@@ -38,50 +38,79 @@
       font-size: 13px;
     }
 
-    /* ===== أزرار موحدة الحجم ===== */
+    /* ===== أزرار موحدة الحجم (بأيقونات فقط) ===== */
     .action-buttons-row {
       display: flex;
       gap: 8px;
       margin-top: 12px;
       flex-wrap: wrap;
+      justify-content: center;
     }
     .action-buttons-row .btn {
-      flex: 1;
-      min-width: 60px;
-      padding: 8px 10px;
-      font-size: 12px;
+      flex: 0 1 auto;
+      min-width: 50px;
+      width: 54px;
+      height: 48px;
+      padding: 0;
+      font-size: 20px;
       text-align: center;
-      border-radius: 8px;
+      border-radius: 10px;
       border: none;
       font-family: 'Cinzel', serif;
-      font-weight: bold;
       cursor: pointer;
       transition: 0.3s;
-      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .action-buttons-row .btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
     }
     .action-buttons-row .btn-hide {
       background: #2c2c2c;
       color: #fff;
+      border: 1px solid #555;
     }
     .action-buttons-row .btn-hide:hover {
       background: #3a3a3a;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      border-color: #777;
     }
     .action-buttons-row .btn-suicide {
       background: #6b1a1a;
       color: #fff;
+      border: 1px solid #8b0000;
     }
     .action-buttons-row .btn-suicide:hover {
       background: #8b0000;
-      box-shadow: 0 0 15px #8b0000;
+      box-shadow: 0 0 20px #8b0000;
     }
     .action-buttons-row .btn-message {
       background: #b8860b;
       color: #fff;
+      border: 1px solid #d4a017;
     }
     .action-buttons-row .btn-message:hover {
       background: #d4a017;
-      box-shadow: 0 0 15px #d4a017;
+      box-shadow: 0 0 20px #d4a017;
+    }
+    /* زر إظهار البطاقة (عند الإخفاء) */
+    .btn-show-card {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      background: #2c2c2c;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-family: 'Cinzel', serif;
+    }
+    .btn-show-card:hover {
+      background: #3a3a3a;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     }
 
     .role-image-wrapper {
@@ -121,7 +150,7 @@
       color: #d4a017;
     }
 
-    /* ===== رسالة من الراوي (تظهر أسفل الوصف) ===== */
+    /* ===== رسالة من الراوي (تظهر أسفل الوصف، تبقى حتى يغلقها اللاعب) ===== */
     .narrator-message-box {
       background: #2a1a0a;
       border: 2px solid #d4a017;
@@ -151,9 +180,9 @@
       color: #fff;
       border: none;
       border-radius: 6px;
-      padding: 2px 10px;
+      padding: 2px 12px;
       font-family: 'Cinzel', serif;
-      font-size: 11px;
+      font-size: 12px;
       cursor: pointer;
       margin-top: 6px;
       transition: 0.3s;
@@ -264,6 +293,14 @@
       border-color: #d4a017;
       outline: none;
       box-shadow: 0 0 15px rgba(212, 160, 23, 0.2);
+    }
+
+    @media (max-width: 400px) {
+      .action-buttons-row .btn {
+        width: 46px;
+        height: 42px;
+        font-size: 17px;
+      }
     }
   </style>
 </head>
@@ -486,10 +523,9 @@
       }
     }
 
-    // ===== عرض رسالة من الراوي (في صندوق أسفل الوصف) =====
-    let narratorMessageTimeout = null;
-
+    // ===== عرض رسالة من الراوي (تبقى حتى يغلقها اللاعب) =====
     function showNarratorMessage(message) {
+      // إزالة أي صندوق سابق
       const existingBox = document.getElementById('narratorMessageBox');
       if (existingBox) existingBox.remove();
 
@@ -499,24 +535,22 @@
       box.innerHTML = `
         <div class="msg-title">🎙️ رسالة من الراوي</div>
         <div class="msg-text">${message}</div>
-        <button class="msg-close" onclick="this.parentElement.style.display='none'">إغلاق</button>
+        <button class="msg-close">إغلاق</button>
       `;
       // إضافته بعد وصف الدور
       const descElement = document.querySelector('.role-description');
       if (descElement) {
         descElement.after(box);
       } else {
-        // إذا لم يوجد وصف، نضيفه بعد الصورة
         const wrapper = document.querySelector('.role-image-wrapper');
         if (wrapper) wrapper.after(box);
       }
       box.style.display = 'block';
 
-      // إخفاء تلقائي بعد 15 ثانية
-      clearTimeout(narratorMessageTimeout);
-      narratorMessageTimeout = setTimeout(() => {
-        if (box) box.style.display = 'none';
-      }, 15000);
+      // زر الإغلاق
+      box.querySelector('.msg-close').addEventListener('click', () => {
+        box.style.display = 'none';
+      });
     }
 
     // ===== الاستماع لرسائل الراوي =====
@@ -550,18 +584,17 @@
         </div>
         ${description ? `<div class="role-description"><strong>📖 ${t('roleDescription')}:</strong> ${description}</div>` : ''}
         <div class="action-buttons-row">
-          <button class="btn btn-hide" id="hideRoleBtn">🔒 ${t('hideCard')}</button>
-          <button class="btn btn-suicide" id="suicideBtn">💀 ${t('suicide')}</button>
-          <button class="btn btn-message" id="messageNarratorBtn">📩 ${t('sendToNarrator') || 'إرسال للراوي'}</button>
+          <button class="btn btn-hide" id="hideRoleBtn" title="${t('hideCard')}">🔒</button>
+          <button class="btn btn-suicide" id="suicideBtn" title="${t('suicide')}">💀</button>
+          <button class="btn btn-message" id="messageNarratorBtn" title="${t('sendToNarrator') || 'إرسال للراوي'}">📩</button>
         </div>
       `;
 
-      // بدء الاستماع لرسائل الراوي
       listenToNarratorMessages(roomCode, playerId);
 
       document.getElementById("hideRoleBtn").onclick = () => {
         roleBox.innerHTML = `
-          <button class="btn btn-primary" id="showRoleBtn" style="width:100%; padding:10px;">🃏 ${t('showCard')}</button>
+          <button class="btn-show-card" id="showRoleBtn">🃏 ${t('showCard')}</button>
         `;
         document.getElementById("showRoleBtn").onclick = () => renderRoleContent(player);
       };
@@ -603,9 +636,9 @@
         </div>
         ${description ? `<div class="role-description"><strong>📖 ${t('roleDescription')}:</strong> ${description}</div>` : ''}
         <div class="action-buttons-row">
-          <button class="btn btn-hide" id="hideInfectedBtn">🔒 ${t('hideCard')}</button>
-          <button class="btn btn-suicide" id="suicideInfectedBtn">💀 ${t('suicide')}</button>
-          <button class="btn btn-message" id="messageNarratorBtnInfected">📩 ${t('sendToNarrator') || 'إرسال للراوي'}</button>
+          <button class="btn btn-hide" id="hideInfectedBtn" title="${t('hideCard')}">🔒</button>
+          <button class="btn btn-suicide" id="suicideInfectedBtn" title="${t('suicide')}">💀</button>
+          <button class="btn btn-message" id="messageNarratorBtnInfected" title="${t('sendToNarrator') || 'إرسال للراوي'}">📩</button>
         </div>
       `;
 
@@ -613,7 +646,7 @@
 
       document.getElementById("hideInfectedBtn").onclick = () => {
         roleBox.innerHTML = `
-          <button class="btn btn-primary" id="showInfectedBtn" style="width:100%; padding:10px;">🃏 ${t('showCard')}</button>
+          <button class="btn-show-card" id="showInfectedBtn">🃏 ${t('showCard')}</button>
         `;
         document.getElementById("showInfectedBtn").onclick = () => renderInfectedContent(player);
       };
@@ -675,7 +708,7 @@
       if (player.isInfected && !player.isDead) {
         statusDiv.classList.add("hidden");
         roleBox.classList.remove("hidden");
-        roleBox.innerHTML = `<button class="btn btn-primary" id="showInfectedBtn" style="width:100%; padding:10px;">🃏 ${t('showCard')}</button>`;
+        roleBox.innerHTML = `<button class="btn-show-card" id="showInfectedBtn">🃏 ${t('showCard')}</button>`;
         document.getElementById("showInfectedBtn").onclick = () => renderInfectedContent(player);
         return;
       }
@@ -683,7 +716,7 @@
       if (player.role) {
         statusDiv.classList.add("hidden");
         roleBox.classList.remove("hidden");
-        roleBox.innerHTML = `<button class="btn btn-primary" id="showRoleBtn" style="width:100%; padding:10px;">🃏 ${t('showCard')}</button>`;
+        roleBox.innerHTML = `<button class="btn-show-card" id="showRoleBtn">🃏 ${t('showCard')}</button>`;
         document.getElementById("showRoleBtn").onclick = () => renderRoleContent(player);
         return;
       }
