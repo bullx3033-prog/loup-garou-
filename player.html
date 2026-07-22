@@ -92,6 +92,8 @@
     }
     .narrator-message-box .msg-close:hover { background: #8b0000; box-shadow: 0 0 15px #8b0000; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== غرفة الذئاب - تصميم جديد ===== */
     #wolfChatContainer {
       margin-top: 15px;
       background: #0d0805;
@@ -104,18 +106,94 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
     #wolfChatContainer .wolf-title span { color: #ff1a1a; font-size: 16px; font-weight: bold; }
     #wolfChatContainer .wolf-title small { color: #777; font-size: 11px; }
+
+    /* ===== القسم الأول: إرسال اسم الضحية (صغير) ===== */
+    .wolf-vote-section {
+      background: #1a0a0a;
+      border: 1px solid #ff1a1a;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+    }
+    .wolf-vote-label {
+      color: #ff6b6b;
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      font-family: 'Cinzel', serif;
+    }
+    .wolf-vote-row {
+      display: flex;
+      gap: 6px;
+    }
+    .wolf-vote-row input {
+      flex: 1;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #555;
+      background: #111;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      height: 34px;
+    }
+    .wolf-vote-row input:focus {
+      border-color: #ff1a1a;
+      outline: none;
+    }
+    .wolf-vote-row input::placeholder {
+      color: #555;
+      font-size: 12px;
+    }
+    .wolf-vote-btn-small {
+      background: #8b0000;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+      height: 34px;
+      white-space: nowrap;
+    }
+    .wolf-vote-btn-small:hover {
+      background: #aa0000;
+      box-shadow: 0 0 15px #8b0000;
+    }
+
+    /* ===== القسم الثاني: دردشة الذئاب (كبير) ===== */
+    .wolf-chat-section {
+      background: #0d0805;
+      border: 1px solid #ff1a1a;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .wolf-chat-label {
+      color: #ff1a1a;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      font-family: 'Cinzel', serif;
+    }
     #wolfMessagesList {
-      max-height: 150px;
+      max-height: 180px;
       overflow-y: auto;
       background: #1a1a1a;
-      border-radius: 8px;
+      border-radius: 6px;
       padding: 8px;
       margin-bottom: 8px;
+      scrollbar-width: thin;
     }
+    #wolfMessagesList::-webkit-scrollbar { width: 4px; }
+    #wolfMessagesList::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 10px; }
+    #wolfMessagesList::-webkit-scrollbar-thumb { background: #ff1a1a; border-radius: 10px; }
     #wolfMessagesList .wolf-msg {
       padding: 4px 0;
       border-bottom: 1px solid #333;
@@ -124,24 +202,36 @@
     }
     #wolfMessagesList .wolf-msg .wolf-name { color: #ff6b6b; font-weight: bold; }
     #wolfMessagesList .wolf-msg .wolf-time { color: #555; font-size: 10px; float: left; }
-    .wolf-input-row { display: flex; gap: 8px; }
+    .wolf-input-row {
+      display: flex;
+      gap: 8px;
+    }
     .wolf-input-row input {
-      flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #555;
-      background: #111; color: #fff; font-family: 'Cinzel', serif; font-size: 13px;
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #555;
+      background: #111;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
     }
     .wolf-input-row input:focus { border-color: #ff1a1a; outline: none; }
+    .wolf-input-row input::placeholder { color: #555; font-size: 12px; }
     .wolf-input-row button {
-      background: #ff1a1a; color: #fff; border: none; border-radius: 8px;
-      padding: 8px 16px; font-family: 'Cinzel', serif; font-weight: bold; cursor: pointer;
+      background: #ff1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      cursor: pointer;
       transition: 0.3s;
     }
     .wolf-input-row button:hover { background: #cc0000; box-shadow: 0 0 15px #ff1a1a; }
-    .wolf-vote-btn {
-      margin-top: 8px; width: 100%; background: #8b0000; color: #fff; border: none;
-      border-radius: 8px; padding: 8px; font-family: 'Cinzel', serif; font-weight: bold;
-      cursor: pointer; transition: 0.3s;
-    }
-    .wolf-vote-btn:hover { background: #aa0000; box-shadow: 0 0 20px #8b0000; }
+
+    /* ===== باقي الأنماط ===== */
     .discord-player-section {
       background: #1a1a1a; border: 1px solid #5865F2; border-radius: 12px; padding: 15px; margin-top: 15px;
     }
@@ -184,6 +274,8 @@
       .suggest-fab { width: 40px; height: 40px; font-size: 18px; top: 12px; left: 12px; }
       [dir="ltr"] .suggest-fab { left: auto; right: 12px; }
       #wolfMessagesList { max-height: 120px; }
+      .wolf-vote-row { flex-wrap: wrap; }
+      .wolf-vote-btn-small { width: 100%; }
     }
   </style>
 </head>
@@ -292,10 +384,13 @@
     const wolfMessagesList = document.getElementById('wolfMessagesList');
     const wolfMessageInput = document.getElementById('wolfMessageInput');
     const sendWolfMessageBtn = document.getElementById('sendWolfMessageBtn');
-    const wolfVoteBtn = document.getElementById('wolfVoteBtn');
     const discordSection = document.getElementById("discordPlayerSection");
     const discordLinkInput = document.getElementById("discordPlayerLink");
     const joinDiscordBtn = document.getElementById("joinDiscordBtn");
+
+    // ===== العناصر الجديدة لقسم التصويت =====
+    const wolfVictimInput = document.getElementById('wolfVictimInput');
+    const wolfVoteBtn = document.getElementById('wolfVoteBtn');
 
     let playerId = localStorage.getItem("playerId");
     let roomCode = getRoomCode();
@@ -489,6 +584,7 @@
       }
     }
 
+    // ===== إرسال رسالة للذئاب (القسم الكبير) =====
     if (sendWolfMessageBtn) {
       sendWolfMessageBtn.addEventListener('click', async () => {
         const message = wolfMessageInput.value.trim();
@@ -507,21 +603,43 @@
       });
     }
 
+    // ===== إرسال اسم الضحية (القسم الصغير - جديد) =====
     if (wolfVoteBtn) {
       wolfVoteBtn.addEventListener('click', async () => {
-        const victim = prompt('🐺 اكتب اسم اللاعب الذي تريد قتله:');
-        if (!victim || !roomCode || !playerId) return;
-        const player = await getPlayer(roomCode, playerId);
-        const messagesRef = ref(db, `rooms/${roomCode}/messages`);
-        await push(messagesRef, {
-          playerId: playerId,
-          playerName: player?.name || 'ذئب',
-          message: `🐺 الذئاب تريد قتل: ${victim}`,
-          timestamp: Date.now(),
-          fromNarrator: false,
-          isWolfVote: true
-        });
-        alert(`✅ تم إرسال اسم الضحية "${victim}" للراوي`);
+        const victim = wolfVictimInput.value.trim();
+        if (!victim) {
+          alert('⚠️ الرجاء كتابة اسم الضحية!');
+          wolfVictimInput.focus();
+          return;
+        }
+        if (!roomCode || !playerId) {
+          alert('❌ لا توجد غرفة أو لاعب!');
+          return;
+        }
+        try {
+          const player = await getPlayer(roomCode, playerId);
+          const messagesRef = ref(db, `rooms/${roomCode}/messages`);
+          await push(messagesRef, {
+            playerId: playerId,
+            playerName: player?.name || 'ذئب',
+            message: `🐺 الذئاب تريد قتل: ${victim}`,
+            timestamp: Date.now(),
+            fromNarrator: false,
+            isWolfVote: true
+          });
+          alert(`✅ تم إرسال اسم الضحية "${victim}" للراوي`);
+          wolfVictimInput.value = '';
+        } catch (err) {
+          alert('❌ خطأ: ' + err.message);
+        }
+      });
+    }
+
+    if (wolfVictimInput) {
+      wolfVictimInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && wolfVoteBtn) {
+          wolfVoteBtn.click();
+        }
       });
     }
 
@@ -531,17 +649,14 @@
       const roleText = t('yourRole') + ' ' + roleDisplay;
       const description = await fetchRoleDescription(player.role);
       
-      // إنشاء العناصر باستخدام createElement بدلاً من innerHTML
       roleBox.innerHTML = '';
       roleBox.classList.remove('hidden');
       
-      // اسم الدور
       const nameDiv = document.createElement('div');
       nameDiv.className = 'role-name';
       nameDiv.textContent = roleText;
       roleBox.appendChild(nameDiv);
       
-      // صورة الدور
       const wrapper = document.createElement('div');
       wrapper.className = 'role-image-wrapper';
       const img = document.createElement('img');
@@ -552,7 +667,6 @@
       wrapper.appendChild(img);
       roleBox.appendChild(wrapper);
       
-      // الوصف
       if (description) {
         const descDiv = document.createElement('div');
         descDiv.className = 'role-description';
@@ -560,11 +674,9 @@
         roleBox.appendChild(descDiv);
       }
       
-      // الأزرار
       const btnRow = document.createElement('div');
       btnRow.className = 'action-buttons-row';
       
-      // زر إخفاء
       const hideBtn = document.createElement('button');
       hideBtn.className = 'btn btn-hide';
       hideBtn.textContent = '🔒';
@@ -582,7 +694,6 @@
       });
       btnRow.appendChild(hideBtn);
       
-      // زر انتحار
       const suicideBtn = document.createElement('button');
       suicideBtn.className = 'btn btn-suicide';
       suicideBtn.textContent = '💀';
@@ -616,7 +727,6 @@
       });
       btnRow.appendChild(suicideBtn);
       
-      // زر إرسال رسالة للراوي
       const messageBtn = document.createElement('button');
       messageBtn.className = 'btn btn-message';
       messageBtn.textContent = '📩';
