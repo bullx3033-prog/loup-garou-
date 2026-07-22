@@ -78,7 +78,6 @@
       transform: scale(1.05);
     }
 
-    /* ===== زر واحد للنهار والليل ===== */
     .day-night-toggle {
       width: 100%;
       padding: 14px;
@@ -239,7 +238,6 @@
     .player-card .actions button:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
     .player-card.dead .actions button { opacity: 0.3; pointer-events: none; }
 
-    /* ===== رسائل اللاعبين ===== */
     #messagesContainer {
       margin-top: 10px;
       background: #0d0805;
@@ -406,7 +404,6 @@
     .message-item .delete-msg:hover { background: #8b0000; box-shadow: 0 0 10px #8b0000; }
     .no-messages { color: #777; font-size: 13px; text-align: center; padding: 15px 10px; font-style: italic; }
 
-    /* ===== نافذة إرسال رسالة من الراوي ===== */
     .modal {
       display: none;
       position: fixed;
@@ -480,7 +477,6 @@
   <div class="container">
     <h2 id="controlTitle">🐺 تحكم الراوي</h2>
 
-    <!-- ===== زر واحد للنهار والليل ===== -->
     <button class="day-night-toggle day" id="dayNightToggle">☀️ أنت في النهار</button>
 
     <div class="info-box">
@@ -491,7 +487,6 @@
 
     <div id="players"></div>
 
-    <!-- ===== رسائل اللاعبين ===== -->
     <div id="messagesContainer">
       <div class="title">
         <span>📩 رسائل اللاعبين</span>
@@ -512,7 +507,6 @@
     <button id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
   </div>
 
-  <!-- ===== نافذة إرسال رسالة من الراوي إلى لاعب ===== -->
   <div class="modal" id="messageModal">
     <div class="modal-content">
       <h3 id="modalTitle">📩 إرسال رسالة</h3>
@@ -551,7 +545,6 @@
       isPlayerWolf
     } from "./logic.js";
 
-    // ===== ترجمة =====
     function applyTranslations() {
       document.title = t('appName') + ' - ' + t('controlTitle');
       document.getElementById('controlTitle').textContent = `🐺 ${t('controlTitle')}`;
@@ -564,8 +557,9 @@
     }
     applyTranslations();
 
-    // ===== متغيرات =====
     const roomCode = getRoomCode();
+    console.log('🔑 roomCode من localStorage:', roomCode);
+
     const playerContainer = document.getElementById("players");
     const roomDisplay = document.getElementById("roomCodeDisplay");
     const statusDisplay = document.getElementById("statusDisplay");
@@ -577,10 +571,7 @@
     const scrollDownBtn = document.getElementById("scrollDownBtn");
     const dayNightToggle = document.getElementById("dayNightToggle");
 
-    // عناصر نافذة الرسائل
     const messageModal = document.getElementById("messageModal");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalSubtitle = document.getElementById("modalSubtitle");
     const targetPlayerName = document.getElementById("targetPlayerName");
     const targetPlayerId = document.getElementById("targetPlayerId");
     const messageInput = document.getElementById("messageInput");
@@ -598,6 +589,7 @@
     }
 
     roomDisplay.textContent = roomCode;
+    statusDisplay.textContent = "⏳ جاري التحميل...";
 
     const valid = await checkRoomExpiry(roomCode);
     if (!valid) {
@@ -606,7 +598,6 @@
       throw new Error("Expired");
     }
 
-    // ===== التحكم بالليل والنهار (زر واحد) =====
     let isNight = false;
 
     async function updateGameState(nightMode) {
@@ -644,7 +635,6 @@
     }
     listenToGameState(roomCode);
 
-    // ===== دوال القتل والتحويل والاستذئاب =====
     window.killPlayer = (id) => {
       killPlayer(roomCode, id);
       fetchPlayers();
@@ -654,14 +644,12 @@
       const confirmMessage = `⚠️ ${t('confirmInfect')} "${playerName || t('unknown')}"؟\n${t('irreversible')}`;
       if (confirm(confirmMessage)) {
         infectPlayer(roomCode, id);
-        // تحويل المستذئب إلى ذئب فوراً
         convertToWolf(roomCode, id);
         fetchPlayers();
         alert(`✅ تم تحويل ${playerName || 'اللاعب'} إلى ذئب وأضيف إلى دردشة الذئاب!`);
       }
     };
 
-    // ===== دالة تحويل إلى ذئب (للأدوار القابلة للتحويل) =====
     window.convertToWolfHandler = async (id, playerName) => {
       const confirmMessage = `⚠️ هل أنت متأكد من تحويل "${playerName || t('unknown')}" إلى ذئب؟\nهذا الدور قابل للتحويل (مثل فتى البريه).`;
       if (confirm(confirmMessage)) {
@@ -675,28 +663,24 @@
       }
     };
 
-    // ===== دالة إرسال رسالة من الراوي إلى لاعب =====
     window.sendMessageToPlayer = (playerId, playerName) => {
       targetPlayerId.value = playerId;
       targetPlayerName.textContent = playerName || 'لاعب مجهول';
-      modalSubtitle.textContent = 'إلى: ' + (playerName || 'لاعب مجهول');
+      document.getElementById('modalSubtitle').textContent = 'إلى: ' + (playerName || 'لاعب مجهول');
       messageInput.value = '';
       modalStatus.textContent = '';
       messageModal.style.display = 'flex';
     };
 
-    // ===== تخزين بيانات اللاعبين =====
     let playersData = {};
     let rolesData = {};
 
-    // ===== تحميل الأدوار =====
     async function loadRolesData() {
       const snap = await get(ref(db, 'global_roles'));
       rolesData = snap.val() || {};
     }
     await loadRolesData();
 
-    // ===== التحقق من قابلية التحويل =====
     function isRoleConvertible(role) {
       if (!role) return false;
       for (const key in rolesData) {
@@ -710,7 +694,6 @@
       return false;
     }
 
-    // ===== دالة تنسيق الوقت =====
     function formatTime(timestamp) {
       if (!timestamp) return '--:--';
       const date = new Date(timestamp);
@@ -719,7 +702,6 @@
       return hours + ':' + minutes;
     }
 
-    // ===== عرض رسائل اللاعبين =====
     function renderMessages(messagesData) {
       messagesList.innerHTML = '';
       if (!messagesData || Object.keys(messagesData).length === 0) {
@@ -762,7 +744,6 @@
         }
 
         const time = formatTime(msg.timestamp);
-
         const isWolfVote = msg.isWolfVote === true;
         const textStyle = isWolfVote ? 'color:#ff6b6b;' : '';
 
@@ -790,7 +771,6 @@
       });
     }
 
-    // ===== الاستماع لرسائل اللاعبين =====
     function listenToMessages(roomCode) {
       const messagesRef = ref(db, `rooms/${roomCode}/messages`);
       onValue(messagesRef, (snapshot) => {
@@ -799,14 +779,12 @@
       });
     }
 
-    // ===== مسح جميع الرسائل =====
     clearMessagesBtn.addEventListener('click', async () => {
       if (confirm('⚠️ هل أنت متأكد من مسح جميع الرسائل؟')) {
         await remove(ref(db, `rooms/${roomCode}/messages`));
       }
     });
 
-    // ===== أزرار التمرير =====
     scrollUpBtn.addEventListener('click', () => {
       messagesList.scrollBy({ top: -80, behavior: 'smooth' });
     });
@@ -814,8 +792,8 @@
       messagesList.scrollBy({ top: 80, behavior: 'smooth' });
     });
 
-    // ===== عرض اللاعبين =====
     function renderPlayers(data) {
+      console.log('👥 عرض اللاعبين:', data);
       playerContainer.innerHTML = "";
       if (!data || Object.keys(data).length === 0) {
         playerContainer.innerHTML = `<p style="color:#b8a08a; text-align:center;">📭 ${t('noPlayersInRoom')}</p>`;
@@ -917,7 +895,9 @@
     }
 
     async function fetchPlayers() {
+      console.log('🔄 جلب اللاعبين للغرفة:', roomCode);
       const data = await getPlayers(roomCode);
+      console.log('👥 اللاعبين:', data);
       renderPlayers(data);
     }
 
@@ -925,14 +905,12 @@
       renderPlayers(data);
     });
 
-    // ===== الاستماع للرسائل =====
     listenToMessages(roomCode);
 
     refreshBtn.addEventListener("click", fetchPlayers);
     setInterval(fetchPlayers, 5000);
     await fetchPlayers();
 
-    // ===== أحداث نافذة إرسال الرسالة =====
     closeMessageModal.addEventListener('click', () => {
       messageModal.style.display = 'none';
     });
@@ -990,6 +968,8 @@
       clearRoomCode();
       window.location.href = "index.html";
     });
+
+    console.log('🚀 تم تحميل صفحة تحكم الراوي للغرفة:', roomCode);
   </script>
 </body>
 </html>
