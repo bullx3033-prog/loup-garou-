@@ -7,6 +7,50 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
+    /* ===== زر اقتراحات للمطور (دائري في الأعلى) ===== */
+    .suggest-fab {
+      position: fixed;
+      top: 20px;
+      z-index: 999;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #2c2c2c;
+      border: 2px solid crimson;
+      color: #fff;
+      font-size: 22px;
+      cursor: pointer;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.15);
+      font-family: 'Cinzel', serif;
+      touch-action: manipulation;
+      user-select: none;
+    }
+    .suggest-fab:hover {
+      background: #3a3a3a;
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+    }
+    .suggest-fab:active {
+      transform: scale(0.95);
+    }
+    /* الموقع حسب اتجاه الصفحة (RTL/LTR) */
+    .suggest-fab {
+      left: 20px; /* في RTL (العربية) يظهر على اليسار */
+    }
+    [dir="ltr"] .suggest-fab {
+      left: auto;
+      right: 20px; /* في LTR (الإنجليزية/الفرنسية) يظهر على اليمين */
+    }
+
+    .btn-suggest-old {
+      display: none !important;
+    }
+
+    /* ===== باقي الأنماط ===== */
     .btn-suggest {
       position: fixed;
       bottom: 20px;
@@ -38,7 +82,6 @@
       font-size: 13px;
     }
 
-    /* ===== أزرار موحدة الحجم (بأيقونات فقط) ===== */
     .action-buttons-row {
       display: flex;
       gap: 8px;
@@ -95,7 +138,6 @@
       background: #d4a017;
       box-shadow: 0 0 20px #d4a017;
     }
-    /* زر إظهار البطاقة (عند الإخفاء) */
     .btn-show-card {
       width: 100%;
       padding: 10px;
@@ -150,7 +192,6 @@
       color: #d4a017;
     }
 
-    /* ===== رسالة من الراوي (تظهر أسفل الوصف، تبقى حتى يغلقها اللاعب) ===== */
     .narrator-message-box {
       background: #2a1a0a;
       border: 2px solid #d4a017;
@@ -196,7 +237,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ===== باقي الأنماط ===== */
     .discord-player-section {
       background: #1a1a1a;
       border: 1px solid #5865F2;
@@ -273,7 +313,6 @@
       min-width: 100px;
     }
 
-    /* نافذة إرسال رسالة للراوي */
     .modal-message .modal-content {
       max-width: 400px;
     }
@@ -301,10 +340,24 @@
         height: 42px;
         font-size: 17px;
       }
+      .suggest-fab {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        top: 12px;
+        left: 12px;
+      }
+      [dir="ltr"] .suggest-fab {
+        left: auto;
+        right: 12px;
+      }
     }
   </style>
 </head>
 <body>
+
+  <!-- ===== زر اقتراحات للمطور (دائري في الأعلى) ===== -->
+  <button class="suggest-fab" id="suggestFabBtn" title="💬 اقتراحات للمطور">💬</button>
 
   <div class="container">
     <h2 id="playerTitle">🐺 لو ڨارو</h2>
@@ -335,7 +388,8 @@
     <div id="roleBox" class="hidden"></div>
   </div>
 
-  <button class="btn-suggest" id="suggestBtn">💬 اقتراحات للمطور</button>
+  <!-- ===== زر اقتراحات قديم (مخفي) ===== -->
+  <button class="btn-suggest btn-suggest-old" id="suggestBtn">💬 اقتراحات للمطور</button>
 
   <!-- ===== نافذة إرسال رسالة للراوي ===== -->
   <div class="modal modal-message" id="messageModal">
@@ -394,7 +448,7 @@
       document.getElementById('discordTitle').textContent = '🎙️ ' + t('discordSettings');
       document.getElementById('discordHint').textContent = '💡 ' + t('discordHint');
       document.getElementById('joinDiscordBtn').textContent = '🎙️ ' + t('join');
-      document.getElementById('suggestBtn').textContent = t('suggestions');
+      document.getElementById('suggestFabBtn').title = '💬 ' + t('suggestions');
       document.getElementById('suggestTitle').textContent = t('shareIdea');
       document.getElementById('suggestDesc').textContent = t('shareDesc');
       document.getElementById('suggestName').placeholder = t('yourName');
@@ -426,6 +480,9 @@
     const sendMessageBtn = document.getElementById("sendMessageBtn");
     const closeMessageModal = document.getElementById("closeMessageModal");
     const messageStatus = document.getElementById("messageStatus");
+
+    const suggestFab = document.getElementById("suggestFabBtn");
+    const suggestModal = document.getElementById("suggestModal");
 
     const discordSection = document.getElementById("discordPlayerSection");
     const discordLinkInput = document.getElementById("discordPlayerLink");
@@ -523,9 +580,8 @@
       }
     }
 
-    // ===== عرض رسالة من الراوي (تبقى حتى يغلقها اللاعب) =====
+    // ===== عرض رسالة من الراوي =====
     function showNarratorMessage(message) {
-      // إزالة أي صندوق سابق
       const existingBox = document.getElementById('narratorMessageBox');
       if (existingBox) existingBox.remove();
 
@@ -537,7 +593,6 @@
         <div class="msg-text">${message}</div>
         <button class="msg-close">إغلاق</button>
       `;
-      // إضافته بعد وصف الدور
       const descElement = document.querySelector('.role-description');
       if (descElement) {
         descElement.after(box);
@@ -547,7 +602,6 @@
       }
       box.style.display = 'block';
 
-      // زر الإغلاق
       box.querySelector('.msg-close').addEventListener('click', () => {
         box.style.display = 'none';
       });
@@ -775,6 +829,11 @@
       }
     });
 
+    // ===== زر اقتراحات (الدائري) =====
+    suggestFab.addEventListener('click', () => {
+      suggestModal.style.display = 'flex';
+    });
+
     // ===== أحداث نافذة إرسال الرسالة للراوي =====
     closeMessageModal.addEventListener('click', () => {
       messageModal.style.display = 'none';
@@ -787,10 +846,6 @@
     sendMessageBtn.addEventListener('click', sendMessageToNarrator);
 
     // ===== نظام الاقتراحات =====
-    const suggestModal = document.getElementById("suggestModal");
-    document.getElementById("suggestBtn").addEventListener("click", () => {
-      suggestModal.style.display = "flex";
-    });
     document.getElementById("closeSuggest").addEventListener("click", () => {
       suggestModal.style.display = "none";
     });
