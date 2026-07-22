@@ -78,7 +78,7 @@
       transform: scale(1.05);
     }
 
-    /* ===== زر حالة الليل والنهار (زر واحد) ===== */
+    /* ===== زر واحد للنهار والليل ===== */
     .day-night-toggle {
       width: 100%;
       padding: 14px;
@@ -134,6 +134,7 @@
       z-index: 100;
     }
     #exitBtn:hover { background: #8b0000; box-shadow: 0 0 25px #8b0000; }
+    
     .infected-badge {
       background: #6b1a1a;
       color: #ff6b6b;
@@ -479,7 +480,7 @@
   <div class="container">
     <h2 id="controlTitle">🐺 تحكم الراوي</h2>
 
-    <!-- ===== زر حالة الليل والنهار (زر واحد) ===== -->
+    <!-- ===== زر واحد للنهار والليل ===== -->
     <button class="day-night-toggle day" id="dayNightToggle">☀️ أنت في النهار</button>
 
     <div class="info-box">
@@ -508,7 +509,6 @@
       </div>
     </div>
 
-    <!-- ===== زر إنهاء الجولة (تحت رسائل اللاعبين) ===== -->
     <button id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
   </div>
 
@@ -588,7 +588,6 @@
     const closeMessageModal = document.getElementById("closeMessageModal");
     const modalStatus = document.getElementById("modalStatus");
 
-    // ===== التحقق من roomCode =====
     if (!roomCode) {
       roomDisplay.textContent = "⚠️ " + t('unknown');
       statusDisplay.textContent = "❌ " + t('noRoomCode');
@@ -599,9 +598,7 @@
     }
 
     roomDisplay.textContent = roomCode;
-    console.log('✅ roomCode:', roomCode);
 
-    // ===== التحقق من صلاحية الغرفة =====
     const valid = await checkRoomExpiry(roomCode);
     if (!valid) {
       alert("⏰ " + t('roomExpired'));
@@ -657,13 +654,14 @@
       const confirmMessage = `⚠️ ${t('confirmInfect')} "${playerName || t('unknown')}"؟\n${t('irreversible')}`;
       if (confirm(confirmMessage)) {
         infectPlayer(roomCode, id);
+        // تحويل المستذئب إلى ذئب فوراً
         convertToWolf(roomCode, id);
         fetchPlayers();
         alert(`✅ تم تحويل ${playerName || 'اللاعب'} إلى ذئب وأضيف إلى دردشة الذئاب!`);
       }
     };
 
-    // ===== دالة تحويل إلى ذئب =====
+    // ===== دالة تحويل إلى ذئب (للأدوار القابلة للتحويل) =====
     window.convertToWolfHandler = async (id, playerName) => {
       const confirmMessage = `⚠️ هل أنت متأكد من تحويل "${playerName || t('unknown')}" إلى ذئب؟\nهذا الدور قابل للتحويل (مثل فتى البريه).`;
       if (confirm(confirmMessage)) {
@@ -712,7 +710,7 @@
       return false;
     }
 
-    // ===== تنسيق الوقت =====
+    // ===== دالة تنسيق الوقت =====
     function formatTime(timestamp) {
       if (!timestamp) return '--:--';
       const date = new Date(timestamp);
@@ -919,13 +917,10 @@
     }
 
     async function fetchPlayers() {
-      console.log('🔄 جلب اللاعبين للغرفة:', roomCode);
       const data = await getPlayers(roomCode);
-      console.log('👥 اللاعبين:', data);
       renderPlayers(data);
     }
 
-    // ===== الاستماع لتغييرات اللاعبين =====
     listenToPlayers(roomCode, (data) => {
       renderPlayers(data);
     });
@@ -984,7 +979,17 @@
       }
     });
 
-    console.log('🚀 تم تحميل صفحة تحكم الراوي للغرفة:', roomCode);
+    document.getElementById("exitBtn").addEventListener("click", async () => {
+      if (!confirm(t('confirmEndRound'))) return;
+      try {
+        await deleteRoom(roomCode);
+      } catch (err) {
+        console.error(err);
+        alert("⚠️ " + t('errorOccurred'));
+      }
+      clearRoomCode();
+      window.location.href = "index.html";
+    });
   </script>
 </body>
 </html>
