@@ -76,6 +76,51 @@
       box-shadow: 0 0 30px #d4a017;
       transform: scale(1.05);
     }
+
+    /* ===== أزرار الليل والنهار ===== */
+    .day-night-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      justify-content: center;
+    }
+    .day-night-buttons .btn {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 2px solid #555;
+      cursor: pointer;
+      transition: 0.3s;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      color: #fff;
+    }
+    .day-night-buttons .btn-night {
+      background: #1a1a4a;
+      border-color: #4a4aff;
+    }
+    .day-night-buttons .btn-night:hover {
+      background: #2a2a6a;
+      box-shadow: 0 0 20px #4a4aff;
+    }
+    .day-night-buttons .btn-night.active {
+      background: #4a4aff;
+      box-shadow: 0 0 30px #4a4aff;
+    }
+    .day-night-buttons .btn-day {
+      background: #4a3a0a;
+      border-color: #d4a017;
+    }
+    .day-night-buttons .btn-day:hover {
+      background: #6a5a1a;
+      box-shadow: 0 0 20px #d4a017;
+    }
+    .day-night-buttons .btn-day.active {
+      background: #d4a017;
+      box-shadow: 0 0 30px #d4a017;
+    }
+
     #exitBtn {
       position: fixed;
       bottom: 20px;
@@ -107,7 +152,6 @@
       display: inline-block;
     }
 
-    /* ===== قائمة اللاعبين ===== */
     #players {
       display: flex;
       flex-direction: column;
@@ -172,7 +216,7 @@
     .player-card .actions button:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
     .player-card.dead .actions button { opacity: 0.3; pointer-events: none; }
 
-    /* ===== رسائل اللاعبين مع أزرار تمرير ===== */
+    /* ===== رسائل اللاعبين ===== */
     #messagesContainer {
       margin-top: 10px;
       background: #0d0805;
@@ -215,7 +259,6 @@
       box-shadow: 0 0 15px #8b0000;
     }
 
-    /* ===== حاوية الرسائل مع أزرار التمرير ===== */
     .messages-wrapper {
       position: relative;
       display: flex;
@@ -234,22 +277,12 @@
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
       scroll-behavior: smooth;
-      /* إخفاء شريط التمرير للحصول على مظهر أنظف */
       scrollbar-width: thin;
     }
-    #messagesList::-webkit-scrollbar {
-      width: 4px;
-    }
-    #messagesList::-webkit-scrollbar-track {
-      background: #1a1a1a;
-      border-radius: 10px;
-    }
-    #messagesList::-webkit-scrollbar-thumb {
-      background: #d4a017;
-      border-radius: 10px;
-    }
+    #messagesList::-webkit-scrollbar { width: 4px; }
+    #messagesList::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 10px; }
+    #messagesList::-webkit-scrollbar-thumb { background: #d4a017; border-radius: 10px; }
 
-    /* ===== أزرار التمرير (بحجم الإصبع) ===== */
     .scroll-btn {
       background: #2c2c2c;
       border: 1px solid #d4a017;
@@ -270,27 +303,11 @@
       box-shadow: 0 0 15px rgba(212, 160, 23, 0.1);
       flex-shrink: 0;
     }
-    .scroll-btn:hover {
-      background: #3a3a3a;
-      box-shadow: 0 0 25px rgba(212, 160, 23, 0.3);
-      transform: scale(1.05);
-    }
-    .scroll-btn:active {
-      transform: scale(0.95);
-    }
-    .scroll-btn.up {
-      margin-bottom: auto;
-    }
-    .scroll-btn.down {
-      margin-top: auto;
-    }
-    /* ترتيب الأزرار عمودياً على يمين القائمة */
-    .scroll-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      flex-shrink: 0;
-    }
+    .scroll-btn:hover { background: #3a3a3a; box-shadow: 0 0 25px rgba(212, 160, 23, 0.3); transform: scale(1.05); }
+    .scroll-btn:active { transform: scale(0.95); }
+    .scroll-btn.up { margin-bottom: auto; }
+    .scroll-btn.down { margin-top: auto; }
+    .scroll-buttons { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
 
     .message-item {
       background: #1a1a1a;
@@ -363,17 +380,8 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    .message-item .delete-msg:hover {
-      background: #8b0000;
-      box-shadow: 0 0 10px #8b0000;
-    }
-    .no-messages {
-      color: #777;
-      font-size: 13px;
-      text-align: center;
-      padding: 15px 10px;
-      font-style: italic;
-    }
+    .message-item .delete-msg:hover { background: #8b0000; box-shadow: 0 0 10px #8b0000; }
+    .no-messages { color: #777; font-size: 13px; text-align: center; padding: 15px 10px; font-style: italic; }
 
     /* ===== نافذة إرسال رسالة من الراوي ===== */
     .modal {
@@ -397,72 +405,24 @@
       width: 90%;
       color: #fff;
     }
-    .modal-content h3 {
-      color: #d4a017;
-      font-size: 20px;
-      margin-bottom: 10px;
-      text-align: center;
-    }
-    .modal-content p {
-      color: #aaa;
-      font-size: 13px;
-      margin-bottom: 10px;
-      text-align: center;
-    }
+    .modal-content h3 { color: #d4a017; font-size: 20px; margin-bottom: 10px; text-align: center; }
+    .modal-content p { color: #aaa; font-size: 13px; margin-bottom: 10px; text-align: center; }
     .modal-content textarea {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #555;
-      background: #1a1a1a;
-      color: #fff;
-      font-family: 'Cinzel', serif;
-      font-size: 14px;
-      resize: vertical;
-      min-height: 80px;
+      width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #555;
+      background: #1a1a1a; color: #fff; font-family: 'Cinzel', serif; font-size: 14px;
+      resize: vertical; min-height: 80px;
     }
-    .modal-content textarea:focus {
-      border-color: #d4a017;
-      outline: none;
-      box-shadow: 0 0 15px rgba(212, 160, 23, 0.2);
-    }
-    .modal-content .flex {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
+    .modal-content textarea:focus { border-color: #d4a017; outline: none; box-shadow: 0 0 15px rgba(212, 160, 23, 0.2); }
+    .modal-content .flex { display: flex; gap: 10px; margin-top: 10px; }
     .modal-content .flex .btn {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-family: 'Cinzel', serif;
-      font-weight: bold;
-      font-size: 14px;
-      cursor: pointer;
-      transition: 0.3s;
+      flex: 1; padding: 10px; border-radius: 8px; border: none;
+      font-family: 'Cinzel', serif; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;
     }
-    .modal-content .flex .btn-success {
-      background: #1a4a1a;
-      color: #fff;
-    }
-    .modal-content .flex .btn-success:hover {
-      background: #2e7d32;
-      box-shadow: 0 0 15px #2e7d32;
-    }
-    .modal-content .flex .btn-cancel {
-      background: #2c2c2c;
-      color: #fff;
-    }
-    .modal-content .flex .btn-cancel:hover {
-      background: #3a3a3a;
-    }
-    .modal-content .status-msg {
-      color: #7a4e2d;
-      font-size: 13px;
-      margin-top: 8px;
-      text-align: center;
-    }
+    .modal-content .flex .btn-success { background: #1a4a1a; color: #fff; }
+    .modal-content .flex .btn-success:hover { background: #2e7d32; box-shadow: 0 0 15px #2e7d32; }
+    .modal-content .flex .btn-cancel { background: #2c2c2c; color: #fff; }
+    .modal-content .flex .btn-cancel:hover { background: #3a3a3a; }
+    .modal-content .status-msg { color: #7a4e2d; font-size: 13px; margin-top: 8px; text-align: center; }
 
     @media (max-width: 500px) {
       .player-card { height: auto; min-height: 44px; padding: 6px 8px; flex-wrap: wrap; gap: 4px; }
@@ -479,6 +439,7 @@
       .message-item .text { font-size: 12px; width: 100%; order: 3; }
       .message-item .time { font-size: 9px; min-width: 50px; }
       .scroll-btn { width: 38px; height: 38px; min-width: 38px; font-size: 18px; }
+      .day-night-buttons .btn { font-size: 13px; padding: 8px; }
     }
     @media (max-width: 380px) {
       .player-card .avatar { width: 20px; height: 20px; }
@@ -487,12 +448,19 @@
       #messagesList { max-height: 120px; }
       .message-item .sender-avatar { width: 20px; height: 20px; }
       .scroll-btn { width: 34px; height: 34px; min-width: 34px; font-size: 16px; }
+      .day-night-buttons .btn { font-size: 11px; padding: 6px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h2 id="controlTitle">🐺 تحكم الراوي</h2>
+
+    <!-- ===== أزرار الليل والنهار ===== -->
+    <div class="day-night-buttons">
+      <button class="btn btn-night" id="nightBtn">🌙 ليل</button>
+      <button class="btn btn-day" id="dayBtn">☀️ نهار</button>
+    </div>
 
     <div class="info-box">
       <div id="roomLabel">🔑 الغرفة: <span class="code" id="roomCodeDisplay">---</span></div>
@@ -502,7 +470,7 @@
 
     <div id="players"></div>
 
-    <!-- ===== رسائل اللاعبين مع أزرار تمرير ===== -->
+    <!-- ===== رسائل اللاعبين ===== -->
     <div id="messagesContainer">
       <div class="title">
         <span>📩 رسائل اللاعبين</span>
@@ -513,7 +481,6 @@
         <div id="messagesList">
           <div class="no-messages">📭 لا توجد رسائل</div>
         </div>
-        <!-- ===== أزرار التمرير ===== -->
         <div class="scroll-buttons">
           <button class="scroll-btn up" id="scrollUpBtn" title="تمرير للأعلى">▲</button>
           <button class="scroll-btn down" id="scrollDownBtn" title="تمرير للأسفل">▼</button>
@@ -557,7 +524,8 @@
       push,
       update,
       get,
-      getPlayer
+      getPlayer,
+      clearWolfMessages
     } from "./logic.js";
 
     // ===== ترجمة =====
@@ -584,6 +552,8 @@
     const clearMessagesBtn = document.getElementById("clearMessagesBtn");
     const scrollUpBtn = document.getElementById("scrollUpBtn");
     const scrollDownBtn = document.getElementById("scrollDownBtn");
+    const nightBtn = document.getElementById("nightBtn");
+    const dayBtn = document.getElementById("dayBtn");
 
     // عناصر نافذة الرسائل
     const messageModal = document.getElementById("messageModal");
@@ -613,6 +583,47 @@
       window.location.href = "index.html";
       throw new Error("Expired");
     }
+
+    // ===== التحكم بالليل والنهار =====
+    let isNight = false;
+
+    async function updateGameState(nightMode) {
+      isNight = nightMode;
+      await update(ref(db, `rooms/${roomCode}/gameState`), { isNight: nightMode });
+      // تحديث واجهة الأزرار
+      nightBtn.classList.toggle('active', nightMode);
+      dayBtn.classList.toggle('active', !nightMode);
+      if (nightMode) {
+        nightBtn.textContent = '🌙 ليل (نشط)';
+        dayBtn.textContent = '☀️ نهار';
+      } else {
+        nightBtn.textContent = '🌙 ليل';
+        dayBtn.textContent = '☀️ نهار (نشط)';
+      }
+    }
+
+    nightBtn.addEventListener('click', async () => {
+      await updateGameState(true);
+      alert('🌙 حل الليل! الذئاب تستيقظ...');
+    });
+
+    dayBtn.addEventListener('click', async () => {
+      await updateGameState(false);
+      await clearWolfMessages(roomCode); // مسح رسائل الذئاب عند حلول النهار
+      alert('☀️ حل النهار!');
+    });
+
+    // الاستماع لحالة الليل/النهار
+    function listenToGameState(roomCode) {
+      const stateRef = ref(db, `rooms/${roomCode}/gameState`);
+      onValue(stateRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          updateGameState(data.isNight === true);
+        }
+      });
+    }
+    listenToGameState(roomCode);
 
     // ===== دوال القتل والتحويل =====
     window.killPlayer = (id) => {
@@ -694,12 +705,22 @@
 
         const time = formatTime(msg.timestamp);
 
+        // تمييز رسائل التصويت من الذئاب
+        const isWolfVote = msg.isWolfVote === true;
+        const textClass = isWolfVote ? 'text' : 'text';
+        const textStyle = isWolfVote ? 'color:#ff6b6b;' : '';
+
         div.innerHTML = `
           ${senderHTML}
-          <span class="text">💬 ${msg.message}</span>
+          <span class="text" style="${textStyle}">💬 ${msg.message}</span>
           <span class="time">🕒 ${time}</span>
           <button class="delete-msg" data-key="${key}">✕</button>
         `;
+
+        if (isWolfVote) {
+          div.style.borderColor = '#ff1a1a';
+          div.style.borderWidth = '2px';
+        }
 
         const deleteBtn = div.querySelector('.delete-msg');
         deleteBtn.addEventListener('click', async (e) => {
@@ -733,7 +754,6 @@
     scrollUpBtn.addEventListener('click', () => {
       messagesList.scrollBy({ top: -80, behavior: 'smooth' });
     });
-
     scrollDownBtn.addEventListener('click', () => {
       messagesList.scrollBy({ top: 80, behavior: 'smooth' });
     });
