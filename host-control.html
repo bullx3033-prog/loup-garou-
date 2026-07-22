@@ -389,6 +389,7 @@
       min-width: 50px;
       text-align: left;
       font-feature-settings: "tnum";
+      direction: ltr;
     }
     .message-item .delete-msg {
       background: #6b1a1a;
@@ -702,7 +703,6 @@
       return hours + ':' + minutes;
     }
 
-    // ===== عرض رسائل اللاعبين (مع فلترة رسائل الراوي) =====
     function renderMessages(messagesData) {
       messagesList.innerHTML = '';
       if (!messagesData || Object.keys(messagesData).length === 0) {
@@ -711,7 +711,6 @@
         return;
       }
 
-      // ✅ التصحيح: استبعاد رسائل الراوي (fromNarrator: true)
       const filteredEntries = Object.entries(messagesData)
         .filter(([key, msg]) => !msg.fromNarrator)
         .sort((a, b) => (b[1].timestamp || 0) - (a[1].timestamp || 0));
@@ -744,9 +743,15 @@
         const isWolfVote = msg.isWolfVote === true;
         const textStyle = isWolfVote ? 'color:#ff6b6b;' : '';
 
+        // تغيير العبارة من "الذئاب تريد قتل:" إلى "قرار الذئاب:"
+        let displayMessage = msg.message;
+        if (isWolfVote && displayMessage.includes('الذئاب تريد قتل:')) {
+          displayMessage = displayMessage.replace('الذئاب تريد قتل:', '🐺 قرار الذئاب:');
+        }
+
         div.innerHTML = `
           ${senderHTML}
-          <span class="text" style="${textStyle}">💬 ${msg.message}</span>
+          <span class="text" style="${textStyle}">💬 ${displayMessage}</span>
           <span class="time">🕒 ${time}</span>
           <button class="delete-msg" data-key="${key}">✕</button>
         `;
