@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -549,7 +549,6 @@
       });
     }
 
-    // ===== دوال عرض البطاقة =====
     async function renderRoleContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const roleText = t('yourRole') + ' ' + roleDisplay;
@@ -766,7 +765,6 @@
       }
     }
 
-    // ===== التحقق من حالة اللاعب =====
     async function checkPlayerStatus() {
       if (!playerId || !roomCode) return;
       try {
@@ -852,7 +850,6 @@
       }
     }
 
-    // ===== أحداث الانضمام =====
     joinBtn.addEventListener("click", async () => {
       const name = nameInput.value.trim();
       const enteredRoom = codeInput.value.trim();
