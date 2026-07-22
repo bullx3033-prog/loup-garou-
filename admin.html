@@ -226,6 +226,37 @@
     .role-circle .convertible-badge { display: none; }
     .role-circle.convertible .convertible-badge { display: flex; }
 
+    /* ===== checkbox مخصص ===== */
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 10px 0;
+      padding: 8px 12px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      margin: 0;
+      accent-color: #d4a017;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .checkbox-group label {
+      color: #d4a017;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+    }
+    .checkbox-group .hint {
+      color: #777;
+      font-size: 12px;
+      margin-right: auto;
+    }
+
     .notice-preview {
       margin-top: 10px;
       text-align: center;
@@ -280,37 +311,6 @@
     }
     .suggestion-card .actions .del-single { background: #6b1a1a; color: #fff; }
     .suggestion-card .actions .del-single:hover { background: #8b0000; box-shadow: 0 0 15px #8b0000; }
-
-    /* ===== checkbox مخصص ===== */
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 10px 0;
-      padding: 8px 12px;
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 8px;
-    }
-    .checkbox-group input[type="checkbox"] {
-      width: 22px;
-      height: 22px;
-      margin: 0;
-      accent-color: #d4a017;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .checkbox-group label {
-      color: #d4a017;
-      font-size: 14px;
-      cursor: pointer;
-      font-family: 'Cinzel', serif;
-    }
-    .checkbox-group .hint {
-      color: #777;
-      font-size: 12px;
-      margin-right: auto;
-    }
 
     @media (max-width: 600px) {
       .role-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
@@ -868,7 +868,6 @@
         const imageUrl = role.imageUrl || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
 
         const wolfBadge = role.isWolf ? '🐺' : '';
-        const convertibleBadge = role.isConvertible ? '🔄' : '';
 
         circle.innerHTML = `
           <img src="${imageUrl}" alt="${displayName}" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
