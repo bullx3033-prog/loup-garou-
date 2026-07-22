@@ -121,16 +121,6 @@ async function getPlayers(roomCode) {
 // ===== دوال القتل والتحويل =====
 function killPlayer(roomCode, playerId) { 
   update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true }); 
-  // إضافة إشعار وفاة
-  const player = await getPlayer(roomCode, playerId);
-  if (player) {
-    const deathsRef = ref(db, `rooms/${roomCode}/deathNotifications`);
-    await push(deathsRef, {
-      playerId: playerId,
-      playerName: player.name || 'لاعب مجهول',
-      timestamp: Date.now()
-    });
-  }
 }
 
 function infectPlayer(roomCode, playerId) { 
@@ -142,30 +132,36 @@ async function convertToWolf(roomCode, playerId) {
   // 1. تحديث حالة اللاعب إلى ذئب
   await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { 
     isWolf: true,
-    isInfected: false
+    isInfected: false // نزيل حالة المستذئب إذا كانت موجودة
   });
   
-  // 2. إضافة اللاعب إلى دردشة الذئاب
-  const wolfChatRef = ref(db, `rooms/${roomCode}/wolvesChat`);
+  // 2. جلب اسم اللاعب
   const player = await getPlayer(roomCode, playerId);
+  const playerName = player?.name || 'لاعب مجهول';
+  
+  // 3. إضافة اللاعب إلى دردشة الذئاب
+  const wolfChatRef = ref(db, `rooms/${roomCode}/wolvesChat`);
   await push(wolfChatRef, {
     playerId: playerId,
-    playerName: player?.name || 'ذئب',
-    message: `🐺 ${player?.name || 'لاعب'} انضم إلى الذئاب!`,
+    playerName: playerName,
+    message: `🐺 ${playerName} انضم إلى الذئاب!`,
     timestamp: Date.now(),
     systemMessage: true
   });
   
-  // 3. إشعار في رسائل اللاعبين
+  // 4. إشعار في رسائل اللاعبين
   const messagesRef = ref(db, `rooms/${roomCode}/messages`);
   await push(messagesRef, {
     playerId: playerId,
     playerName: 'النظام',
-    message: `🐺 ${player?.name || 'لاعب'} أصبح ذئباً!`,
+    message: `🐺 ${playerName} أصبح ذئباً!`,
     timestamp: Date.now(),
     fromNarrator: true,
     systemMessage: true
   });
+  
+  // 5. إشعار وفاة (اختياري) - إذا كان اللاعب ميتاً لا نحتاج
+  // ولكن يمكن إضافة إشعار للراوي فقط
   
   return true;
 }
@@ -178,8 +174,8 @@ async function addPlayer(roomCode, name) {
     role: null, 
     roleImage: "", 
     isDead: false, 
-    isInfected: false, 
-    isWolf: false 
+    isInfected: false,
+    isWolf: false  // حقل جديد
   });
   return newRef.key;
 }
@@ -254,17 +250,33 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
 
 // ===== إدارة الأدوار =====
 function listenToRoles(callback) { onValue(ref(db, "global_roles"), (s) => callback(s.val())); }
+
 async function addRole(nameObj, imageUrl, description, isWolf, isConvertible) { 
   const newRef = push(ref(db, "global_roles")); 
-  await set(newRef, { name: nameObj, imageUrl, description, isWolf: isWolf || false, isConvertible: isConvertible || false }); 
+  await set(newRef, { 
+    name: nameObj, 
+    imageUrl, 
+    description, 
+    isWolf: isWolf || false,
+    isConvertible: isConvertible || false 
+  }); 
   return newRef.key; 
 }
+
 async function updateRole(roleId, nameObj, imageUrl, description, isWolf, isConvertible) { 
-  await update(ref(db, `global_roles/${roleId}`), { name: nameObj, imageUrl, description, isWolf: isWolf || false, isConvertible: isConvertible || false }); 
+  await update(ref(db, `global_roles/${roleId}`), { 
+    name: nameObj, 
+    imageUrl, 
+    description, 
+    isWolf: isWolf || false,
+    isConvertible: isConvertible || false 
+  }); 
 }
+
 async function deleteRole(roleId) { 
   await remove(ref(db, `global_roles/${roleId}`)); 
 }
+
 async function uploadImageToImgBB(file) {
   const reader = new FileReader();
   const base64 = await new Promise((resolve) => { 
@@ -307,8 +319,10 @@ async function isPlayerWolf(roomCode, playerId) {
   const player = await getPlayer(roomCode, playerId);
   if (!player) return false;
   
+  // التحقق من isWolf مباشرة
   if (player.isWolf === true) return true;
   
+  // التحقق من الدور
   if (!player.role) return false;
   
   const rolesSnap = await get(ref(db, 'global_roles'));
@@ -385,5 +399,5 @@ export {
   listenToWolfMessages,
   clearWolfMessages,
   isPlayerWolf,
-  convertToWolf
+  convertToWolf  // تصدير الدالة الجديدة
 };
