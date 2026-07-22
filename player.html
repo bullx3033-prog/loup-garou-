@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
+    /* ===== زر اقتراحات ===== */
     .suggest-fab {
       position: fixed;
       top: 20px;
@@ -33,6 +34,146 @@
     .suggest-fab { left: 20px; }
     [dir="ltr"] .suggest-fab { left: auto; right: 20px; }
     .btn-suggest-old { display: none !important; }
+
+    /* ===== إشعارات الوفاة ===== */
+    #deathNotificationsContainer {
+      position: fixed;
+      top: 75px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 998;
+      width: 90%;
+      max-width: 500px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+    }
+    #deathNotificationsContainer .death-notification {
+      background: #1a0a0a;
+      border: 2px solid #ff1a1a;
+      border-radius: 10px;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: auto;
+      animation: slideDownDeath 0.4s ease;
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+    }
+    #deathNotificationsContainer .death-notification .death-text {
+      color: #ff6b6b;
+      font-size: 14px;
+      font-weight: bold;
+      font-family: 'Cinzel', serif;
+    }
+    #deathNotificationsContainer .death-notification .death-close {
+      background: transparent;
+      border: none;
+      color: #ff6b6b;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 0 6px;
+      transition: 0.3s;
+      font-family: 'Cinzel', serif;
+    }
+    #deathNotificationsContainer .death-notification .death-close:hover {
+      color: #ff0000;
+      transform: scale(1.2);
+    }
+    @keyframes slideDownDeath {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== إشعار حالة الوقت (النهار/الليل) ===== */
+    #timeStatusBar {
+      background: #0d0805;
+      border: 2px solid #d4a017;
+      border-radius: 10px;
+      padding: 8px 16px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: bold;
+      transition: 0.3s;
+      display: none;
+    }
+    #timeStatusBar.day {
+      color: #d4a017;
+      border-color: #d4a017;
+      background: #2a1a0a;
+      box-shadow: 0 0 20px rgba(212, 160, 23, 0.15);
+    }
+    #timeStatusBar.night {
+      color: #4a4aff;
+      border-color: #4a4aff;
+      background: #0a0a2a;
+      box-shadow: 0 0 20px rgba(74, 74, 255, 0.15);
+    }
+    #timeStatusBar .time-icon { margin-left: 8px; }
+
+    /* ===== رسائل الراوي (إشعارات في الأعلى) ===== */
+    #narratorNotifications {
+      position: fixed;
+      top: 130px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 997;
+      width: 90%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+    }
+    #narratorNotifications .narrator-notif {
+      background: #2a1a0a;
+      border: 2px solid #d4a017;
+      border-radius: 10px;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: auto;
+      animation: slideDownNotif 0.4s ease;
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.2);
+    }
+    #narratorNotifications .narrator-notif .notif-text {
+      color: #f0e0c0;
+      font-size: 14px;
+      font-weight: bold;
+      font-family: 'Cinzel', serif;
+      flex: 1;
+      margin-left: 10px;
+    }
+    #narratorNotifications .narrator-notif .notif-icon {
+      color: #d4a017;
+      font-size: 18px;
+      margin-left: 8px;
+    }
+    #narratorNotifications .narrator-notif .notif-close {
+      background: #6b1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 2px 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #narratorNotifications .narrator-notif .notif-close:hover {
+      background: #8b0000;
+      box-shadow: 0 0 15px #8b0000;
+    }
+    @keyframes slideDownNotif {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== الأزرار ===== */
     .action-buttons-row {
       display: flex;
       gap: 8px;
@@ -70,6 +211,7 @@
       border: 1px solid #555; border-radius: 10px; cursor: pointer; transition: 0.3s; font-family: 'Cinzel', serif;
     }
     .btn-show-card:hover { background: #3a3a3a; box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); }
+
     .role-image-wrapper { position: relative; width: 100%; max-width: 300px; margin: 10px auto; }
     .role-image-wrapper img.role-img { width: 100%; border-radius: 12px; border: 2px solid crimson; }
     .role-image-wrapper img.blood-overlay {
@@ -80,91 +222,6 @@
       color: #ccc; font-size: 13px; line-height: 1.5; text-align: center; font-family: 'Cinzel', serif; letter-spacing: 0.3px;
     }
     .role-description strong { color: #d4a017; }
-
-    /* ===== رسائل الراوي (قائمة متراكمة) ===== */
-    .narrator-messages-box {
-      background: #1a0a0a;
-      border: 2px solid #d4a017;
-      border-radius: 10px;
-      padding: 12px;
-      margin-top: 15px;
-      max-height: 250px;
-      overflow-y: auto;
-    }
-    .narrator-messages-box::-webkit-scrollbar { width: 4px; }
-    .narrator-messages-box::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 10px; }
-    .narrator-messages-box::-webkit-scrollbar-thumb { background: #d4a017; border-radius: 10px; }
-    .narrator-messages-title {
-      color: #d4a017;
-      font-size: 15px;
-      font-weight: bold;
-      margin-bottom: 8px;
-      font-family: 'Cinzel', serif;
-      border-bottom: 1px solid #333;
-      padding-bottom: 6px;
-    }
-    .narrator-msg-item {
-      background: #0d0805;
-      border: 1px solid #333;
-      border-radius: 8px;
-      padding: 8px 12px;
-      margin-bottom: 6px;
-      animation: fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .narrator-msg-content {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-    }
-    .narrator-msg-icon {
-      color: #d4a017;
-      font-size: 16px;
-    }
-    .narrator-msg-text {
-      color: #f0e0c0;
-      font-size: 14px;
-      line-height: 1.5;
-      word-wrap: break-word;
-      flex: 1;
-    }
-    .narrator-msg-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 4px;
-      padding-top: 4px;
-      border-top: 1px solid #222;
-    }
-    .narrator-msg-time {
-      color: #777;
-      font-size: 10px;
-    }
-    .narrator-msg-delete {
-      background: #6b1a1a;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 2px 10px;
-      font-family: 'Cinzel', serif;
-      font-size: 10px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .narrator-msg-delete:hover {
-      background: #8b0000;
-      box-shadow: 0 0 10px #8b0000;
-    }
-    .no-messages {
-      color: #777;
-      font-size: 13px;
-      text-align: center;
-      padding: 10px;
-      font-style: italic;
-    }
 
     /* ===== غرفة الذئاب ===== */
     #wolfChatContainer {
@@ -184,7 +241,7 @@
     #wolfChatContainer .wolf-title span { color: #ff1a1a; font-size: 16px; font-weight: bold; }
     #wolfChatContainer .wolf-title small { color: #777; font-size: 11px; }
 
-    /* ===== القسم الأول: إرسال اسم الضحية (صغير) ===== */
+    /* ===== القسم العلوي: إرسال اسم الضحية (صغير) ===== */
     .wolf-vote-section {
       background: #1a0a0a;
       border: 1px solid #ff1a1a;
@@ -241,7 +298,7 @@
       box-shadow: 0 0 15px #8b0000;
     }
 
-    /* ===== القسم الثاني: دردشة الذئاب (كبير) ===== */
+    /* ===== القسم السفلي: دردشة الذئاب (كبير) ===== */
     .wolf-chat-section {
       background: #0d0805;
       border: 1px solid #ff1a1a;
@@ -350,14 +407,31 @@
       #wolfMessagesList { max-height: 120px; }
       .wolf-vote-row { flex-wrap: wrap; }
       .wolf-vote-btn-small { width: 100%; }
-      .narrator-messages-box { max-height: 180px; }
+      #narratorNotifications { top: 115px; }
+      #deathNotificationsContainer { top: 65px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- ===== زر اقتراحات ===== -->
   <button class="suggest-fab" id="suggestFabBtn" title="💬 اقتراحات للمطور">💬</button>
+
+  <!-- ===== إشعارات الوفاة ===== -->
+  <div id="deathNotificationsContainer"></div>
+
+  <!-- ===== إشعارات رسائل الراوي ===== -->
+  <div id="narratorNotifications"></div>
+
   <div class="container">
     <h2 id="playerTitle">🐺 لو ڨارو</h2>
+
+    <!-- ===== شريط حالة الوقت (النهار/الليل) ===== -->
+    <div id="timeStatusBar" style="display:none;">
+      <span class="time-icon">☀️</span>
+      <span id="timeStatusText">النهار</span>
+    </div>
+
     <div id="joinForm">
       <input type="text" id="playerName" placeholder="اسمك" />
       <input type="text" id="roomCodeInput" placeholder="رمز الغرفة" />
@@ -366,10 +440,12 @@
         <button class="btn btn-secondary" id="backBtn">🔙 رجوع</button>
       </div>
     </div>
+
     <div id="status" class="hidden" style="color: #ccc; margin: 20px 0; text-align:center;">
       <span id="waitingText">في انتظار بدء اللعبة...</span>
       <button class="btn btn-danger" id="leaveBtn" style="margin-top:15px;">مغادرة</button>
     </div>
+
     <div id="discordPlayerSection" class="discord-player-section hidden">
       <div class="title" id="discordTitle">🎙️ غرفة الصوت في Discord</div>
       <div class="link-box">
@@ -378,16 +454,41 @@
       </div>
       <p style="color:#777; font-size:12px; margin-top:5px;" id="discordHint">💡 انضم إلى الغرفة الصوتية للتواصل مع اللاعبين أثناء اللعبة.</p>
     </div>
+
     <div id="roleBox" class="hidden"></div>
 
-    <!-- ===== رسائل الراوي (قائمة متراكمة) ===== -->
-    <div id="narratorMessagesContainer" class="narrator-messages-box">
-      <div class="narrator-messages-title">📩 رسائل الراوي</div>
-      <div class="no-messages">📭 لا توجد رسائل من الراوي</div>
+    <!-- ===== غرفة الذئاب (تظهر فقط للذئاب والمستذئبين) ===== -->
+    <div id="wolfChatContainer">
+      <div class="wolf-title">
+        <span>🐺 غرفة الذئاب</span>
+        <small>🔒 خاصة بالذئاب فقط</small>
+      </div>
+
+      <!-- ===== القسم العلوي: إرسال اسم الضحية (صغير) ===== -->
+      <div class="wolf-vote-section">
+        <div class="wolf-vote-label">🎯 إرسال اسم الضحية للراوي</div>
+        <div class="wolf-vote-row">
+          <input type="text" id="wolfVictimInput" placeholder="اكتب اسم الضحية..." />
+          <button class="wolf-vote-btn-small" id="wolfVoteBtn">📤 إرسال</button>
+        </div>
+      </div>
+
+      <!-- ===== القسم السفلي: دردشة الذئاب (كبير) ===== -->
+      <div class="wolf-chat-section">
+        <div class="wolf-chat-label">💬 دردشة الذئاب</div>
+        <div id="wolfMessagesList"></div>
+        <div class="wolf-input-row">
+          <input type="text" id="wolfMessageInput" placeholder="✏️ اكتب رسالة للذئاب..." />
+          <button id="sendWolfMessageBtn">📤</button>
+        </div>
+      </div>
     </div>
+
   </div>
 
   <button class="btn-suggest btn-suggest-old" id="suggestBtn">💬 اقتراحات للمطور</button>
+
+  <!-- ===== نافذة إرسال رسالة للراوي ===== -->
   <div class="modal modal-message" id="messageModal">
     <div class="modal-content">
       <h3 style="color:#d4a017;">📩 إرسال رسالة إلى الراوي</h3>
@@ -400,6 +501,8 @@
       <p id="messageStatus" style="color:#7a4e2d; font-size:13px; margin-top:8px; text-align:center;"></p>
     </div>
   </div>
+
+  <!-- ===== نافذة الاقتراحات ===== -->
   <div class="modal" id="suggestModal">
     <div class="modal-content">
       <h3 id="suggestTitle">📢 شارك فكرتك</h3>
@@ -410,6 +513,7 @@
       <button class="btn" id="closeSuggest" style="margin-top:8px;">إلغاء</button>
     </div>
   </div>
+
   <script type="module">
     import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
     import {
@@ -446,6 +550,7 @@
     }
     applyTranslations();
 
+    // ===== عناصر الصفحة =====
     const nameInput = document.getElementById("playerName");
     const codeInput = document.getElementById("roomCodeInput");
     const joinBtn = document.getElementById("joinBtn");
@@ -469,11 +574,12 @@
     const discordSection = document.getElementById("discordPlayerSection");
     const discordLinkInput = document.getElementById("discordPlayerLink");
     const joinDiscordBtn = document.getElementById("joinDiscordBtn");
-    const narratorContainer = document.getElementById('narratorMessagesContainer');
-
-    // ===== العناصر الجديدة لقسم التصويت =====
     const wolfVictimInput = document.getElementById('wolfVictimInput');
     const wolfVoteBtn = document.getElementById('wolfVoteBtn');
+    const timeStatusBar = document.getElementById('timeStatusBar');
+    const timeStatusText = document.getElementById('timeStatusText');
+    const narratorNotifContainer = document.getElementById('narratorNotifications');
+    const deathContainer = document.getElementById('deathNotificationsContainer');
 
     let playerId = localStorage.getItem("playerId");
     let roomCode = getRoomCode();
@@ -481,7 +587,148 @@
     let wolfMessagesListener = null;
     let gameStateListener = null;
     let playersListener = null;
-    let narratorListener = null;
+    let narratorNotifListener = null;
+    let deathListener = null;
+    let shownDeaths = new Set();
+    let shownNarratorNotifs = new Set();
+
+    // ===== تحديث شريط حالة الوقت =====
+    function updateTimeStatus(isNight) {
+      timeStatusBar.style.display = 'block';
+      if (isNight) {
+        timeStatusBar.className = 'night';
+        timeStatusBar.querySelector('.time-icon').textContent = '🌙';
+        timeStatusText.textContent = 'الليل';
+      } else {
+        timeStatusBar.className = 'day';
+        timeStatusBar.querySelector('.time-icon').textContent = '☀️';
+        timeStatusText.textContent = 'النهار';
+      }
+    }
+
+    function listenToGameState(roomCode) {
+      if (!roomCode) return;
+      const stateRef = ref(db, `rooms/${roomCode}/gameState`);
+      onValue(stateRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          updateTimeStatus(data.isNight === true);
+        }
+      });
+    }
+
+    // ===== إشعارات الوفاة =====
+    function renderDeathNotifications(data) {
+      if (!data) {
+        deathContainer.style.display = 'none';
+        return;
+      }
+      const entries = Object.entries(data);
+      if (entries.length === 0) {
+        deathContainer.style.display = 'none';
+        return;
+      }
+      const newEntries = entries.filter(([key]) => !shownDeaths.has(key));
+      if (newEntries.length === 0) {
+        deathContainer.style.display = 'flex';
+        deathContainer.innerHTML = '';
+        entries.forEach(([key, death]) => {
+          addDeathNotification(key, death.playerName);
+          shownDeaths.add(key);
+        });
+        return;
+      }
+      deathContainer.style.display = 'flex';
+      newEntries.forEach(([key, death]) => {
+        addDeathNotification(key, death.playerName);
+        shownDeaths.add(key);
+      });
+    }
+
+    function addDeathNotification(key, playerName) {
+      const notif = document.createElement('div');
+      notif.className = 'death-notification';
+      notif.dataset.key = key;
+      notif.innerHTML = `
+        <span class="death-text">💀 ${playerName} قد مات!</span>
+        <button class="death-close" data-key="${key}">✕</button>
+      `;
+      const closeBtn = notif.querySelector('.death-close');
+      closeBtn.addEventListener('click', () => {
+        notif.style.display = 'none';
+        const remaining = deathContainer.querySelectorAll('.death-notification:not([style*="display: none"])');
+        if (remaining.length === 0) deathContainer.style.display = 'none';
+      });
+      deathContainer.appendChild(notif);
+    }
+
+    function listenToDeathNotifications(roomCode) {
+      if (!roomCode) return;
+      const deathsRef = ref(db, `rooms/${roomCode}/deathNotifications`);
+      if (deathListener) deathListener();
+      deathListener = onValue(deathsRef, (snapshot) => {
+        const data = snapshot.val();
+        renderDeathNotifications(data);
+      });
+    }
+
+    // ===== إشعارات رسائل الراوي =====
+    function renderNarratorNotifications(data) {
+      if (!data) {
+        narratorNotifContainer.innerHTML = '';
+        return;
+      }
+      const entries = Object.entries(data)
+        .filter(([key, msg]) => msg.fromNarrator === true && msg.playerId === playerId)
+        .sort((a, b) => (b[1].timestamp || 0) - (a[1].timestamp || 0));
+
+      if (entries.length === 0) {
+        narratorNotifContainer.innerHTML = '';
+        return;
+      }
+
+      // عرض الإشعارات الجديدة فقط
+      let hasNew = false;
+      entries.forEach(([key, msg]) => {
+        if (!shownNarratorNotifs.has(key)) {
+          hasNew = true;
+          addNarratorNotification(key, msg.message);
+          shownNarratorNotifs.add(key);
+        }
+      });
+    }
+
+    function addNarratorNotification(key, message) {
+      const notif = document.createElement('div');
+      notif.className = 'narrator-notif';
+      notif.dataset.key = key;
+      notif.innerHTML = `
+        <span class="notif-icon">🎙️</span>
+        <span class="notif-text">${message}</span>
+        <button class="notif-close" data-key="${key}">✕ مسح</button>
+      `;
+      const closeBtn = notif.querySelector('.notif-close');
+      closeBtn.addEventListener('click', async () => {
+        await remove(ref(db, `rooms/${roomCode}/messages/${key}`));
+        notif.remove();
+        // إزالة من الذاكرة
+        shownNarratorNotifs.delete(key);
+        if (narratorNotifContainer.children.length === 0) {
+          narratorNotifContainer.innerHTML = '';
+        }
+      });
+      narratorNotifContainer.appendChild(notif);
+    }
+
+    function listenToNarratorNotifications(roomCode, playerId) {
+      if (!roomCode || !playerId) return;
+      if (narratorNotifListener) narratorNotifListener();
+      const messagesRef = ref(db, `rooms/${roomCode}/messages`);
+      narratorNotifListener = onValue(messagesRef, (snapshot) => {
+        const data = snapshot.val();
+        renderNarratorNotifications(data);
+      });
+    }
 
     function updateDiscordLink(roomCode) {
       const discordRef = ref(db, `rooms/${roomCode}/discordLink`);
@@ -566,69 +813,6 @@
         messageStatus.textContent = '❌ خطأ: ' + e.message;
         messageStatus.style.color = '#e74c3c';
       }
-    }
-
-    // ===== عرض رسائل الراوي (قائمة متراكمة) =====
-    function renderNarratorMessages() {
-      if (!narratorContainer) return;
-      if (!roomCode || !playerId) {
-        narratorContainer.innerHTML = `
-          <div class="narrator-messages-title">📩 رسائل الراوي</div>
-          <div class="no-messages">📭 لا توجد رسائل من الراوي</div>
-        `;
-        return;
-      }
-
-      const messagesRef = ref(db, `rooms/${roomCode}/messages`);
-      if (narratorListener) narratorListener();
-      narratorListener = onValue(messagesRef, (snapshot) => {
-        const data = snapshot.val();
-        if (!data) {
-          narratorContainer.innerHTML = `
-            <div class="narrator-messages-title">📩 رسائل الراوي</div>
-            <div class="no-messages">📭 لا توجد رسائل من الراوي</div>
-          `;
-          return;
-        }
-
-        const entries = Object.entries(data)
-          .filter(([key, msg]) => msg.fromNarrator === true && msg.playerId === playerId)
-          .sort((a, b) => (b[1].timestamp || 0) - (a[1].timestamp || 0));
-
-        let html = `<div class="narrator-messages-title">📩 رسائل الراوي</div>`;
-
-        if (entries.length === 0) {
-          html += `<div class="no-messages">📭 لا توجد رسائل من الراوي</div>`;
-        } else {
-          entries.forEach(([key, msg]) => {
-            const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : '--:--';
-            html += `
-              <div class="narrator-msg-item" data-key="${key}">
-                <div class="narrator-msg-content">
-                  <span class="narrator-msg-icon">🎙️</span>
-                  <span class="narrator-msg-text">${msg.message}</span>
-                </div>
-                <div class="narrator-msg-footer">
-                  <span class="narrator-msg-time">🕒 ${time}</span>
-                  <button class="narrator-msg-delete" data-key="${key}">✕ مسح</button>
-                </div>
-              </div>
-            `;
-          });
-        }
-
-        narratorContainer.innerHTML = html;
-
-        // ربط أزرار الحذف
-        narratorContainer.querySelectorAll('.narrator-msg-delete').forEach(btn => {
-          btn.addEventListener('click', async function() {
-            const key = this.dataset.key;
-            if (confirm('حذف هذه الرسالة؟')) {
-              await remove(ref(db, `rooms/${roomCode}/messages/${key}`));
-            }
-          });
-        });
-      });
     }
 
     // ===== غرفة الذئاب =====
@@ -742,7 +926,7 @@
       });
     }
 
-    // ===== الدوال الرئيسية لعرض البطاقة =====
+    // ===== دوال عرض البطاقة =====
     async function renderRoleContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const roleText = t('yourRole') + ' ' + roleDisplay;
@@ -840,7 +1024,8 @@
       roleBox.appendChild(btnRow);
       
       await initWolfChat(roomCode, playerId);
-      renderNarratorMessages();
+      listenToNarratorNotifications(roomCode, playerId);
+      listenToGameState(roomCode);
     }
 
     async function renderInfectedContent(player) {
@@ -943,7 +1128,8 @@
       roleBox.appendChild(btnRow);
       
       await initWolfChat(roomCode, playerId);
-      renderNarratorMessages();
+      listenToNarratorNotifications(roomCode, playerId);
+      listenToGameState(roomCode);
     }
 
     async function renderWolfContent(player) {
@@ -1042,7 +1228,8 @@
       roleBox.appendChild(btnRow);
       
       await initWolfChat(roomCode, playerId);
-      renderNarratorMessages();
+      listenToNarratorNotifications(roomCode, playerId);
+      listenToGameState(roomCode);
     }
 
     async function checkPlayerStatus() {
@@ -1055,6 +1242,9 @@
           return;
         }
         updateDiscordLink(roomCode);
+        listenToDeathNotifications(roomCode);
+        listenToGameState(roomCode);
+
         if (player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
@@ -1077,9 +1267,9 @@
             window.location.href = "index.html";
           });
           roleBox.appendChild(exitBtn);
-          renderNarratorMessages();
           return;
         }
+
         if (player.isInfected && !player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
@@ -1091,9 +1281,9 @@
             renderInfectedContent(player);
           });
           roleBox.appendChild(showBtn);
-          renderNarratorMessages();
           return;
         }
+
         if (player.isWolf && !player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
@@ -1105,9 +1295,9 @@
             renderWolfContent(player);
           });
           roleBox.appendChild(showBtn);
-          renderNarratorMessages();
           return;
         }
+
         if (player.role) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
@@ -1119,9 +1309,9 @@
             renderRoleContent(player);
           });
           roleBox.appendChild(showBtn);
-          renderNarratorMessages();
           return;
         }
+
         statusDiv.classList.remove("hidden");
         waitingText.textContent = t('waitingForGame') + ` (${t('roomCode')} ${roomCode})`;
         if (playersListener) playersListener();
@@ -1137,6 +1327,7 @@
       }
     }
 
+    // ===== أحداث الانضمام =====
     joinBtn.addEventListener("click", async () => {
       const name = nameInput.value.trim();
       const enteredRoom = codeInput.value.trim();
