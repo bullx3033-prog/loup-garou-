@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -136,7 +136,6 @@
     .player-card .details .role { font-size: 11px; color: #aaa; }
     .player-card .details .role strong { color: #fff; }
 
-    /* ===== أزرار الإجراءات ===== */
     .player-card .actions {
       display: flex;
       gap: 4px;
@@ -173,14 +172,14 @@
     .player-card .actions button:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
     .player-card.dead .actions button { opacity: 0.3; pointer-events: none; }
 
-    /* ===== رسائل اللاعبين (مع تمرير محسّن) ===== */
+    /* ===== رسائل اللاعبين مع أزرار تمرير ===== */
     #messagesContainer {
       margin-top: 10px;
       background: #0d0805;
       border: 1px solid #d4a017;
       border-radius: 12px;
       padding: 12px;
-      touch-action: none; /* منع تمرير الصفحة عند التمرير داخل القائمة */
+      touch-action: none;
     }
     #messagesContainer .title {
       color: #d4a017;
@@ -216,19 +215,30 @@
       box-shadow: 0 0 15px #8b0000;
     }
 
+    /* ===== حاوية الرسائل مع أزرار التمرير ===== */
+    .messages-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     #messagesList {
+      flex: 1;
       max-height: 200px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 4px;
       padding-left: 4px;
-      touch-action: pan-y; /* يسمح بالسحب العمودي فقط داخل القائمة */
-      -webkit-overflow-scrolling: touch; /* تحسين التمرير على iOS */
-      overscroll-behavior: contain; /* منع تمرير الصفحة عند الوصول للنهاية */
+      touch-action: pan-y;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      scroll-behavior: smooth;
+      /* إخفاء شريط التمرير للحصول على مظهر أنظف */
+      scrollbar-width: thin;
     }
     #messagesList::-webkit-scrollbar {
-      width: 5px;
+      width: 4px;
     }
     #messagesList::-webkit-scrollbar-track {
       background: #1a1a1a;
@@ -238,8 +248,48 @@
       background: #d4a017;
       border-radius: 10px;
     }
-    #messagesList::-webkit-scrollbar-thumb:hover {
-      background: #b8860b;
+
+    /* ===== أزرار التمرير (بحجم الإصبع) ===== */
+    .scroll-btn {
+      background: #2c2c2c;
+      border: 1px solid #d4a017;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      color: #d4a017;
+      font-size: 22px;
+      cursor: pointer;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      touch-action: manipulation;
+      user-select: none;
+      box-shadow: 0 0 15px rgba(212, 160, 23, 0.1);
+      flex-shrink: 0;
+    }
+    .scroll-btn:hover {
+      background: #3a3a3a;
+      box-shadow: 0 0 25px rgba(212, 160, 23, 0.3);
+      transform: scale(1.05);
+    }
+    .scroll-btn:active {
+      transform: scale(0.95);
+    }
+    .scroll-btn.up {
+      margin-bottom: auto;
+    }
+    .scroll-btn.down {
+      margin-top: auto;
+    }
+    /* ترتيب الأزرار عمودياً على يمين القائمة */
+    .scroll-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
     }
 
     .message-item {
@@ -262,7 +312,6 @@
       font-weight: bold;
       min-width: 70px;
     }
-    /* ===== دائرة صغيرة تحتوي على صورة بطاقة الدور ===== */
     .message-item .sender-avatar {
       width: 28px;
       height: 28px;
@@ -301,7 +350,7 @@
       font-size: 10px;
       min-width: 50px;
       text-align: left;
-      font-feature-settings: "tnum"; /* أرقام متساوية العرض */
+      font-feature-settings: "tnum";
     }
     .message-item .delete-msg {
       background: #6b1a1a;
@@ -429,6 +478,7 @@
       .message-item .sender-avatar { width: 24px; height: 24px; }
       .message-item .text { font-size: 12px; width: 100%; order: 3; }
       .message-item .time { font-size: 9px; min-width: 50px; }
+      .scroll-btn { width: 38px; height: 38px; min-width: 38px; font-size: 18px; }
     }
     @media (max-width: 380px) {
       .player-card .avatar { width: 20px; height: 20px; }
@@ -436,6 +486,7 @@
       .player-card .details .role { font-size: 9px; }
       #messagesList { max-height: 120px; }
       .message-item .sender-avatar { width: 20px; height: 20px; }
+      .scroll-btn { width: 34px; height: 34px; min-width: 34px; font-size: 16px; }
     }
   </style>
 </head>
@@ -451,15 +502,22 @@
 
     <div id="players"></div>
 
-    <!-- ===== رسائل اللاعبين (مع تمرير محسّن) ===== -->
+    <!-- ===== رسائل اللاعبين مع أزرار تمرير ===== -->
     <div id="messagesContainer">
       <div class="title">
         <span>📩 رسائل اللاعبين</span>
         <span class="badge" id="messagesCount">0</span>
         <button class="clear-btn" id="clearMessagesBtn">🗑️ مسح الكل</button>
       </div>
-      <div id="messagesList">
-        <div class="no-messages">📭 لا توجد رسائل</div>
+      <div class="messages-wrapper">
+        <div id="messagesList">
+          <div class="no-messages">📭 لا توجد رسائل</div>
+        </div>
+        <!-- ===== أزرار التمرير ===== -->
+        <div class="scroll-buttons">
+          <button class="scroll-btn up" id="scrollUpBtn" title="تمرير للأعلى">▲</button>
+          <button class="scroll-btn down" id="scrollDownBtn" title="تمرير للأسفل">▼</button>
+        </div>
       </div>
     </div>
 
@@ -524,6 +582,8 @@
     const messagesList = document.getElementById("messagesList");
     const messagesCount = document.getElementById("messagesCount");
     const clearMessagesBtn = document.getElementById("clearMessagesBtn");
+    const scrollUpBtn = document.getElementById("scrollUpBtn");
+    const scrollDownBtn = document.getElementById("scrollDownBtn");
 
     // عناصر نافذة الرسائل
     const messageModal = document.getElementById("messageModal");
@@ -581,7 +641,7 @@
     // ===== تخزين بيانات اللاعبين =====
     let playersData = {};
 
-    // ===== دالة تنسيق الوقت (بأرقام إنجليزية/فرنسية) =====
+    // ===== دالة تنسيق الوقت =====
     function formatTime(timestamp) {
       if (!timestamp) return '--:--';
       const date = new Date(timestamp);
@@ -667,6 +727,15 @@
       if (confirm('⚠️ هل أنت متأكد من مسح جميع الرسائل؟')) {
         await remove(ref(db, `rooms/${roomCode}/messages`));
       }
+    });
+
+    // ===== أزرار التمرير =====
+    scrollUpBtn.addEventListener('click', () => {
+      messagesList.scrollBy({ top: -80, behavior: 'smooth' });
+    });
+
+    scrollDownBtn.addEventListener('click', () => {
+      messagesList.scrollBy({ top: 80, behavior: 'smooth' });
     });
 
     // ===== عرض اللاعبين =====
