@@ -58,7 +58,7 @@ async function createNewRoom() {
   return roomCode;
 }
 
-// ===== إدارة الغرفة (مع حل جذري للصلاحية) =====
+// ===== إدارة الغرفة =====
 async function createOrGetRoom() {
   await deleteAllStaleRooms();
 
@@ -69,7 +69,6 @@ async function createOrGetRoom() {
       const data = snap.val();
       const now = Date.now();
       if (data.createdAt && (now - data.createdAt > 24 * 60 * 60 * 1000)) {
-        // الغرفة منتهية: نحذفها وننشئ جديدة
         await deleteRoom(roomCode);
         roomCode = await createNewRoom();
       }
@@ -79,7 +78,6 @@ async function createOrGetRoom() {
     }
   }
   
-  // إنشاء غرفة جديدة
   return await createNewRoom();
 }
 
@@ -88,30 +86,25 @@ async function deleteRoom(roomCode) {
   clearRoomCode(); 
 }
 
-// ===== التحقق من صلاحية الغرفة (تعيد غرفة جديدة إذا انتهت) =====
 async function checkRoomExpiry(roomCode) {
   await deleteAllStaleRooms();
 
-  // إذا لم يُمرر كود، ننشئ غرفة جديدة
   if (!roomCode) {
     return await createNewRoom();
   }
 
   const snap = await get(ref(db, `rooms/${roomCode}`));
   if (!snap.exists()) {
-    // الغرفة غير موجودة: ننشئ جديدة
     return await createNewRoom();
   }
   
   const data = snap.val();
   const now = Date.now();
   if (data.createdAt && (now - data.createdAt > 24 * 60 * 60 * 1000)) {
-    // الغرفة منتهية: نحذفها وننشئ جديدة
     await deleteRoom(roomCode);
     return await createNewRoom();
   }
   
-  // الغرفة صالحة
   return roomCode;
 }
 
@@ -200,13 +193,13 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
 
 // ===== إدارة الأدوار =====
 function listenToRoles(callback) { onValue(ref(db, "global_roles"), (s) => callback(s.val())); }
-async function addRole(nameObj, imageUrl, description) { 
+async function addRole(nameObj, imageUrl, description, isWolf) { 
   const newRef = push(ref(db, "global_roles")); 
-  await set(newRef, { name: nameObj, imageUrl, description }); 
+  await set(newRef, { name: nameObj, imageUrl, description, isWolf: isWolf || false }); 
   return newRef.key; 
 }
-async function updateRole(roleId, nameObj, imageUrl, description) { 
-  await update(ref(db, `global_roles/${roleId}`), { name: nameObj, imageUrl, description }); 
+async function updateRole(roleId, nameObj, imageUrl, description, isWolf) { 
+  await update(ref(db, `global_roles/${roleId}`), { name: nameObj, imageUrl, description, isWolf: isWolf || false }); 
 }
 async function deleteRole(roleId) { 
   await remove(ref(db, `global_roles/${roleId}`)); 
@@ -224,6 +217,47 @@ async function uploadImageToImgBB(file) {
   const json = await res.json();
   if (!json.success) throw new Error("فشل الرفع");
   return json.data.url;
+}
+
+// ===== غرفة الذئاب (الدردشة الخاصة) =====
+async function sendWolfMessage(roomCode, playerId, playerName, message) {
+  const wolvesRef = ref(db, `rooms/${roomCode}/wolvesChat`);
+  await push(wolvesRef, {
+    playerId: playerId,
+    playerName: playerName,
+    message: message,
+    timestamp: Date.now()
+  });
+}
+
+function listenToWolfMessages(roomCode, callback) {
+  const wolvesRef = ref(db, `rooms/${roomCode}/wolvesChat`);
+  onValue(wolvesRef, (snapshot) => {
+    const data = snapshot.val();
+    callback(data);
+  });
+}
+
+async function clearWolfMessages(roomCode) {
+  await remove(ref(db, `rooms/${roomCode}/wolvesChat`));
+}
+
+async function isPlayerWolf(roomCode, playerId) {
+  const player = await getPlayer(roomCode, playerId);
+  if (!player || !player.role) return false;
+  
+  const rolesSnap = await get(ref(db, 'global_roles'));
+  const allRoles = rolesSnap.val() || {};
+  
+  for (const key in allRoles) {
+    const role = allRoles[key];
+    const roleName = typeof role.name === 'object' ? role.name.ar : role.name;
+    const playerRoleName = typeof player.role === 'object' ? player.role.ar : player.role;
+    if (roleName === playerRoleName) {
+      return role.isWolf === true;
+    }
+  }
+  return false;
 }
 
 // ===== نظام الاقتراحات =====
@@ -281,5 +315,10 @@ export {
   listenToRoles, addRole, updateRole, deleteRole, uploadImageToImgBB,
   sendSuggestion, listenToSuggestions, deleteSuggestion, deleteAllSuggestions,
   incrementDownloadCount, getDownloadCount,
-  getCredentials, setCredentials, seedDefaultCredentials, getPlayer
+  getCredentials, setCredentials, seedDefaultCredentials, getPlayer,
+  // دوال غرفة الذئاب الجديدة
+  sendWolfMessage,
+  listenToWolfMessages,
+  clearWolfMessages,
+  isPlayerWolf
 };
