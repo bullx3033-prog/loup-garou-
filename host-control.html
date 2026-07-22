@@ -495,7 +495,7 @@
       </div>
       <div class="messages-wrapper">
         <div id="messagesList">
-          <div class="no-messages">📭 لا توجد رسائل</div>
+          <div class="no-messages">📭 لا توجد رسائل من اللاعبين</div>
         </div>
         <div class="scroll-buttons">
           <button class="scroll-btn up" id="scrollUpBtn" title="تمرير للأعلى">▲</button>
@@ -702,46 +702,43 @@
       return hours + ':' + minutes;
     }
 
+    // ===== عرض رسائل اللاعبين (مع فلترة رسائل الراوي) =====
     function renderMessages(messagesData) {
       messagesList.innerHTML = '';
       if (!messagesData || Object.keys(messagesData).length === 0) {
-        messagesList.innerHTML = `<div class="no-messages">📭 لا توجد رسائل</div>`;
+        messagesList.innerHTML = `<div class="no-messages">📭 لا توجد رسائل من اللاعبين</div>`;
         messagesCount.textContent = '0';
         return;
       }
 
-      const entries = Object.entries(messagesData).sort((a, b) => {
-        return (b[1].timestamp || 0) - (a[1].timestamp || 0);
-      });
-      messagesCount.textContent = entries.length;
+      // ✅ التصحيح: استبعاد رسائل الراوي (fromNarrator: true)
+      const filteredEntries = Object.entries(messagesData)
+        .filter(([key, msg]) => !msg.fromNarrator)
+        .sort((a, b) => (b[1].timestamp || 0) - (a[1].timestamp || 0));
 
-      entries.forEach(([key, msg]) => {
+      messagesCount.textContent = filteredEntries.length;
+
+      if (filteredEntries.length === 0) {
+        messagesList.innerHTML = `<div class="no-messages">📭 لا توجد رسائل من اللاعبين</div>`;
+        return;
+      }
+
+      filteredEntries.forEach(([key, msg]) => {
         const div = document.createElement('div');
         div.className = 'message-item';
 
-        const isNarrator = msg.fromNarrator === true;
-
-        let senderHTML = '';
-        if (isNarrator) {
-          senderHTML = `
-            <span class="sender">
-              🎙️ الراوي
-              <span class="narrator-tag">📢</span>
-            </span>
-          `;
-        } else {
-          const player = playersData[msg.playerId] || {};
-          const playerName = player.name || msg.playerName || 'لاعب مجهول';
-          const roleDisplay = translateDynamicRole(player.role) || t('unknown');
-          const roleImage = player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
-          senderHTML = `
-            <span class="sender">
-              <img src="${roleImage}" class="sender-avatar" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
-              ${playerName}
-              <span class="role-tag">🎭 ${roleDisplay}</span>
-            </span>
-          `;
-        }
+        const player = playersData[msg.playerId] || {};
+        const playerName = player.name || msg.playerName || 'لاعب مجهول';
+        const roleDisplay = translateDynamicRole(player.role) || t('unknown');
+        const roleImage = player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
+        
+        const senderHTML = `
+          <span class="sender">
+            <img src="${roleImage}" class="sender-avatar" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
+            ${playerName}
+            <span class="role-tag">🎭 ${roleDisplay}</span>
+          </span>
+        `;
 
         const time = formatTime(msg.timestamp);
         const isWolfVote = msg.isWolfVote === true;
