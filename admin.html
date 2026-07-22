@@ -204,6 +204,28 @@
     .role-circle:hover .delete-btn { opacity: 1; }
     .role-circle .delete-btn:hover { background: #ff0000; transform: scale(1.2); }
 
+    /* ===== علامة "قابل للتحويل إلى ذئب" ===== */
+    .convertible-badge {
+      position: absolute;
+      bottom: -6px;
+      right: -6px;
+      background: #d4a017;
+      color: #000;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border: 2px solid #000;
+      box-shadow: 0 0 15px rgba(212, 160, 23, 0.5);
+      font-family: 'Cinzel', serif;
+    }
+    .role-circle .convertible-badge { display: none; }
+    .role-circle.convertible .convertible-badge { display: flex; }
+
     .notice-preview {
       margin-top: 10px;
       text-align: center;
@@ -258,6 +280,37 @@
     }
     .suggestion-card .actions .del-single { background: #6b1a1a; color: #fff; }
     .suggestion-card .actions .del-single:hover { background: #8b0000; box-shadow: 0 0 15px #8b0000; }
+
+    /* ===== checkbox مخصص ===== */
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 10px 0;
+      padding: 8px 12px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      margin: 0;
+      accent-color: #d4a017;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .checkbox-group label {
+      color: #d4a017;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+    }
+    .checkbox-group .hint {
+      color: #777;
+      font-size: 12px;
+      margin-right: auto;
+    }
 
     @media (max-width: 600px) {
       .role-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
@@ -341,11 +394,20 @@
       <textarea id="roleDescAr" placeholder="وصف الدور (عربي)" rows="3" style="margin-bottom:5px;"></textarea>
       <textarea id="roleDescFr" placeholder="Description du rôle (Français)" rows="3" style="margin-bottom:5px;"></textarea>
       <textarea id="roleDescEn" placeholder="Role description (English)" rows="3" style="margin-bottom:5px;"></textarea>
+      
       <!-- ===== علامة "يعتبر ذئباً" ===== -->
-      <div style="display:flex; align-items:center; gap:10px; margin:10px 0;">
-        <input type="checkbox" id="roleIsWolf" style="width:20px; height:20px; margin:0; accent-color:#ff1a1a;" />
-        <label for="roleIsWolf" style="color:#d4a017; font-size:14px;">🐺 هذا الدور يعتبر ذئباً (يظهر في غرفة الذئاب)</label>
+      <div class="checkbox-group">
+        <input type="checkbox" id="roleIsWolf" />
+        <label for="roleIsWolf">🐺 هذا الدور يعتبر ذئباً (يظهر في غرفة الذئاب)</label>
       </div>
+
+      <!-- ===== علامة "قابل للتحويل إلى ذئب" (جديدة) ===== -->
+      <div class="checkbox-group" style="border-color: #d4a017;">
+        <input type="checkbox" id="roleIsConvertible" />
+        <label for="roleIsConvertible">🔄 هذا الدور قابل للتحويل إلى ذئب (سيظهر زر تحويل للراوي)</label>
+        <span class="hint">مثل: فتى البريه</span>
+      </div>
+
       <input type="file" id="roleImageInput" accept="image/*" />
       <div id="imagePreviewContainer" style="margin-top:10px;"></div>
       <input type="hidden" id="editingRoleId" value="" />
@@ -446,6 +508,7 @@
     const roleDescFr = document.getElementById('roleDescFr');
     const roleDescEn = document.getElementById('roleDescEn');
     const roleIsWolf = document.getElementById('roleIsWolf');
+    const roleIsConvertible = document.getElementById('roleIsConvertible'); // جديد
     const roleImageInput = document.getElementById('roleImageInput');
     const imagePreview = document.getElementById('imagePreviewContainer');
     const editingRoleId = document.getElementById('editingRoleId');
@@ -799,16 +862,19 @@
       entries.forEach(([id, role]) => {
         const circle = document.createElement('div');
         circle.className = 'role-circle';
+        if (role.isConvertible) circle.classList.add('convertible');
+        
         const displayName = translateDynamicRole(role.name);
         const imageUrl = role.imageUrl || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
 
-        // إضافة علامة 🐺 إذا كان الدور يعتبر ذئباً
         const wolfBadge = role.isWolf ? '🐺' : '';
+        const convertibleBadge = role.isConvertible ? '🔄' : '';
 
         circle.innerHTML = `
           <img src="${imageUrl}" alt="${displayName}" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
           <span class="role-name-tooltip">${displayName} ${wolfBadge}</span>
           <span class="delete-btn" data-id="${id}">✕</span>
+          ${role.isConvertible ? `<span class="convertible-badge">🔄</span>` : ''}
         `;
 
         const deleteBtn = circle.querySelector('.delete-btn');
@@ -860,8 +926,8 @@
         roleDescFr.value = '';
         roleDescEn.value = '';
       }
-      // تعبئة علامة "ذئب"
       roleIsWolf.checked = role.isWolf === true;
+      roleIsConvertible.checked = role.isConvertible === true; // جديد
       editingRoleId.value = id;
       imagePreview.innerHTML = role.imageUrl ? `<img src="${role.imageUrl}" style="max-width:100%; max-height:150px; border-radius:10px;" />` : '';
       roleImageInput.value = '';
@@ -878,6 +944,7 @@
       roleDescFr.value = '';
       roleDescEn.value = '';
       roleIsWolf.checked = false;
+      roleIsConvertible.checked = false; // جديد
       editingRoleId.value = '';
       imagePreview.innerHTML = '';
       roleImageInput.value = '';
@@ -910,6 +977,7 @@
       const descFr = roleDescFr.value.trim();
       const descEn = roleDescEn.value.trim();
       const isWolf = roleIsWolf.checked;
+      const isConvertible = roleIsConvertible.checked; // جديد
       const editId = editingRoleId.value;
       const file = roleImageInput.files[0];
 
@@ -933,7 +1001,8 @@
           name: nameObj, 
           imageUrl, 
           description: descObj,
-          isWolf: isWolf
+          isWolf: isWolf,
+          isConvertible: isConvertible // جديد
         };
 
         if (editId) {
@@ -949,6 +1018,7 @@
         roleDescFr.value = '';
         roleDescEn.value = '';
         roleIsWolf.checked = false;
+        roleIsConvertible.checked = false; // جديد
         roleImageInput.value = '';
         imagePreview.innerHTML = '';
         editingRoleId.value = '';
