@@ -127,19 +127,16 @@ function infectPlayer(roomCode, playerId) {
   update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isInfected: true }); 
 }
 
-// ===== دالة تحويل إلى ذئب (جديدة) =====
+// ===== دالة تحويل إلى ذئب =====
 async function convertToWolf(roomCode, playerId) {
-  // 1. تحديث حالة اللاعب إلى ذئب
   await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { 
     isWolf: true,
-    isInfected: false // نزيل حالة المستذئب إذا كانت موجودة
+    isInfected: false
   });
   
-  // 2. جلب اسم اللاعب
   const player = await getPlayer(roomCode, playerId);
   const playerName = player?.name || 'لاعب مجهول';
   
-  // 3. إضافة اللاعب إلى دردشة الذئاب
   const wolfChatRef = ref(db, `rooms/${roomCode}/wolvesChat`);
   await push(wolfChatRef, {
     playerId: playerId,
@@ -149,7 +146,6 @@ async function convertToWolf(roomCode, playerId) {
     systemMessage: true
   });
   
-  // 4. إشعار في رسائل اللاعبين
   const messagesRef = ref(db, `rooms/${roomCode}/messages`);
   await push(messagesRef, {
     playerId: playerId,
@@ -159,9 +155,6 @@ async function convertToWolf(roomCode, playerId) {
     fromNarrator: true,
     systemMessage: true
   });
-  
-  // 5. إشعار وفاة (اختياري) - إذا كان اللاعب ميتاً لا نحتاج
-  // ولكن يمكن إضافة إشعار للراوي فقط
   
   return true;
 }
@@ -175,7 +168,7 @@ async function addPlayer(roomCode, name) {
     roleImage: "", 
     isDead: false, 
     isInfected: false,
-    isWolf: false  // حقل جديد
+    isWolf: false
   });
   return newRef.key;
 }
@@ -225,7 +218,7 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
     roles.push({ 
       name: r.name, 
       imageUrl: found?.imageUrl || r.imageUrl || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png",
-      isWolf: found?.isWolf || false,
+      isWolf: found?.isWol || false,
       isConvertible: found?.isConvertible || false
     });
   });
@@ -257,7 +250,7 @@ async function addRole(nameObj, imageUrl, description, isWolf, isConvertible) {
     name: nameObj, 
     imageUrl, 
     description, 
-    isWolf: isWolf || false,
+    isWol: isWolf || false,
     isConvertible: isConvertible || false 
   }); 
   return newRef.key; 
@@ -268,7 +261,7 @@ async function updateRole(roleId, nameObj, imageUrl, description, isWolf, isConv
     name: nameObj, 
     imageUrl, 
     description, 
-    isWolf: isWolf || false,
+    isWol: isWolf || false,
     isConvertible: isConvertible || false 
   }); 
 }
@@ -292,7 +285,7 @@ async function uploadImageToImgBB(file) {
   return json.data.url;
 }
 
-// ===== غرفة الذئاب (الدردشة الخاصة) =====
+// ===== غرفة الذئاب =====
 async function sendWolfMessage(roomCode, playerId, playerName, message) {
   const wolvesRef = ref(db, `rooms/${roomCode}/wolvesChat`);
   await push(wolvesRef, {
@@ -319,10 +312,8 @@ async function isPlayerWolf(roomCode, playerId) {
   const player = await getPlayer(roomCode, playerId);
   if (!player) return false;
   
-  // التحقق من isWolf مباشرة
   if (player.isWolf === true) return true;
   
-  // التحقق من الدور
   if (!player.role) return false;
   
   const rolesSnap = await get(ref(db, 'global_roles'));
@@ -333,7 +324,7 @@ async function isPlayerWolf(roomCode, playerId) {
     const roleName = typeof role.name === 'object' ? role.name.ar : role.name;
     const playerRoleName = typeof player.role === 'object' ? player.role.ar : player.role;
     if (roleName === playerRoleName) {
-      return role.isWolf === true;
+      return role.isWol === true;
     }
   }
   return false;
@@ -399,5 +390,5 @@ export {
   listenToWolfMessages,
   clearWolfMessages,
   isPlayerWolf,
-  convertToWolf  // تصدير الدالة الجديدة
+  convertToWolf
 };
