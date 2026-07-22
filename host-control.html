@@ -27,6 +27,7 @@
       border: 2px solid crimson;
       border-radius: 16px;
       padding: 25px 20px;
+      padding-bottom: 100px;
       box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
     }
     h2 {
@@ -77,48 +78,39 @@
       transform: scale(1.05);
     }
 
-    /* ===== أزرار الليل والنهار ===== */
-    .day-night-buttons {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-      justify-content: center;
-    }
-    .day-night-buttons .btn {
-      flex: 1;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: 2px solid #555;
+    /* ===== زر حالة الليل والنهار (زر واحد) ===== */
+    .day-night-toggle {
+      width: 100%;
+      padding: 14px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 12px;
+      border: none;
       cursor: pointer;
       transition: 0.3s;
       font-family: 'Cinzel', serif;
-      font-weight: bold;
-      color: #fff;
+      margin-bottom: 15px;
+      text-align: center;
     }
-    .day-night-buttons .btn-night {
-      background: #1a1a4a;
-      border-color: #4a4aff;
-    }
-    .day-night-buttons .btn-night:hover {
-      background: #2a2a6a;
-      box-shadow: 0 0 20px #4a4aff;
-    }
-    .day-night-buttons .btn-night.active {
-      background: #4a4aff;
-      box-shadow: 0 0 30px #4a4aff;
-    }
-    .day-night-buttons .btn-day {
+    .day-night-toggle.day {
       background: #4a3a0a;
-      border-color: #d4a017;
+      color: #d4a017;
+      border: 2px solid #d4a017;
+      box-shadow: 0 0 20px rgba(212, 160, 23, 0.2);
     }
-    .day-night-buttons .btn-day:hover {
+    .day-night-toggle.day:hover {
       background: #6a5a1a;
-      box-shadow: 0 0 20px #d4a017;
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.4);
     }
-    .day-night-buttons .btn-day.active {
-      background: #d4a017;
-      box-shadow: 0 0 30px #d4a017;
+    .day-night-toggle.night {
+      background: #1a1a4a;
+      color: #4a4aff;
+      border: 2px solid #4a4aff;
+      box-shadow: 0 0 20px rgba(74, 74, 255, 0.2);
+    }
+    .day-night-toggle.night:hover {
+      background: #2a2a6a;
+      box-shadow: 0 0 30px rgba(74, 74, 255, 0.4);
     }
 
     #exitBtn {
@@ -139,6 +131,7 @@
       transition: 0.3s;
       font-size: 16px;
       box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+      z-index: 100;
     }
     #exitBtn:hover { background: #8b0000; box-shadow: 0 0 25px #8b0000; }
     .infected-badge {
@@ -454,6 +447,7 @@
     .modal-content .status-msg { color: #7a4e2d; font-size: 13px; margin-top: 8px; text-align: center; }
 
     @media (max-width: 500px) {
+      .container { padding-bottom: 80px; }
       .player-card { height: auto; min-height: 44px; padding: 6px 8px; flex-wrap: wrap; gap: 4px; }
       .player-card .info { flex: 1 1 100%; }
       .player-card .actions { flex: 1 1 100%; justify-content: flex-start; gap: 8px; }
@@ -468,7 +462,7 @@
       .message-item .text { font-size: 12px; width: 100%; order: 3; }
       .message-item .time { font-size: 9px; min-width: 50px; }
       .scroll-btn { width: 38px; height: 38px; min-width: 38px; font-size: 18px; }
-      .day-night-buttons .btn { font-size: 13px; padding: 8px; }
+      .day-night-toggle { font-size: 15px; padding: 12px; }
     }
     @media (max-width: 380px) {
       .player-card .avatar { width: 20px; height: 20px; }
@@ -477,7 +471,7 @@
       #messagesList { max-height: 120px; }
       .message-item .sender-avatar { width: 20px; height: 20px; }
       .scroll-btn { width: 34px; height: 34px; min-width: 34px; font-size: 16px; }
-      .day-night-buttons .btn { font-size: 11px; padding: 6px; }
+      .day-night-toggle { font-size: 13px; padding: 10px; }
     }
   </style>
 </head>
@@ -485,11 +479,8 @@
   <div class="container">
     <h2 id="controlTitle">🐺 تحكم الراوي</h2>
 
-    <!-- ===== أزرار الليل والنهار ===== -->
-    <div class="day-night-buttons">
-      <button class="btn btn-night" id="nightBtn">🌙 ليل</button>
-      <button class="btn btn-day" id="dayBtn">☀️ نهار</button>
-    </div>
+    <!-- ===== زر حالة الليل والنهار (زر واحد) ===== -->
+    <button class="day-night-toggle day" id="dayNightToggle">☀️ أنت في النهار</button>
 
     <div class="info-box">
       <div id="roomLabel">🔑 الغرفة: <span class="code" id="roomCodeDisplay">---</span></div>
@@ -517,6 +508,7 @@
       </div>
     </div>
 
+    <!-- ===== زر إنهاء الجولة (تحت رسائل اللاعبين) ===== -->
     <button id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
   </div>
 
@@ -555,7 +547,7 @@
       get,
       getPlayer,
       clearWolfMessages,
-      convertToWolf, // دالة جديدة
+      convertToWolf,
       isPlayerWolf
     } from "./logic.js";
 
@@ -583,8 +575,7 @@
     const clearMessagesBtn = document.getElementById("clearMessagesBtn");
     const scrollUpBtn = document.getElementById("scrollUpBtn");
     const scrollDownBtn = document.getElementById("scrollDownBtn");
-    const nightBtn = document.getElementById("nightBtn");
-    const dayBtn = document.getElementById("dayBtn");
+    const dayNightToggle = document.getElementById("dayNightToggle");
 
     // عناصر نافذة الرسائل
     const messageModal = document.getElementById("messageModal");
@@ -615,32 +606,32 @@
       throw new Error("Expired");
     }
 
-    // ===== التحكم بالليل والنهار =====
+    // ===== التحكم بالليل والنهار (زر واحد) =====
     let isNight = false;
 
     async function updateGameState(nightMode) {
       isNight = nightMode;
       await update(ref(db, `rooms/${roomCode}/gameState`), { isNight: nightMode });
-      nightBtn.classList.toggle('active', nightMode);
-      dayBtn.classList.toggle('active', !nightMode);
+      
+      // تحديث الزر
       if (nightMode) {
-        nightBtn.textContent = '🌙 ليل (نشط)';
-        dayBtn.textContent = '☀️ نهار';
+        dayNightToggle.textContent = '🌙 أنت في الليل';
+        dayNightToggle.className = 'day-night-toggle night';
       } else {
-        nightBtn.textContent = '🌙 ليل';
-        dayBtn.textContent = '☀️ نهار (نشط)';
+        dayNightToggle.textContent = '☀️ أنت في النهار';
+        dayNightToggle.className = 'day-night-toggle day';
       }
     }
 
-    nightBtn.addEventListener('click', async () => {
-      await updateGameState(true);
-      alert('🌙 حل الليل! الذئاب تستيقظ...');
-    });
-
-    dayBtn.addEventListener('click', async () => {
-      await updateGameState(false);
-      await clearWolfMessages(roomCode);
-      alert('☀️ حل النهار!');
+    dayNightToggle.addEventListener('click', async () => {
+      const newState = !isNight;
+      await updateGameState(newState);
+      if (newState) {
+        alert('🌙 حل الليل! الذئاب تستيقظ...');
+      } else {
+        await clearWolfMessages(roomCode);
+        alert('☀️ حل النهار!');
+      }
     });
 
     function listenToGameState(roomCode) {
@@ -664,15 +655,13 @@
       const confirmMessage = `⚠️ ${t('confirmInfect')} "${playerName || t('unknown')}"؟\n${t('irreversible')}`;
       if (confirm(confirmMessage)) {
         infectPlayer(roomCode, id);
-        // بعد الاستذئاب، نحول اللاعب إلى ذئب فوراً وندخله للدردشة
         convertToWolf(roomCode, id);
         fetchPlayers();
-        // إشعار للراوي
         alert(`✅ تم تحويل ${playerName || 'اللاعب'} إلى ذئب وأضيف إلى دردشة الذئاب!`);
       }
     };
 
-    // ===== دالة تحويل إلى ذئب (للأدوار القابلة للتحويل) =====
+    // ===== دالة تحويل إلى ذئب =====
     window.convertToWolfHandler = async (id, playerName) => {
       const confirmMessage = `⚠️ هل أنت متأكد من تحويل "${playerName || t('unknown')}" إلى ذئب؟\nهذا الدور قابل للتحويل (مثل فتى البريه).`;
       if (confirm(confirmMessage)) {
@@ -700,17 +689,16 @@
     let playersData = {};
     let rolesData = {};
 
-    // ===== تحميل الأدوار لتحديد من هو قابل للتحويل =====
+    // ===== تحميل الأدوار =====
     async function loadRolesData() {
       const snap = await get(ref(db, 'global_roles'));
       rolesData = snap.val() || {};
     }
     await loadRolesData();
 
-    // ===== دالة التحقق مما إذا كان الدور قابلاً للتحويل =====
+    // ===== التحقق من قابلية التحويل =====
     function isRoleConvertible(role) {
       if (!role) return false;
-      // نبحث عن الدور في rolesData
       for (const key in rolesData) {
         const r = rolesData[key];
         const roleName = typeof r.name === 'object' ? r.name.ar : r.name;
@@ -722,7 +710,7 @@
       return false;
     }
 
-    // ===== دالة تنسيق الوقت =====
+    // ===== تنسيق الوقت =====
     function formatTime(timestamp) {
       if (!timestamp) return '--:--';
       const date = new Date(timestamp);
@@ -850,7 +838,6 @@
 
         const avatarUrl = player.roleImage || "https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png";
         
-        // تحديد نوع البادج
         let badge = '';
         if (player.isInfected && !player.isDead) {
           badge = `<span class="infected-badge">🐺 ${t('infected')}</span>`;
@@ -858,7 +845,6 @@
           badge = `<span class="wolf-badge">🐺 ${t('role_wolf')}</span>`;
         }
         
-        // التحقق إذا كان الدور قابلاً للتحويل
         const convertible = isRoleConvertible(player.role);
         if (convertible && !player.isDead && !player.isInfected && !player.isWolf) {
           badge += `<span class="convertible-badge">🔄 قابل للتحويل</span>`;
@@ -866,13 +852,11 @@
 
         const roleDisplay = translateDynamicRole(player.role) || t('unknown');
 
-        // بناء الأزرار
         let actionsHTML = `
           <button class="kill" data-id="${id}">🗡️ ${t('kill')}</button>
           <button class="infect" data-id="${id}">🐺 ${t('infect')}</button>
         `;
 
-        // زر تحويل إلى ذئب (يظهر فقط إذا كان الدور قابلاً للتحويل)
         if (convertible && !player.isDead && !player.isInfected && !player.isWolf) {
           actionsHTML += `<button class="convert-to-wolf" data-id="${id}">🔄 تحويل إلى ذئب</button>`;
         }
@@ -995,17 +979,8 @@
       }
     });
 
-    document.getElementById("exitBtn").addEventListener("click", async () => {
-      if (!confirm(t('confirmEndRound'))) return;
-      try {
-        await deleteRoom(roomCode);
-      } catch (err) {
-        console.error(err);
-        alert("⚠️ " + t('errorOccurred'));
-      }
-      clearRoomCode();
-      window.location.href = "index.html";
-    });
+    // زر إنهاء الجولة موجود في أسفل الصفحة (تحت رسائل اللاعبين)
+    // تم نقل الزر إلى أسفل الـ container
   </script>
 </body>
 </html>
