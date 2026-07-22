@@ -84,11 +84,7 @@
       font-family: 'Cinzel', serif;
       font-size: 16px;
     }
-    input:focus, textarea:focus {
-      border-color: crimson;
-      outline: none;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
-    }
+    input:focus, textarea:focus { border-color: crimson; outline: none; box-shadow: 0 0 15px rgba(255, 0, 0, 0.2); }
     .hidden { display: none !important; }
     .flex { display: flex; gap: 10px; flex-wrap: wrap; }
     .flex .btn { flex: 1; }
@@ -212,12 +208,7 @@
       margin-top: 10px;
       text-align: center;
     }
-    .notice-preview img {
-      max-width: 100%;
-      max-height: 200px;
-      border-radius: 8px;
-      border: 1px solid #555;
-    }
+    .notice-preview img { max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid #555; }
     .notice-preview .empty { color: #777; font-size: 14px; padding: 10px; }
 
     .modal {
@@ -243,13 +234,7 @@
       max-height: 90vh;
       overflow-y: auto;
     }
-    .modal-content h3 {
-      color: crimson;
-      font-size: 24px;
-      margin-bottom: 15px;
-      text-shadow: 0 0 10px red;
-      text-align: center;
-    }
+    .modal-content h3 { color: crimson; font-size: 24px; margin-bottom: 15px; text-shadow: 0 0 10px red; text-align: center; }
 
     .suggestion-card {
       background: #1a1a1a;
@@ -310,7 +295,7 @@
         </div>
       </div>
 
-      <!-- إدارة الإشعارات (ثلاث حقول) -->
+      <!-- إدارة الإشعارات -->
       <div class="section">
         <span class="section-title">📢 إدارة الإشعارات</span>
         <button class="btn btn-primary" id="openNoticeModalBtn" style="width:auto; padding:12px 20px;"></button>
@@ -345,7 +330,7 @@
     </div>
   </div>
 
-  <!-- ===== نافذة إضافة/تعديل الدور (مع وصف ثلاثي اللغات) ===== -->
+  <!-- ===== نافذة إضافة/تعديل الدور ===== -->
   <div class="modal" id="roleModal">
     <div class="modal-content">
       <h3 id="roleModalTitle">➕ إضافة دور</h3>
@@ -356,6 +341,11 @@
       <textarea id="roleDescAr" placeholder="وصف الدور (عربي)" rows="3" style="margin-bottom:5px;"></textarea>
       <textarea id="roleDescFr" placeholder="Description du rôle (Français)" rows="3" style="margin-bottom:5px;"></textarea>
       <textarea id="roleDescEn" placeholder="Role description (English)" rows="3" style="margin-bottom:5px;"></textarea>
+      <!-- ===== علامة "يعتبر ذئباً" ===== -->
+      <div style="display:flex; align-items:center; gap:10px; margin:10px 0;">
+        <input type="checkbox" id="roleIsWolf" style="width:20px; height:20px; margin:0; accent-color:#ff1a1a;" />
+        <label for="roleIsWolf" style="color:#d4a017; font-size:14px;">🐺 هذا الدور يعتبر ذئباً (يظهر في غرفة الذئاب)</label>
+      </div>
       <input type="file" id="roleImageInput" accept="image/*" />
       <div id="imagePreviewContainer" style="margin-top:10px;"></div>
       <input type="hidden" id="editingRoleId" value="" />
@@ -367,7 +357,7 @@
     </div>
   </div>
 
-  <!-- ===== نافذة الإشعارات (ثلاث حقول) ===== -->
+  <!-- ===== نافذة الإشعارات ===== -->
   <div class="modal" id="noticeModal">
     <div class="modal-content">
       <h3 id="noticeModalTitle" style="color:#d4a017;">📢 تحرير الإشعار</h3>
@@ -376,9 +366,7 @@
       <textarea id="noticeTextFr" placeholder="Texte de notification (Français)" rows="3" style="margin-bottom:5px;"></textarea>
       <textarea id="noticeTextEn" placeholder="Notification text (English)" rows="3" style="margin-bottom:5px;"></textarea>
       <input type="file" id="noticeImageInput" accept="image/*" />
-      <div class="notice-preview" id="noticePreview">
-        <div class="empty">📷 لا توجد صورة مرفوعة</div>
-      </div>
+      <div class="notice-preview" id="noticePreview"><div class="empty">📷 لا توجد صورة مرفوعة</div></div>
       <div class="flex" style="margin-top:10px;">
         <button class="btn btn-success" id="saveNoticeBtn">💾 حفظ</button>
         <button class="btn btn-danger" id="deleteNoticeBtn">🗑️ حذف</button>
@@ -449,7 +437,6 @@
     const rolesCounter = document.getElementById('rolesCounter');
     const addRoleBtn = document.getElementById('addRoleBtn');
 
-    // عناصر نافذة الدور (ثلاثي اللغات)
     const roleModal = document.getElementById('roleModal');
     const roleModalTitle = document.getElementById('roleModalTitle');
     const roleNameAr = document.getElementById('roleNameAr');
@@ -458,6 +445,7 @@
     const roleDescAr = document.getElementById('roleDescAr');
     const roleDescFr = document.getElementById('roleDescFr');
     const roleDescEn = document.getElementById('roleDescEn');
+    const roleIsWolf = document.getElementById('roleIsWolf');
     const roleImageInput = document.getElementById('roleImageInput');
     const imagePreview = document.getElementById('imagePreviewContainer');
     const editingRoleId = document.getElementById('editingRoleId');
@@ -465,7 +453,6 @@
     const deleteRoleBtn = document.getElementById('deleteRoleBtn');
     const closeRoleModal = document.getElementById('closeRoleModal');
 
-    // عناصر الإشعارات (ثلاثي اللغات)
     const noticeModal = document.getElementById('noticeModal');
     const openNoticeModalBtn = document.getElementById('openNoticeModalBtn');
     const closeNoticeModal = document.getElementById('closeNoticeModal');
@@ -480,7 +467,6 @@
     const noticeModalTitle = document.getElementById('noticeModalTitle');
     const noticeModalHint = document.getElementById('noticeModalHint');
 
-    // عناصر الروابط الاجتماعية
     const socialModal = document.getElementById('socialModal');
     const openSocialModalBtn = document.getElementById('openSocialModalBtn');
     const closeSocialModal = document.getElementById('closeSocialModal');
@@ -816,9 +802,12 @@
         const displayName = translateDynamicRole(role.name);
         const imageUrl = role.imageUrl || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
 
+        // إضافة علامة 🐺 إذا كان الدور يعتبر ذئباً
+        const wolfBadge = role.isWolf ? '🐺' : '';
+
         circle.innerHTML = `
           <img src="${imageUrl}" alt="${displayName}" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
-          <span class="role-name-tooltip">${displayName}</span>
+          <span class="role-name-tooltip">${displayName} ${wolfBadge}</span>
           <span class="delete-btn" data-id="${id}">✕</span>
         `;
 
@@ -853,7 +842,6 @@
       deleteRoleBtn.style.display = 'block';
       deleteRoleBtn.onclick = () => deleteRoleHandler(id);
 
-      // تعبئة الأسماء
       if (typeof role.name === 'object') {
         roleNameAr.value = role.name.ar || '';
         roleNameFr.value = role.name.fr || '';
@@ -863,7 +851,6 @@
         roleNameFr.value = '';
         roleNameEn.value = '';
       }
-      // تعبئة الوصف ثلاثي اللغات
       if (typeof role.description === 'object') {
         roleDescAr.value = role.description.ar || '';
         roleDescFr.value = role.description.fr || '';
@@ -873,6 +860,8 @@
         roleDescFr.value = '';
         roleDescEn.value = '';
       }
+      // تعبئة علامة "ذئب"
+      roleIsWolf.checked = role.isWolf === true;
       editingRoleId.value = id;
       imagePreview.innerHTML = role.imageUrl ? `<img src="${role.imageUrl}" style="max-width:100%; max-height:150px; border-radius:10px;" />` : '';
       roleImageInput.value = '';
@@ -888,6 +877,7 @@
       roleDescAr.value = '';
       roleDescFr.value = '';
       roleDescEn.value = '';
+      roleIsWolf.checked = false;
       editingRoleId.value = '';
       imagePreview.innerHTML = '';
       roleImageInput.value = '';
@@ -919,6 +909,7 @@
       const descAr = roleDescAr.value.trim();
       const descFr = roleDescFr.value.trim();
       const descEn = roleDescEn.value.trim();
+      const isWolf = roleIsWolf.checked;
       const editId = editingRoleId.value;
       const file = roleImageInput.files[0];
 
@@ -938,7 +929,12 @@
         const nameObj = { ar: nameAr, fr: nameFr || nameAr, en: nameEn || nameAr };
         const descObj = { ar: descAr, fr: descFr || descAr, en: descEn || descAr };
 
-        const roleData = { name: nameObj, imageUrl, description: descObj };
+        const roleData = { 
+          name: nameObj, 
+          imageUrl, 
+          description: descObj,
+          isWolf: isWolf
+        };
 
         if (editId) {
           await update(ref(db, `global_roles/${editId}`), roleData);
@@ -946,13 +942,13 @@
           await push(ref(db, 'global_roles'), roleData);
         }
         roleModal.style.display = 'none';
-        // تنظيف الحقول
         roleNameAr.value = '';
         roleNameFr.value = '';
         roleNameEn.value = '';
         roleDescAr.value = '';
         roleDescFr.value = '';
         roleDescEn.value = '';
+        roleIsWolf.checked = false;
         roleImageInput.value = '';
         imagePreview.innerHTML = '';
         editingRoleId.value = '';
