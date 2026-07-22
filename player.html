@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
+    /* ===== زر اقتراحات للمطور (دائري في الأعلى) ===== */
     .suggest-fab {
       position: fixed;
       top: 20px;
@@ -33,8 +34,58 @@
     .suggest-fab { left: 20px; }
     [dir="ltr"] .suggest-fab { left: auto; right: 20px; }
 
-    .btn-suggest-old { display: none !important; }
+    /* ===== إشعارات الوفاة (في الأعلى تحت زر الاقتراحات) ===== */
+    #deathNotificationsContainer {
+      position: fixed;
+      top: 75px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 998;
+      width: 90%;
+      max-width: 500px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+    }
+    #deathNotificationsContainer .death-notification {
+      background: #1a0a0a;
+      border: 2px solid #ff1a1a;
+      border-radius: 10px;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: auto;
+      animation: slideDownDeath 0.4s ease;
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+    }
+    #deathNotificationsContainer .death-notification .death-text {
+      color: #ff6b6b;
+      font-size: 14px;
+      font-weight: bold;
+      font-family: 'Cinzel', serif;
+    }
+    #deathNotificationsContainer .death-notification .death-close {
+      background: transparent;
+      border: none;
+      color: #ff6b6b;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 0 6px;
+      transition: 0.3s;
+      font-family: 'Cinzel', serif;
+    }
+    #deathNotificationsContainer .death-notification .death-close:hover {
+      color: #ff0000;
+      transform: scale(1.2);
+    }
+    @keyframes slideDownDeath {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
+    /* ===== باقي الأنماط ===== */
     .action-buttons-row {
       display: flex;
       gap: 8px;
@@ -150,6 +201,7 @@
     }
     .wolf-vote-btn:hover { background: #aa0000; box-shadow: 0 0 20px #8b0000; }
 
+    /* ===== باقي الأنماط ===== */
     .discord-player-section {
       background: #1a1a1a; border: 1px solid #5865F2; border-radius: 12px; padding: 15px; margin-top: 15px;
     }
@@ -182,11 +234,16 @@
     }
     .modal-message textarea:focus { border-color: #d4a017; outline: none; box-shadow: 0 0 15px rgba(212, 160, 23, 0.2); }
 
+    .btn-suggest-old { display: none !important; }
+
     @media (max-width: 400px) {
       .action-buttons-row .btn { width: 46px; height: 42px; font-size: 17px; }
       .suggest-fab { width: 40px; height: 40px; font-size: 18px; top: 12px; left: 12px; }
       [dir="ltr"] .suggest-fab { left: auto; right: 12px; }
       #wolfMessagesList { max-height: 120px; }
+      #deathNotificationsContainer { top: 65px; }
+      #deathNotificationsContainer .death-notification { padding: 6px 12px; }
+      #deathNotificationsContainer .death-notification .death-text { font-size: 12px; }
     }
   </style>
 </head>
@@ -194,6 +251,9 @@
 
   <!-- ===== زر اقتراحات للمطور ===== -->
   <button class="suggest-fab" id="suggestFabBtn" title="💬 اقتراحات للمطور">💬</button>
+
+  <!-- ===== إشعارات الوفاة (في الأعلى) ===== -->
+  <div id="deathNotificationsContainer"></div>
 
   <div class="container">
     <h2 id="playerTitle">🐺 لو ڨارو</h2>
@@ -329,6 +389,9 @@
     const sendWolfMessageBtn = document.getElementById('sendWolfMessageBtn');
     const wolfVoteBtn = document.getElementById('wolfVoteBtn');
 
+    // عناصر إشعارات الوفاة
+    const deathContainer = document.getElementById('deathNotificationsContainer');
+
     const discordSection = document.getElementById("discordPlayerSection");
     const discordLinkInput = document.getElementById("discordPlayerLink");
     const joinDiscordBtn = document.getElementById("joinDiscordBtn");
@@ -338,6 +401,8 @@
     let isWolf = false;
     let wolfMessagesListener = null;
     let gameStateListener = null;
+    let deathListener = null;
+    let shownDeaths = new Set(); // لتتبع الإشعارات التي تم عرضها
 
     function updateDiscordLink(roomCode) {
       const discordRef = ref(db, `rooms/${roomCode}/discordLink`);
@@ -473,6 +538,81 @@
       });
     }
 
+    // ===== عرض إشعارات الوفاة =====
+    function renderDeathNotifications(data) {
+      if (!data) {
+        deathContainer.style.display = 'none';
+        return;
+      }
+
+      const entries = Object.entries(data);
+      if (entries.length === 0) {
+        deathContainer.style.display = 'none';
+        return;
+      }
+
+      // تصفية الإشعارات التي تم عرضها مسبقاً
+      const newEntries = entries.filter(([key]) => !shownDeaths.has(key));
+      if (newEntries.length === 0) {
+        // إذا كانت هناك إشعارات قديمة ولكن لم يتم عرضها بعد (لأن المستخدم لم يغلقها)
+        // نعرض كل الإشعارات
+        const allEntries = entries;
+        if (allEntries.length === 0) {
+          deathContainer.style.display = 'none';
+          return;
+        }
+        // نعرض كل الإشعارات (قديمة وجديدة)
+        deathContainer.style.display = 'flex';
+        deathContainer.innerHTML = '';
+        allEntries.forEach(([key, death]) => {
+          addDeathNotification(key, death.playerName);
+          shownDeaths.add(key);
+        });
+        return;
+      }
+
+      // إضافة الإشعارات الجديدة فقط
+      deathContainer.style.display = 'flex';
+      newEntries.forEach(([key, death]) => {
+        addDeathNotification(key, death.playerName);
+        shownDeaths.add(key);
+      });
+    }
+
+    function addDeathNotification(key, playerName) {
+      const notif = document.createElement('div');
+      notif.className = 'death-notification';
+      notif.dataset.key = key;
+      notif.innerHTML = `
+        <span class="death-text">💀 ${playerName} قد مات!</span>
+        <button class="death-close" data-key="${key}">✕</button>
+      `;
+      
+      // زر الإغلاق
+      const closeBtn = notif.querySelector('.death-close');
+      closeBtn.addEventListener('click', () => {
+        notif.style.display = 'none';
+        // التحقق مما إذا كانت هناك إشعارات أخرى
+        const remaining = deathContainer.querySelectorAll('.death-notification:not([style*="display: none"])');
+        if (remaining.length === 0) {
+          deathContainer.style.display = 'none';
+        }
+      });
+
+      deathContainer.appendChild(notif);
+    }
+
+    // ===== الاستماع لإشعارات الوفاة =====
+    function listenToDeathNotifications(roomCode) {
+      if (!roomCode) return;
+      const deathsRef = ref(db, `rooms/${roomCode}/deathNotifications`);
+      if (deathListener) deathListener();
+      deathListener = onValue(deathsRef, (snapshot) => {
+        const data = snapshot.val();
+        renderDeathNotifications(data);
+      });
+    }
+
     // ===== غرفة الذئاب =====
     function renderWolfMessages(data) {
       wolfMessagesList.innerHTML = '';
@@ -496,24 +636,20 @@
         `;
         wolfMessagesList.appendChild(div);
       });
-      // التمرير إلى الأسفل لمشاهدة أحدث رسالة
       wolfMessagesList.scrollTop = wolfMessagesList.scrollHeight;
     }
 
     async function initWolfChat(roomCode, playerId) {
-      // التحقق مما إذا كان هذا اللاعب ذئباً
       isWolf = await isPlayerWolf(roomCode, playerId);
       
       if (isWolf) {
         wolfChatContainer.style.display = 'block';
         
-        // الاستماع لرسائل الذئاب
         if (wolfMessagesListener) wolfMessagesListener();
         wolfMessagesListener = listenToWolfMessages(roomCode, (data) => {
           renderWolfMessages(data);
         });
         
-        // الاستماع لحالة الليل/النهار
         if (gameStateListener) gameStateListener();
         const stateRef = ref(db, `rooms/${roomCode}/gameState`);
         gameStateListener = onValue(stateRef, (snapshot) => {
@@ -544,7 +680,7 @@
       }
     });
 
-    // إرسال الضحية (اسم اللاعب)
+    // إرسال الضحية
     wolfVoteBtn.addEventListener('click', async () => {
       const victim = prompt('🐺 اكتب اسم اللاعب الذي تريد قتله:');
       if (!victim || !roomCode || !playerId) return;
@@ -580,9 +716,7 @@
         </div>
       `;
 
-      // تهيئة غرفة الذئاب
       await initWolfChat(roomCode, playerId);
-
       listenToNarratorMessages(roomCode, playerId);
 
       document.getElementById("hideRoleBtn").onclick = () => {
@@ -590,7 +724,6 @@
           <button class="btn-show-card" id="showRoleBtn">🃏 ${t('showCard')}</button>
         `;
         document.getElementById("showRoleBtn").onclick = () => renderRoleContent(player);
-        // إعادة تهيئة غرفة الذئاب بعد إظهار البطاقة
         setTimeout(() => initWolfChat(roomCode, playerId), 100);
       };
 
@@ -747,6 +880,8 @@
         statusDiv.classList.remove("hidden");
 
         updateDiscordLink(roomCode);
+        // بدء الاستماع لإشعارات الوفاة
+        listenToDeathNotifications(roomCode);
         checkPlayerStatus();
       } catch (err) {
         alert("❌ " + t('errorOccurred') + ": " + err.message);
@@ -772,7 +907,7 @@
       }
     });
 
-    // ===== زر اقتراحات (الدائري) =====
+    // ===== زر اقتراحات =====
     suggestFab.addEventListener('click', () => {
       suggestModal.style.display = 'flex';
     });
@@ -817,6 +952,8 @@
       joinForm.classList.add("hidden");
       statusDiv.classList.remove("hidden");
       updateDiscordLink(roomCode);
+      // بدء الاستماع لإشعارات الوفاة
+      listenToDeathNotifications(roomCode);
       checkPlayerStatus();
     }
   </script>
