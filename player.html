@@ -247,6 +247,18 @@
     }
     .error-msg.show { display: block; }
 
+    /* ===== علامة المستذئب (لون أخضر) ===== */
+    .infected-role-name {
+      color: #2ecc71 !important;
+      text-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
+    }
+
+    /* ===== علامة الذئب المحول (لون أخضر فاتح) ===== */
+    .wolf-converted-role-name {
+      color: #66bb6a !important;
+      text-shadow: 0 0 20px rgba(102, 187, 106, 0.3);
+    }
+
     @media (max-width: 400px) {
       .action-buttons-row .btn { width: 46px; height: 42px; font-size: 17px; }
       .suggest-fab { width: 40px; height: 40px; font-size: 18px; top: 12px; left: 12px; }
@@ -424,6 +436,7 @@
     let deathListener = null;
     let shownDeaths = new Set();
     let playersListener = null;
+    let narratorMessagesListener = null;
 
     // ===== عرض رسالة الخطأ =====
     function showError(message) {
@@ -538,6 +551,8 @@
         <div class="msg-text">${message}</div>
         <button class="msg-close">إغلاق</button>
       `;
+      
+      // إضافة الرسالة في مكان مناسب
       const descElement = document.querySelector('.role-description');
       if (descElement) {
         descElement.after(box);
@@ -552,20 +567,35 @@
       });
     }
 
-    // ===== الاستماع لرسائل الراوي =====
+    // ===== الاستماع لرسائل الراوي (محسّن) =====
     function listenToNarratorMessages(roomCode, playerId) {
       if (!roomCode || !playerId) return;
+      
+      // إزالة المستمع السابق إن وجد
+      if (narratorMessagesListener) {
+        narratorMessagesListener();
+        narratorMessagesListener = null;
+      }
+
       const messagesRef = ref(db, `rooms/${roomCode}/messages`);
-      onValue(messagesRef, (snapshot) => {
+      narratorMessagesListener = onValue(messagesRef, (snapshot) => {
         const data = snapshot.val();
         if (!data) return;
+        
+        // فلترة الرسائل: من الراوي (fromNarrator: true) وموجهة لهذا اللاعب
         const entries = Object.entries(data)
           .filter(([key, msg]) => msg.fromNarrator === true && msg.playerId === playerId)
           .sort((a, b) => (b[1].timestamp || 0) - (a[1].timestamp || 0));
 
         if (entries.length > 0) {
+          // نأخذ أحدث رسالة
           const latest = entries[0][1];
-          showNarratorMessage(latest.message);
+          // نتحقق إذا كانت الرسالة جديدة (لم تظهر من قبل)
+          const lastMessageKey = localStorage.getItem('lastNarratorMessageKey_' + playerId);
+          if (lastMessageKey !== entries[0][0]) {
+            showNarratorMessage(latest.message);
+            localStorage.setItem('lastNarratorMessageKey_' + playerId, entries[0][0]);
+          }
         }
       });
     }
@@ -586,13 +616,11 @@
       // تصفية الإشعارات التي تم عرضها مسبقاً
       const newEntries = entries.filter(([key]) => !shownDeaths.has(key));
       if (newEntries.length === 0) {
-        // إذا كانت هناك إشعارات قديمة ولكن لم يتم عرضها بعد
         const allEntries = entries;
         if (allEntries.length === 0) {
           deathContainer.style.display = 'none';
           return;
         }
-        // نعرض كل الإشعارات
         deathContainer.style.display = 'flex';
         deathContainer.innerHTML = '';
         allEntries.forEach(([key, death]) => {
@@ -602,7 +630,6 @@
         return;
       }
 
-      // إضافة الإشعارات الجديدة فقط
       deathContainer.style.display = 'flex';
       newEntries.forEach(([key, death]) => {
         addDeathNotification(key, death.playerName);
@@ -735,7 +762,7 @@
       });
     }
 
-    // ===== عرض البطاقة =====
+    // ===== عرض البطاقة (الدور العادي) =====
     async function renderRoleContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const roleText = t('yourRole') + ' ' + roleDisplay;
@@ -757,6 +784,7 @@
       await initWolfChat(roomCode, playerId);
       listenToNarratorMessages(roomCode, playerId);
 
+      // زر إخفاء البطاقة
       document.getElementById("hideRoleBtn").onclick = () => {
         roleBox.innerHTML = `
           <button class="btn-show-card" id="showRoleBtn">🃏 ${t('showCard')}</button>
@@ -765,6 +793,7 @@
         setTimeout(() => initWolfChat(roomCode, playerId), 100);
       };
 
+      // زر الانتحار
       document.getElementById("suicideBtn").onclick = async () => {
         if (!confirm(t('confirmSuicide'))) return;
         try {
@@ -784,6 +813,7 @@
         }
       };
 
+      // زر إرسال رسالة للراوي
       document.getElementById("messageNarratorBtn").onclick = () => {
         messageModal.style.display = 'flex';
         messageText.value = '';
@@ -791,11 +821,11 @@
       };
     }
 
-    // ===== عرض البطاقة للاعب المصاب =====
+    // ===== عرض البطاقة للاعب المستذئب (لقد تم استذئابك) =====
     async function renderInfectedContent(player) {
       const description = await fetchRoleDescription(player.role);
       roleBox.innerHTML = `
-        <div class="role-name" style="color:#66bb6a;">${t('infectedMessage')}</div>
+        <div class="role-name infected-role-name">⚠️ لقد تم استذئابك!</div>
         <div class="role-image-wrapper">
           <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
           <img src="https://i.postimg.cc/y8Dhy5VS/IMG-20260708-204243.png" class="blood-overlay" />
@@ -845,13 +875,14 @@
       };
     }
 
-    // ===== عرض البطاقة للاعب الذي تحول إلى ذئب =====
+    // ===== عرض البطاقة للاعب الذي تحول إلى ذئب (تم التحويل) =====
     async function renderWolfContent(player) {
+      // جلب اسم الدور الكامل من Firebase
       const roleDisplay = translateDynamicRole(player.role);
       const description = await fetchRoleDescription(player.role);
       
       roleBox.innerHTML = `
-        <div class="role-name" style="color:#66bb6a;">🐺 ${t('role_wolf')} (تم التحويل)</div>
+        <div class="role-name wolf-converted-role-name">🐺 أنت ${roleDisplay}</div>
         <div class="role-image-wrapper">
           <img src="${player.roleImage || 'https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg'}" class="role-img" />
         </div>
@@ -866,6 +897,7 @@
       await initWolfChat(roomCode, playerId);
       listenToNarratorMessages(roomCode, playerId);
 
+      // زر إخفاء البطاقة
       document.getElementById("hideWolfBtn").onclick = () => {
         roleBox.innerHTML = `
           <button class="btn-show-card" id="showWolfBtn">🃏 ${t('showCard')}</button>
@@ -874,6 +906,7 @@
         setTimeout(() => initWolfChat(roomCode, playerId), 100);
       };
 
+      // زر الانتحار
       document.getElementById("suicideWolfBtn").onclick = async () => {
         if (!confirm(t('confirmSuicide'))) return;
         try {
@@ -893,6 +926,7 @@
         }
       };
 
+      // زر إرسال رسالة للراوي
       document.getElementById("messageNarratorBtnWolf").onclick = () => {
         messageModal.style.display = 'flex';
         messageText.value = '';
@@ -935,7 +969,7 @@
           return;
         }
 
-        // إذا كان اللاعب مستذئباً (isInfected)
+        // إذا كان اللاعب مستذئباً (isInfected) - تظهر "لقد تم استذئابك"
         if (player.isInfected && !player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
@@ -944,7 +978,7 @@
           return;
         }
 
-        // إذا كان اللاعب ذئباً (تم تحويله)
+        // إذا كان اللاعب ذئباً (تم تحويله) - تظهر "أنت [اسم الدور]"
         if (player.isWolf && !player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
@@ -953,7 +987,7 @@
           return;
         }
 
-        // إذا كان اللاعب له دور
+        // إذا كان اللاعب له دور عادي
         if (player.role) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
@@ -997,7 +1031,6 @@
         return;
       }
 
-      // التحقق من أن رمز الغرفة رقمي
       if (!/^\d+$/.test(enteredRoom)) {
         showError('⚠️ رمز الغرفة يجب أن يكون أرقاماً فقط!');
         codeInput.focus();
@@ -1005,7 +1038,6 @@
       }
 
       try {
-        // التحقق من وجود الغرفة
         const roomSnap = await get(ref(db, `rooms/${enteredRoom}`));
         if (!roomSnap.exists()) {
           showError('❌ الغرفة غير موجودة! تأكد من الرقم.');
@@ -1018,7 +1050,6 @@
           return;
         }
 
-        // التحقق من عدم وجود لاعب بنفس الاسم
         const players = await getPlayers(enteredRoom);
         const existingPlayer = Object.values(players).find(p => p.name === name);
         if (existingPlayer) {
@@ -1026,7 +1057,6 @@
           return;
         }
 
-        // إضافة اللاعب
         roomCode = enteredRoom;
         playerId = await addPlayer(roomCode, name);
         
@@ -1035,22 +1065,15 @@
           return;
         }
 
-        // تخزين البيانات
         localStorage.setItem("playerId", playerId);
         setRoomCode(roomCode);
 
-        // إخفاء نموذج الانضمام وإظهار حالة الانتظار
         joinForm.classList.add("hidden");
         statusDiv.classList.remove("hidden");
         errorMsg.classList.remove('show');
 
-        // تحديث رابط Discord
         updateDiscordLink(roomCode);
-        
-        // بدء الاستماع لإشعارات الوفاة
         listenToDeathNotifications(roomCode);
-        
-        // التحقق من حالة اللاعب
         await checkPlayerStatus();
 
         console.log(`✅ تم انضمام ${name} إلى الغرفة ${roomCode} برقم ${playerId}`);
@@ -1134,7 +1157,6 @@
 
     // ===== إذا كان اللاعب مسجلاً بالفعل =====
     if (playerId && roomCode) {
-      // التحقق من وجود اللاعب في الغرفة
       try {
         const player = await getPlayer(roomCode, playerId);
         if (player) {
@@ -1144,7 +1166,6 @@
           listenToDeathNotifications(roomCode);
           await checkPlayerStatus();
         } else {
-          // اللاعب غير موجود، نعيده للصفحة الرئيسية
           localStorage.clear();
           window.location.href = "index.html";
         }
