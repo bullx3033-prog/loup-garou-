@@ -32,9 +32,7 @@
     .suggest-fab:active { transform: scale(0.95); }
     .suggest-fab { left: 20px; }
     [dir="ltr"] .suggest-fab { left: auto; right: 20px; }
-
     .btn-suggest-old { display: none !important; }
-
     .action-buttons-row {
       display: flex;
       gap: 8px;
@@ -72,7 +70,6 @@
       border: 1px solid #555; border-radius: 10px; cursor: pointer; transition: 0.3s; font-family: 'Cinzel', serif;
     }
     .btn-show-card:hover { background: #3a3a3a; box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); }
-
     .role-image-wrapper { position: relative; width: 100%; max-width: 300px; margin: 10px auto; }
     .role-image-wrapper img.role-img { width: 100%; border-radius: 12px; border: 2px solid crimson; }
     .role-image-wrapper img.blood-overlay {
@@ -83,7 +80,6 @@
       color: #ccc; font-size: 13px; line-height: 1.5; text-align: center; font-family: 'Cinzel', serif; letter-spacing: 0.3px;
     }
     .role-description strong { color: #d4a017; }
-
     .narrator-message-box {
       background: #2a1a0a; border: 2px solid #d4a017; border-radius: 10px; padding: 10px 14px; margin-top: 10px;
       display: none; animation: fadeIn 0.4s ease;
@@ -96,7 +92,6 @@
     }
     .narrator-message-box .msg-close:hover { background: #8b0000; box-shadow: 0 0 15px #8b0000; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-
     #wolfChatContainer {
       margin-top: 15px;
       background: #0d0805;
@@ -147,7 +142,6 @@
       cursor: pointer; transition: 0.3s;
     }
     .wolf-vote-btn:hover { background: #aa0000; box-shadow: 0 0 20px #8b0000; }
-
     .discord-player-section {
       background: #1a1a1a; border: 1px solid #5865F2; border-radius: 12px; padding: 15px; margin-top: 15px;
     }
@@ -166,12 +160,10 @@
       font-family: 'Cinzel', serif; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 14px;
     }
     .discord-player-section .btn-discord-join:hover { background: #4752C4; box-shadow: 0 0 15px #5865F2; }
-
     .btn-secondary { background: #2c2c2c; color: #fff; border: 1px solid #555; }
     .btn-secondary:hover { background: #3a3a3a; border-color: #777; }
     .join-form-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
     .join-form-buttons .btn { flex: 1; min-width: 100px; }
-
     .modal-message .modal-content { max-width: 400px; }
     .modal-message textarea {
       width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #555;
@@ -179,7 +171,6 @@
       resize: vertical; min-height: 80px;
     }
     .modal-message textarea:focus { border-color: #d4a017; outline: none; box-shadow: 0 0 15px rgba(212, 160, 23, 0.2); }
-
     .role-name-infected {
       color: #2ecc71 !important;
       text-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
@@ -188,7 +179,6 @@
       color: #66bb6a !important;
       text-shadow: 0 0 20px rgba(102, 187, 106, 0.3);
     }
-
     @media (max-width: 400px) {
       .action-buttons-row .btn { width: 46px; height: 42px; font-size: 17px; }
       .suggest-fab { width: 40px; height: 40px; font-size: 18px; top: 12px; left: 12px; }
@@ -198,12 +188,9 @@
   </style>
 </head>
 <body>
-
   <button class="suggest-fab" id="suggestFabBtn" title="💬 اقتراحات للمطور">💬</button>
-
   <div class="container">
     <h2 id="playerTitle">🐺 لو ڨارو</h2>
-
     <div id="joinForm">
       <input type="text" id="playerName" placeholder="اسمك" />
       <input type="text" id="roomCodeInput" placeholder="رمز الغرفة" />
@@ -212,12 +199,10 @@
         <button class="btn btn-secondary" id="backBtn">🔙 رجوع</button>
       </div>
     </div>
-
     <div id="status" class="hidden" style="color: #ccc; margin: 20px 0; text-align:center;">
       <span id="waitingText">في انتظار بدء اللعبة...</span>
       <button class="btn btn-danger" id="leaveBtn" style="margin-top:15px;">مغادرة</button>
     </div>
-
     <div id="discordPlayerSection" class="discord-player-section hidden">
       <div class="title" id="discordTitle">🎙️ غرفة الصوت في Discord</div>
       <div class="link-box">
@@ -226,12 +211,9 @@
       </div>
       <p style="color:#777; font-size:12px; margin-top:5px;" id="discordHint">💡 انضم إلى الغرفة الصوتية للتواصل مع اللاعبين أثناء اللعبة.</p>
     </div>
-
     <div id="roleBox" class="hidden"></div>
   </div>
-
   <button class="btn-suggest btn-suggest-old" id="suggestBtn">💬 اقتراحات للمطور</button>
-
   <div class="modal modal-message" id="messageModal">
     <div class="modal-content">
       <h3 style="color:#d4a017;">📩 إرسال رسالة إلى الراوي</h3>
@@ -244,7 +226,6 @@
       <p id="messageStatus" style="color:#7a4e2d; font-size:13px; margin-top:8px; text-align:center;"></p>
     </div>
   </div>
-
   <div class="modal" id="suggestModal">
     <div class="modal-content">
       <h3 id="suggestTitle">📢 شارك فكرتك</h3>
@@ -255,7 +236,6 @@
       <button class="btn" id="closeSuggest" style="margin-top:8px;">إلغاء</button>
     </div>
   </div>
-
   <script type="module">
     import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
     import {
@@ -301,22 +281,18 @@
     const roleBox = document.getElementById("roleBox");
     const leaveBtn = document.getElementById("leaveBtn");
     const waitingText = document.getElementById("waitingText");
-
     const messageModal = document.getElementById("messageModal");
     const messageText = document.getElementById("messageText");
     const sendMessageBtn = document.getElementById("sendMessageBtn");
     const closeMessageModal = document.getElementById("closeMessageModal");
     const messageStatus = document.getElementById("messageStatus");
-
     const suggestFab = document.getElementById("suggestFabBtn");
     const suggestModal = document.getElementById("suggestModal");
-
     const wolfChatContainer = document.getElementById('wolfChatContainer');
     const wolfMessagesList = document.getElementById('wolfMessagesList');
     const wolfMessageInput = document.getElementById('wolfMessageInput');
     const sendWolfMessageBtn = document.getElementById('sendWolfMessageBtn');
     const wolfVoteBtn = document.getElementById('wolfVoteBtn');
-
     const discordSection = document.getElementById("discordPlayerSection");
     const discordLinkInput = document.getElementById("discordPlayerLink");
     const joinDiscordBtn = document.getElementById("joinDiscordBtn");
@@ -549,220 +525,315 @@
       });
     }
 
+    // ===== الدوال الرئيسية لعرض البطاقة مع أزرار تعمل =====
     async function renderRoleContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const roleText = t('yourRole') + ' ' + roleDisplay;
       const description = await fetchRoleDescription(player.role);
       
-      roleBox.innerHTML = `
-        <div class="role-name">${roleText}</div>
-        <div class="role-image-wrapper">
-          <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
-        </div>
-        ${description ? `<div class="role-description"><strong>📖 ${t('roleDescription')}:</strong> ${description}</div>` : ''}
-        <div class="action-buttons-row">
-          <button class="btn btn-hide" id="hideRoleBtn">🔒</button>
-          <button class="btn btn-suicide" id="suicideRoleBtn">💀</button>
-          <button class="btn btn-message" id="messageRoleBtn">📩</button>
-        </div>
-      `;
-
+      // إنشاء العناصر باستخدام createElement بدلاً من innerHTML
+      roleBox.innerHTML = '';
+      roleBox.classList.remove('hidden');
+      
+      // اسم الدور
+      const nameDiv = document.createElement('div');
+      nameDiv.className = 'role-name';
+      nameDiv.textContent = roleText;
+      roleBox.appendChild(nameDiv);
+      
+      // صورة الدور
+      const wrapper = document.createElement('div');
+      wrapper.className = 'role-image-wrapper';
+      const img = document.createElement('img');
+      img.className = 'role-img';
+      img.src = player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
+      img.alt = roleDisplay;
+      img.onerror = function() { this.src = 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'; };
+      wrapper.appendChild(img);
+      roleBox.appendChild(wrapper);
+      
+      // الوصف
+      if (description) {
+        const descDiv = document.createElement('div');
+        descDiv.className = 'role-description';
+        descDiv.innerHTML = `<strong>📖 ${t('roleDescription')}:</strong> ${description}`;
+        roleBox.appendChild(descDiv);
+      }
+      
+      // الأزرار
+      const btnRow = document.createElement('div');
+      btnRow.className = 'action-buttons-row';
+      
+      // زر إخفاء
+      const hideBtn = document.createElement('button');
+      hideBtn.className = 'btn btn-hide';
+      hideBtn.textContent = '🔒';
+      hideBtn.title = t('hideCard');
+      hideBtn.addEventListener('click', function() {
+        roleBox.innerHTML = '';
+        const showBtn = document.createElement('button');
+        showBtn.className = 'btn-show-card';
+        showBtn.textContent = '🃏 ' + t('showCard');
+        showBtn.addEventListener('click', function() {
+          renderRoleContent(player);
+        });
+        roleBox.appendChild(showBtn);
+        setTimeout(() => initWolfChat(roomCode, playerId), 100);
+      });
+      btnRow.appendChild(hideBtn);
+      
+      // زر انتحار
+      const suicideBtn = document.createElement('button');
+      suicideBtn.className = 'btn btn-suicide';
+      suicideBtn.textContent = '💀';
+      suicideBtn.title = t('suicide');
+      suicideBtn.addEventListener('click', async function() {
+        if (!confirm(t('confirmSuicide'))) return;
+        try {
+          await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
+          roleBox.innerHTML = '';
+          const skull = document.createElement('div');
+          skull.id = 'skull';
+          skull.textContent = '💀';
+          roleBox.appendChild(skull);
+          const deathText = document.createElement('p');
+          deathText.id = 'death-text';
+          deathText.textContent = t('deathMessage');
+          roleBox.appendChild(deathText);
+          const exitBtn = document.createElement('button');
+          exitBtn.className = 'btn btn-danger';
+          exitBtn.textContent = '🚪 ' + t('exitGame');
+          exitBtn.style.marginTop = '10px';
+          exitBtn.addEventListener('click', async function() {
+            await deleteRoom(roomCode);
+            localStorage.clear();
+            window.location.href = "index.html";
+          });
+          roleBox.appendChild(exitBtn);
+        } catch (err) {
+          alert("❌ " + t('errorOccurred') + ": " + err.message);
+        }
+      });
+      btnRow.appendChild(suicideBtn);
+      
+      // زر إرسال رسالة للراوي
+      const messageBtn = document.createElement('button');
+      messageBtn.className = 'btn btn-message';
+      messageBtn.textContent = '📩';
+      messageBtn.title = t('sendToNarrator') || 'إرسال للراوي';
+      messageBtn.addEventListener('click', function() {
+        messageModal.style.display = 'flex';
+        messageText.value = '';
+        messageStatus.textContent = '';
+      });
+      btnRow.appendChild(messageBtn);
+      
+      roleBox.appendChild(btnRow);
+      
       await initWolfChat(roomCode, playerId);
       listenToNarratorMessages(roomCode, playerId);
-
-      const hideBtn = document.getElementById("hideRoleBtn");
-      const suicideBtn = document.getElementById("suicideRoleBtn");
-      const messageBtn = document.getElementById("messageRoleBtn");
-
-      if (hideBtn) {
-        hideBtn.addEventListener('click', function() {
-          roleBox.innerHTML = `
-            <button class="btn-show-card" id="showRoleBtn">🃏 ${t('showCard')}</button>
-          `;
-          const showBtn = document.getElementById("showRoleBtn");
-          if (showBtn) {
-            showBtn.addEventListener('click', function() {
-              renderRoleContent(player);
-            });
-          }
-          setTimeout(() => initWolfChat(roomCode, playerId), 100);
-        });
-      }
-
-      if (suicideBtn) {
-        suicideBtn.addEventListener('click', async function() {
-          if (!confirm(t('confirmSuicide'))) return;
-          try {
-            await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
-            roleBox.innerHTML = `
-              <div id="skull">💀</div>
-              <p id="death-text">${t('deathMessage')}</p>
-              <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
-            `;
-            const exitBtn = document.getElementById("exitBtn");
-            if (exitBtn) {
-              exitBtn.addEventListener('click', async function() {
-                await deleteRoom(roomCode);
-                localStorage.clear();
-                window.location.href = "index.html";
-              });
-            }
-          } catch (err) {
-            alert("❌ " + t('errorOccurred') + ": " + err.message);
-          }
-        });
-      }
-
-      if (messageBtn) {
-        messageBtn.addEventListener('click', function() {
-          messageModal.style.display = 'flex';
-          messageText.value = '';
-          messageStatus.textContent = '';
-        });
-      }
     }
 
     async function renderInfectedContent(player) {
       const description = await fetchRoleDescription(player.role);
-      roleBox.innerHTML = `
-        <div class="role-name role-name-infected">⚠️ لقد تم استذئابك!</div>
-        <div class="role-image-wrapper">
-          <img src="${player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'}" class="role-img" />
-          <img src="https://i.postimg.cc/y8Dhy5VS/IMG-20260708-204243.png" class="blood-overlay" />
-        </div>
-        ${description ? `<div class="role-description"><strong>📖 ${t('roleDescription')}:</strong> ${description}</div>` : ''}
-        <div class="action-buttons-row">
-          <button class="btn btn-hide" id="hideInfectedBtn">🔒</button>
-          <button class="btn btn-suicide" id="suicideInfectedBtn">💀</button>
-          <button class="btn btn-message" id="messageInfectedBtn">📩</button>
-        </div>
-      `;
-
+      
+      roleBox.innerHTML = '';
+      roleBox.classList.remove('hidden');
+      
+      const nameDiv = document.createElement('div');
+      nameDiv.className = 'role-name role-name-infected';
+      nameDiv.textContent = '⚠️ لقد تم استذئابك!';
+      roleBox.appendChild(nameDiv);
+      
+      const wrapper = document.createElement('div');
+      wrapper.className = 'role-image-wrapper';
+      const img = document.createElement('img');
+      img.className = 'role-img';
+      img.src = player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
+      img.alt = 'دور المستذئب';
+      img.onerror = function() { this.src = 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'; };
+      wrapper.appendChild(img);
+      const overlay = document.createElement('img');
+      overlay.className = 'blood-overlay';
+      overlay.src = 'https://i.postimg.cc/y8Dhy5VS/IMG-20260708-204243.png';
+      overlay.alt = 'دم';
+      wrapper.appendChild(overlay);
+      roleBox.appendChild(wrapper);
+      
+      if (description) {
+        const descDiv = document.createElement('div');
+        descDiv.className = 'role-description';
+        descDiv.innerHTML = `<strong>📖 ${t('roleDescription')}:</strong> ${description}`;
+        roleBox.appendChild(descDiv);
+      }
+      
+      const btnRow = document.createElement('div');
+      btnRow.className = 'action-buttons-row';
+      
+      const hideBtn = document.createElement('button');
+      hideBtn.className = 'btn btn-hide';
+      hideBtn.textContent = '🔒';
+      hideBtn.title = t('hideCard');
+      hideBtn.addEventListener('click', function() {
+        roleBox.innerHTML = '';
+        const showBtn = document.createElement('button');
+        showBtn.className = 'btn-show-card';
+        showBtn.textContent = '🃏 ' + t('showCard');
+        showBtn.addEventListener('click', function() {
+          renderInfectedContent(player);
+        });
+        roleBox.appendChild(showBtn);
+        setTimeout(() => initWolfChat(roomCode, playerId), 100);
+      });
+      btnRow.appendChild(hideBtn);
+      
+      const suicideBtn = document.createElement('button');
+      suicideBtn.className = 'btn btn-suicide';
+      suicideBtn.textContent = '💀';
+      suicideBtn.title = t('suicide');
+      suicideBtn.addEventListener('click', async function() {
+        if (!confirm(t('confirmSuicide'))) return;
+        try {
+          await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
+          roleBox.innerHTML = '';
+          const skull = document.createElement('div');
+          skull.id = 'skull';
+          skull.textContent = '💀';
+          roleBox.appendChild(skull);
+          const deathText = document.createElement('p');
+          deathText.id = 'death-text';
+          deathText.textContent = t('infectedDeathMessage');
+          roleBox.appendChild(deathText);
+          const exitBtn = document.createElement('button');
+          exitBtn.className = 'btn btn-danger';
+          exitBtn.textContent = '🚪 ' + t('exitGame');
+          exitBtn.style.marginTop = '10px';
+          exitBtn.addEventListener('click', async function() {
+            await deleteRoom(roomCode);
+            localStorage.clear();
+            window.location.href = "index.html";
+          });
+          roleBox.appendChild(exitBtn);
+        } catch (err) {
+          alert("❌ " + t('errorOccurred') + ": " + err.message);
+        }
+      });
+      btnRow.appendChild(suicideBtn);
+      
+      const messageBtn = document.createElement('button');
+      messageBtn.className = 'btn btn-message';
+      messageBtn.textContent = '📩';
+      messageBtn.title = t('sendToNarrator') || 'إرسال للراوي';
+      messageBtn.addEventListener('click', function() {
+        messageModal.style.display = 'flex';
+        messageText.value = '';
+        messageStatus.textContent = '';
+      });
+      btnRow.appendChild(messageBtn);
+      
+      roleBox.appendChild(btnRow);
+      
       await initWolfChat(roomCode, playerId);
       listenToNarratorMessages(roomCode, playerId);
-
-      const hideBtn = document.getElementById("hideInfectedBtn");
-      const suicideBtn = document.getElementById("suicideInfectedBtn");
-      const messageBtn = document.getElementById("messageInfectedBtn");
-
-      if (hideBtn) {
-        hideBtn.addEventListener('click', function() {
-          roleBox.innerHTML = `
-            <button class="btn-show-card" id="showInfectedBtn">🃏 ${t('showCard')}</button>
-          `;
-          const showBtn = document.getElementById("showInfectedBtn");
-          if (showBtn) {
-            showBtn.addEventListener('click', function() {
-              renderInfectedContent(player);
-            });
-          }
-          setTimeout(() => initWolfChat(roomCode, playerId), 100);
-        });
-      }
-
-      if (suicideBtn) {
-        suicideBtn.addEventListener('click', async function() {
-          if (!confirm(t('confirmSuicide'))) return;
-          try {
-            await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
-            roleBox.innerHTML = `
-              <div id="skull">💀</div>
-              <p id="death-text">${t('infectedDeathMessage')}</p>
-              <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
-            `;
-            const exitBtn = document.getElementById("exitBtn");
-            if (exitBtn) {
-              exitBtn.addEventListener('click', async function() {
-                await deleteRoom(roomCode);
-                localStorage.clear();
-                window.location.href = "index.html";
-              });
-            }
-          } catch (err) {
-            alert("❌ " + t('errorOccurred') + ": " + err.message);
-          }
-        });
-      }
-
-      if (messageBtn) {
-        messageBtn.addEventListener('click', function() {
-          messageModal.style.display = 'flex';
-          messageText.value = '';
-          messageStatus.textContent = '';
-        });
-      }
     }
 
     async function renderWolfContent(player) {
       const roleDisplay = translateDynamicRole(player.role);
       const description = await fetchRoleDescription(player.role);
       
-      roleBox.innerHTML = `
-        <div class="role-name role-name-wolf-converted">🐺 أنت ${roleDisplay}</div>
-        <div class="role-image-wrapper">
-          <img src="${player.roleImage || 'https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg'}" class="role-img" />
-        </div>
-        ${description ? `<div class="role-description"><strong>📖 ${t('roleDescription')}:</strong> ${description}</div>` : ''}
-        <div class="action-buttons-row">
-          <button class="btn btn-hide" id="hideWolfBtn">🔒</button>
-          <button class="btn btn-suicide" id="suicideWolfBtn">💀</button>
-          <button class="btn btn-message" id="messageWolfBtn">📩</button>
-        </div>
-      `;
-
+      roleBox.innerHTML = '';
+      roleBox.classList.remove('hidden');
+      
+      const nameDiv = document.createElement('div');
+      nameDiv.className = 'role-name role-name-wolf-converted';
+      nameDiv.textContent = '🐺 أنت ' + roleDisplay;
+      roleBox.appendChild(nameDiv);
+      
+      const wrapper = document.createElement('div');
+      wrapper.className = 'role-image-wrapper';
+      const img = document.createElement('img');
+      img.className = 'role-img';
+      img.src = player.roleImage || 'https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg';
+      img.alt = 'ذئب';
+      img.onerror = function() { this.src = 'https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg'; };
+      wrapper.appendChild(img);
+      roleBox.appendChild(wrapper);
+      
+      if (description) {
+        const descDiv = document.createElement('div');
+        descDiv.className = 'role-description';
+        descDiv.innerHTML = `<strong>📖 ${t('roleDescription')}:</strong> ${description}`;
+        roleBox.appendChild(descDiv);
+      }
+      
+      const btnRow = document.createElement('div');
+      btnRow.className = 'action-buttons-row';
+      
+      const hideBtn = document.createElement('button');
+      hideBtn.className = 'btn btn-hide';
+      hideBtn.textContent = '🔒';
+      hideBtn.title = t('hideCard');
+      hideBtn.addEventListener('click', function() {
+        roleBox.innerHTML = '';
+        const showBtn = document.createElement('button');
+        showBtn.className = 'btn-show-card';
+        showBtn.textContent = '🃏 ' + t('showCard');
+        showBtn.addEventListener('click', function() {
+          renderWolfContent(player);
+        });
+        roleBox.appendChild(showBtn);
+        setTimeout(() => initWolfChat(roomCode, playerId), 100);
+      });
+      btnRow.appendChild(hideBtn);
+      
+      const suicideBtn = document.createElement('button');
+      suicideBtn.className = 'btn btn-suicide';
+      suicideBtn.textContent = '💀';
+      suicideBtn.title = t('suicide');
+      suicideBtn.addEventListener('click', async function() {
+        if (!confirm(t('confirmSuicide'))) return;
+        try {
+          await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
+          roleBox.innerHTML = '';
+          const skull = document.createElement('div');
+          skull.id = 'skull';
+          skull.textContent = '💀';
+          roleBox.appendChild(skull);
+          const deathText = document.createElement('p');
+          deathText.id = 'death-text';
+          deathText.textContent = t('deathMessage');
+          roleBox.appendChild(deathText);
+          const exitBtn = document.createElement('button');
+          exitBtn.className = 'btn btn-danger';
+          exitBtn.textContent = '🚪 ' + t('exitGame');
+          exitBtn.style.marginTop = '10px';
+          exitBtn.addEventListener('click', async function() {
+            await deleteRoom(roomCode);
+            localStorage.clear();
+            window.location.href = "index.html";
+          });
+          roleBox.appendChild(exitBtn);
+        } catch (err) {
+          alert("❌ " + t('errorOccurred') + ": " + err.message);
+        }
+      });
+      btnRow.appendChild(suicideBtn);
+      
+      const messageBtn = document.createElement('button');
+      messageBtn.className = 'btn btn-message';
+      messageBtn.textContent = '📩';
+      messageBtn.title = t('sendToNarrator') || 'إرسال للراوي';
+      messageBtn.addEventListener('click', function() {
+        messageModal.style.display = 'flex';
+        messageText.value = '';
+        messageStatus.textContent = '';
+      });
+      btnRow.appendChild(messageBtn);
+      
+      roleBox.appendChild(btnRow);
+      
       await initWolfChat(roomCode, playerId);
       listenToNarratorMessages(roomCode, playerId);
-
-      const hideBtn = document.getElementById("hideWolfBtn");
-      const suicideBtn = document.getElementById("suicideWolfBtn");
-      const messageBtn = document.getElementById("messageWolfBtn");
-
-      if (hideBtn) {
-        hideBtn.addEventListener('click', function() {
-          roleBox.innerHTML = `
-            <button class="btn-show-card" id="showWolfBtn">🃏 ${t('showCard')}</button>
-          `;
-          const showBtn = document.getElementById("showWolfBtn");
-          if (showBtn) {
-            showBtn.addEventListener('click', function() {
-              renderWolfContent(player);
-            });
-          }
-          setTimeout(() => initWolfChat(roomCode, playerId), 100);
-        });
-      }
-
-      if (suicideBtn) {
-        suicideBtn.addEventListener('click', async function() {
-          if (!confirm(t('confirmSuicide'))) return;
-          try {
-            await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
-            roleBox.innerHTML = `
-              <div id="skull">💀</div>
-              <p id="death-text">${t('deathMessage')}</p>
-              <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
-            `;
-            const exitBtn = document.getElementById("exitBtn");
-            if (exitBtn) {
-              exitBtn.addEventListener('click', async function() {
-                await deleteRoom(roomCode);
-                localStorage.clear();
-                window.location.href = "index.html";
-              });
-            }
-          } catch (err) {
-            alert("❌ " + t('errorOccurred') + ": " + err.message);
-          }
-        });
-      }
-
-      if (messageBtn) {
-        messageBtn.addEventListener('click', function() {
-          messageModal.style.display = 'flex';
-          messageText.value = '';
-          messageStatus.textContent = '';
-        });
-      }
     }
 
     async function checkPlayerStatus() {
@@ -775,68 +846,71 @@
           return;
         }
         updateDiscordLink(roomCode);
-
         if (player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
-          roleBox.innerHTML = `
-            <div id="skull">💀</div>
-            <p id="death-text">${player.isInfected ? t('infectedDeathMessage') : t('deathMessage')}</p>
-            <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
-          `;
-          const exitBtn = document.getElementById("exitBtn");
-          if (exitBtn) {
-            exitBtn.addEventListener('click', async function() {
-              await deleteRoom(roomCode);
-              localStorage.clear();
-              window.location.href = "index.html";
-            });
-          }
+          roleBox.innerHTML = '';
+          const skull = document.createElement('div');
+          skull.id = 'skull';
+          skull.textContent = '💀';
+          roleBox.appendChild(skull);
+          const deathText = document.createElement('p');
+          deathText.id = 'death-text';
+          deathText.textContent = player.isInfected ? t('infectedDeathMessage') : t('deathMessage');
+          roleBox.appendChild(deathText);
+          const exitBtn = document.createElement('button');
+          exitBtn.className = 'btn btn-danger';
+          exitBtn.textContent = '🚪 ' + t('exitGame');
+          exitBtn.style.marginTop = '10px';
+          exitBtn.addEventListener('click', async function() {
+            await deleteRoom(roomCode);
+            localStorage.clear();
+            window.location.href = "index.html";
+          });
+          roleBox.appendChild(exitBtn);
           return;
         }
-
         if (player.isInfected && !player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
-          roleBox.innerHTML = `<button class="btn-show-card" id="showInfectedBtn">🃏 ${t('showCard')}</button>`;
-          const showBtn = document.getElementById("showInfectedBtn");
-          if (showBtn) {
-            showBtn.addEventListener('click', function() {
-              renderInfectedContent(player);
-            });
-          }
+          roleBox.innerHTML = '';
+          const showBtn = document.createElement('button');
+          showBtn.className = 'btn-show-card';
+          showBtn.textContent = '🃏 ' + t('showCard');
+          showBtn.addEventListener('click', function() {
+            renderInfectedContent(player);
+          });
+          roleBox.appendChild(showBtn);
           return;
         }
-
         if (player.isWolf && !player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
-          roleBox.innerHTML = `<button class="btn-show-card" id="showWolfBtn">🃏 ${t('showCard')}</button>`;
-          const showBtn = document.getElementById("showWolfBtn");
-          if (showBtn) {
-            showBtn.addEventListener('click', function() {
-              renderWolfContent(player);
-            });
-          }
+          roleBox.innerHTML = '';
+          const showBtn = document.createElement('button');
+          showBtn.className = 'btn-show-card';
+          showBtn.textContent = '🃏 ' + t('showCard');
+          showBtn.addEventListener('click', function() {
+            renderWolfContent(player);
+          });
+          roleBox.appendChild(showBtn);
           return;
         }
-
         if (player.role) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
-          roleBox.innerHTML = `<button class="btn-show-card" id="showRoleBtn">🃏 ${t('showCard')}</button>`;
-          const showBtn = document.getElementById("showRoleBtn");
-          if (showBtn) {
-            showBtn.addEventListener('click', function() {
-              renderRoleContent(player);
-            });
-          }
+          roleBox.innerHTML = '';
+          const showBtn = document.createElement('button');
+          showBtn.className = 'btn-show-card';
+          showBtn.textContent = '🃏 ' + t('showCard');
+          showBtn.addEventListener('click', function() {
+            renderRoleContent(player);
+          });
+          roleBox.appendChild(showBtn);
           return;
         }
-
         statusDiv.classList.remove("hidden");
         waitingText.textContent = t('waitingForGame') + ` (${t('roomCode')} ${roomCode})`;
-
         if (playersListener) playersListener();
         playersListener = listenToPlayers(roomCode, async (data) => {
           if (!data) return;
@@ -953,7 +1027,6 @@
         console.error('خطأ في التحقق من الجلسة:', err);
       }
     }
-
     console.log('🚀 تم تحميل صفحة اللاعب');
   </script>
 </body>
