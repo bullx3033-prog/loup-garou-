@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
+    /* ===== زر اقتراحات للمطور ===== */
     .suggest-fab {
       position: fixed;
       top: 20px;
@@ -86,6 +87,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* ===== الأزرار ===== */
     .action-buttons-row {
       display: flex;
       gap: 8px;
@@ -137,17 +139,46 @@
 
     /* ===== رسالة من الراوي ===== */
     .narrator-message-box {
-      background: #2a1a0a; border: 2px solid #d4a017; border-radius: 10px; padding: 10px 14px; margin-top: 10px;
-      display: none; animation: fadeIn 0.4s ease;
+      background: #2a1a0a;
+      border: 2px solid #d4a017;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-top: 10px;
+      display: none;
+      animation: fadeIn 0.4s ease;
     }
-    .narrator-message-box .msg-title { color: #d4a017; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-    .narrator-message-box .msg-text { color: #f0e0c0; font-size: 14px; line-height: 1.6; word-wrap: break-word; }
+    .narrator-message-box .msg-title {
+      color: #d4a017;
+      font-size: 13px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .narrator-message-box .msg-text {
+      color: #f0e0c0;
+      font-size: 14px;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
     .narrator-message-box .msg-close {
-      background: #6b1a1a; color: #fff; border: none; border-radius: 6px; padding: 2px 12px;
-      font-family: 'Cinzel', serif; font-size: 12px; cursor: pointer; margin-top: 6px; transition: 0.3s;
+      background: #6b1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 2px 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: 0.3s;
     }
     .narrator-message-box .msg-close:hover { background: #8b0000; box-shadow: 0 0 15px #8b0000; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     /* ===== غرفة الذئاب ===== */
     #wolfChatContainer {
@@ -184,39 +215,86 @@
     #wolfMessagesList .wolf-msg .wolf-time { color: #555; font-size: 10px; float: left; }
     .wolf-input-row { display: flex; gap: 8px; }
     .wolf-input-row input {
-      flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #555;
-      background: #111; color: #fff; font-family: 'Cinzel', serif; font-size: 13px;
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #111;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
     }
     .wolf-input-row input:focus { border-color: #ff1a1a; outline: none; }
     .wolf-input-row button {
-      background: #ff1a1a; color: #fff; border: none; border-radius: 8px;
-      padding: 8px 16px; font-family: 'Cinzel', serif; font-weight: bold; cursor: pointer;
+      background: #ff1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      cursor: pointer;
       transition: 0.3s;
     }
     .wolf-input-row button:hover { background: #cc0000; box-shadow: 0 0 15px #ff1a1a; }
     .wolf-vote-btn {
-      margin-top: 8px; width: 100%; background: #8b0000; color: #fff; border: none;
-      border-radius: 8px; padding: 8px; font-family: 'Cinzel', serif; font-weight: bold;
-      cursor: pointer; transition: 0.3s;
+      margin-top: 8px;
+      width: 100%;
+      background: #8b0000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
     }
     .wolf-vote-btn:hover { background: #aa0000; box-shadow: 0 0 20px #8b0000; }
 
+    /* ===== Discord ===== */
     .discord-player-section {
-      background: #1a1a1a; border: 1px solid #5865F2; border-radius: 12px; padding: 15px; margin-top: 15px;
+      background: #1a1a1a;
+      border: 1px solid #5865F2;
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 15px;
     }
     .discord-player-section .title { color: #5865F2; font-size: 16px; display: flex; align-items: center; gap: 8px; }
     .discord-player-section .link-box {
-      display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: #0d0d0d;
-      padding: 10px; border-radius: 8px; margin-top: 8px; border: 1px solid #333;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: #0d0d0d;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 8px;
+      border: 1px solid #333;
     }
     .discord-player-section .link-box input {
-      flex: 1; background: transparent; border: none; color: #ccc; font-family: 'Cinzel', serif;
-      font-size: 13px; padding: 5px; min-width: 120px; direction: ltr;
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #ccc;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      padding: 5px;
+      min-width: 120px;
+      direction: ltr;
     }
     .discord-player-section .link-box input:focus { outline: none; }
     .discord-player-section .btn-discord-join {
-      background: #5865F2; color: #fff; border: none; padding: 8px 16px; border-radius: 8px;
-      font-family: 'Cinzel', serif; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 14px;
+      background: #5865F2;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 14px;
     }
     .discord-player-section .btn-discord-join:hover { background: #4752C4; box-shadow: 0 0 15px #5865F2; }
 
@@ -227,9 +305,16 @@
 
     .modal-message .modal-content { max-width: 400px; }
     .modal-message textarea {
-      width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #555;
-      background: #1a1a1a; color: #fff; font-family: 'Cinzel', serif; font-size: 14px;
-      resize: vertical; min-height: 80px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #1a1a1a;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 80px;
     }
     .modal-message textarea:focus { border-color: #d4a017; outline: none; box-shadow: 0 0 15px rgba(212, 160, 23, 0.2); }
 
@@ -336,7 +421,7 @@
       isPlayerWolf,
       sendWolfMessage,
       listenToWolfMessages,
-      convertToWolf  // <-- إضافة استيراد الدالة الجديدة
+      getPlayers
     } from "./logic.js";
 
     function applyTranslations() {
@@ -478,7 +563,9 @@
       });
     }
 
+    // ===== تحديث رابط Discord =====
     function updateDiscordLink(roomCode) {
+      if (!roomCode) return;
       const discordRef = ref(db, `rooms/${roomCode}/discordLink`);
       onValue(discordRef, (snapshot) => {
         const link = snapshot.val();
@@ -569,6 +656,7 @@
 
     // ===== عرض رسالة من الراوي =====
     function showNarratorMessage(message) {
+      console.log('📩 رسالة من الراوي:', message);
       const existingBox = document.getElementById('narratorMessageBox');
       if (existingBox) existingBox.remove();
 
@@ -580,6 +668,7 @@
         <div class="msg-text">${message}</div>
         <button class="msg-close">إغلاق</button>
       `;
+      
       const descElement = document.querySelector('.role-description');
       if (descElement) {
         descElement.after(box);
@@ -608,9 +697,12 @@
         const data = snapshot.val();
         if (!data) return;
         
+        // تصفية الرسائل: من الراوي وموجهة لهذا اللاعب
         const entries = Object.entries(data)
           .filter(([key, msg]) => msg.fromNarrator === true && msg.playerId === playerId)
           .sort((a, b) => (b[1].timestamp || 0) - (a[1].timestamp || 0));
+
+        console.log('📩 رسائل الراوي لهذا اللاعب:', entries);
 
         if (entries.length > 0) {
           const latest = entries[0][1];
@@ -678,7 +770,7 @@
       }
     }
 
-    // إرسال رسالة في غرفة الذئاب
+    // ===== إرسال رسالة في غرفة الذئاب =====
     if (sendWolfMessageBtn) {
       sendWolfMessageBtn.addEventListener('click', async () => {
         const message = wolfMessageInput.value.trim();
@@ -697,7 +789,7 @@
       });
     }
 
-    // إرسال الضحية
+    // ===== إرسال الضحية =====
     if (wolfVoteBtn) {
       wolfVoteBtn.addEventListener('click', async () => {
         const victim = prompt('🐺 اكتب اسم اللاعب الذي تريد قتله:');
@@ -710,8 +802,7 @@
           message: `🐺 الذئاب تريد قتل: ${victim}`,
           timestamp: Date.now(),
           fromNarrator: false,
-          isWolfVote: true
-        });
+          isWolfVote: true        });
         alert(`✅ تم إرسال اسم الضحية "${victim}" للراوي`);
       });
     }
@@ -729,26 +820,28 @@
         </div>
         ${description ? `<div class="role-description"><strong>📖 ${t('roleDescription')}:</strong> ${description}</div>` : ''}
         <div class="action-buttons-row">
-          <button class="btn btn-hide" id="hideRoleBtn" title="${t('hideCard')}">🔒</button>
-          <button class="btn btn-suicide" id="suicideRoleBtn" title="${t('suicide')}">💀</button>
-          <button class="btn btn-message" id="messageRoleBtn" title="${t('sendToNarrator') || 'إرسال للراوي'}">📩</button>
+          <button class="btn btn-hide" id="hideRoleBtn">🔒</button>
+          <button class="btn btn-suicide" id="suicideRoleBtn">💀</button>
+          <button class="btn btn-message" id="messageRoleBtn">📩</button>
         </div>
       `;
 
       await initWolfChat(roomCode, playerId);
       listenToNarratorMessages(roomCode, playerId);
 
-      // زر إخفاء البطاقة
-      document.getElementById("hideRoleBtn").addEventListener('click', () => {
+      // ✅ زر إخفاء البطاقة
+      document.getElementById("hideRoleBtn").addEventListener('click', function() {
         roleBox.innerHTML = `
           <button class="btn-show-card" id="showRoleBtn">🃏 ${t('showCard')}</button>
         `;
-        document.getElementById("showRoleBtn").addEventListener('click', () => renderRoleContent(player));
+        document.getElementById("showRoleBtn").addEventListener('click', function() {
+          renderRoleContent(player);
+        });
         setTimeout(() => initWolfChat(roomCode, playerId), 100);
       });
 
-      // زر الانتحار
-      document.getElementById("suicideRoleBtn").addEventListener('click', async () => {
+      // ✅ زر الانتحار
+      document.getElementById("suicideRoleBtn").addEventListener('click', async function() {
         if (!confirm(t('confirmSuicide'))) return;
         try {
           await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
@@ -757,7 +850,7 @@
             <p id="death-text">${t('deathMessage')}</p>
             <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
           `;
-          document.getElementById("exitBtn").addEventListener('click', async () => {
+          document.getElementById("exitBtn").addEventListener('click', async function() {
             await deleteRoom(roomCode);
             localStorage.clear();
             window.location.href = "index.html";
@@ -767,8 +860,8 @@
         }
       });
 
-      // زر إرسال رسالة للراوي
-      document.getElementById("messageRoleBtn").addEventListener('click', () => {
+      // ✅ زر إرسال رسالة للراوي
+      document.getElementById("messageRoleBtn").addEventListener('click', function() {
         messageModal.style.display = 'flex';
         messageText.value = '';
         messageStatus.textContent = '';
@@ -786,24 +879,26 @@
         </div>
         ${description ? `<div class="role-description"><strong>📖 ${t('roleDescription')}:</strong> ${description}</div>` : ''}
         <div class="action-buttons-row">
-          <button class="btn btn-hide" id="hideInfectedBtn" title="${t('hideCard')}">🔒</button>
-          <button class="btn btn-suicide" id="suicideInfectedBtn" title="${t('suicide')}">💀</button>
-          <button class="btn btn-message" id="messageInfectedBtn" title="${t('sendToNarrator') || 'إرسال للراوي'}">📩</button>
+          <button class="btn btn-hide" id="hideInfectedBtn">🔒</button>
+          <button class="btn btn-suicide" id="suicideInfectedBtn">💀</button>
+          <button class="btn btn-message" id="messageInfectedBtn">📩</button>
         </div>
       `;
 
       await initWolfChat(roomCode, playerId);
       listenToNarratorMessages(roomCode, playerId);
 
-      document.getElementById("hideInfectedBtn").addEventListener('click', () => {
+      document.getElementById("hideInfectedBtn").addEventListener('click', function() {
         roleBox.innerHTML = `
           <button class="btn-show-card" id="showInfectedBtn">🃏 ${t('showCard')}</button>
         `;
-        document.getElementById("showInfectedBtn").addEventListener('click', () => renderInfectedContent(player));
+        document.getElementById("showInfectedBtn").addEventListener('click', function() {
+          renderInfectedContent(player);
+        });
         setTimeout(() => initWolfChat(roomCode, playerId), 100);
       });
 
-      document.getElementById("suicideInfectedBtn").addEventListener('click', async () => {
+      document.getElementById("suicideInfectedBtn").addEventListener('click', async function() {
         if (!confirm(t('confirmSuicide'))) return;
         try {
           await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
@@ -812,7 +907,7 @@
             <p id="death-text">${t('infectedDeathMessage')}</p>
             <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
           `;
-          document.getElementById("exitBtn").addEventListener('click', async () => {
+          document.getElementById("exitBtn").addEventListener('click', async function() {
             await deleteRoom(roomCode);
             localStorage.clear();
             window.location.href = "index.html";
@@ -822,7 +917,7 @@
         }
       });
 
-      document.getElementById("messageInfectedBtn").addEventListener('click', () => {
+      document.getElementById("messageInfectedBtn").addEventListener('click', function() {
         messageModal.style.display = 'flex';
         messageText.value = '';
         messageStatus.textContent = '';
@@ -841,24 +936,26 @@
         </div>
         ${description ? `<div class="role-description"><strong>📖 ${t('roleDescription')}:</strong> ${description}</div>` : ''}
         <div class="action-buttons-row">
-          <button class="btn btn-hide" id="hideWolfBtn" title="${t('hideCard')}">🔒</button>
-          <button class="btn btn-suicide" id="suicideWolfBtn" title="${t('suicide')}">💀</button>
-          <button class="btn btn-message" id="messageWolfBtn" title="${t('sendToNarrator') || 'إرسال للراوي'}">📩</button>
+          <button class="btn btn-hide" id="hideWolfBtn">🔒</button>
+          <button class="btn btn-suicide" id="suicideWolfBtn">💀</button>
+          <button class="btn btn-message" id="messageWolfBtn">📩</button>
         </div>
       `;
 
       await initWolfChat(roomCode, playerId);
       listenToNarratorMessages(roomCode, playerId);
 
-      document.getElementById("hideWolfBtn").addEventListener('click', () => {
+      document.getElementById("hideWolfBtn").addEventListener('click', function() {
         roleBox.innerHTML = `
           <button class="btn-show-card" id="showWolfBtn">🃏 ${t('showCard')}</button>
         `;
-        document.getElementById("showWolfBtn").addEventListener('click', () => renderWolfContent(player));
+        document.getElementById("showWolfBtn").addEventListener('click', function() {
+          renderWolfContent(player);
+        });
         setTimeout(() => initWolfChat(roomCode, playerId), 100);
       });
 
-      document.getElementById("suicideWolfBtn").addEventListener('click', async () => {
+      document.getElementById("suicideWolfBtn").addEventListener('click', async function() {
         if (!confirm(t('confirmSuicide'))) return;
         try {
           await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
@@ -867,7 +964,7 @@
             <p id="death-text">${t('deathMessage')}</p>
             <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
           `;
-          document.getElementById("exitBtn").addEventListener('click', async () => {
+          document.getElementById("exitBtn").addEventListener('click', async function() {
             await deleteRoom(roomCode);
             localStorage.clear();
             window.location.href = "index.html";
@@ -877,7 +974,7 @@
         }
       });
 
-      document.getElementById("messageWolfBtn").addEventListener('click', () => {
+      document.getElementById("messageWolfBtn").addEventListener('click', function() {
         messageModal.style.display = 'flex';
         messageText.value = '';
         messageStatus.textContent = '';
@@ -907,7 +1004,7 @@
             <p id="death-text">${player.isInfected ? t('infectedDeathMessage') : t('deathMessage')}</p>
             <button class="btn btn-danger" id="exitBtn" style="margin-top:10px;">🚪 ${t('exitGame')}</button>
           `;
-          document.getElementById("exitBtn").addEventListener('click', async () => {
+          document.getElementById("exitBtn").addEventListener('click', async function() {
             await deleteRoom(roomCode);
             localStorage.clear();
             window.location.href = "index.html";
@@ -915,21 +1012,25 @@
           return;
         }
 
-        // إذا كان اللاعب مستذئباً (isInfected)
+        // ✅ إذا كان اللاعب مستذئباً
         if (player.isInfected && !player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
           roleBox.innerHTML = `<button class="btn-show-card" id="showInfectedBtn">🃏 ${t('showCard')}</button>`;
-          document.getElementById("showInfectedBtn").addEventListener('click', () => renderInfectedContent(player));
+          document.getElementById("showInfectedBtn").addEventListener('click', function() {
+            renderInfectedContent(player);
+          });
           return;
         }
 
-        // إذا كان اللاعب ذئباً (تم تحويله)
+        // ✅ إذا كان اللاعب ذئباً (تم تحويله)
         if (player.isWolf && !player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
           roleBox.innerHTML = `<button class="btn-show-card" id="showWolfBtn">🃏 ${t('showCard')}</button>`;
-          document.getElementById("showWolfBtn").addEventListener('click', () => renderWolfContent(player));
+          document.getElementById("showWolfBtn").addEventListener('click', function() {
+            renderWolfContent(player);
+          });
           return;
         }
 
@@ -938,7 +1039,9 @@
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
           roleBox.innerHTML = `<button class="btn-show-card" id="showRoleBtn">🃏 ${t('showCard')}</button>`;
-          document.getElementById("showRoleBtn").addEventListener('click', () => renderRoleContent(player));
+          document.getElementById("showRoleBtn").addEventListener('click', function() {
+            renderRoleContent(player);
+          });
           return;
         }
 
@@ -1011,7 +1114,7 @@
       }
     });
 
-    // ===== زر اقتراحات (الدائري) =====
+    // ===== زر اقتراحات =====
     suggestFab.addEventListener('click', () => {
       suggestModal.style.display = 'flex';
     });
