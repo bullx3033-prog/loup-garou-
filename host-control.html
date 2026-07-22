@@ -588,6 +588,7 @@
     const closeMessageModal = document.getElementById("closeMessageModal");
     const modalStatus = document.getElementById("modalStatus");
 
+    // ===== التحقق من roomCode =====
     if (!roomCode) {
       roomDisplay.textContent = "⚠️ " + t('unknown');
       statusDisplay.textContent = "❌ " + t('noRoomCode');
@@ -598,7 +599,9 @@
     }
 
     roomDisplay.textContent = roomCode;
+    console.log('✅ roomCode:', roomCode);
 
+    // ===== التحقق من صلاحية الغرفة =====
     const valid = await checkRoomExpiry(roomCode);
     if (!valid) {
       alert("⏰ " + t('roomExpired'));
@@ -613,7 +616,6 @@
       isNight = nightMode;
       await update(ref(db, `rooms/${roomCode}/gameState`), { isNight: nightMode });
       
-      // تحديث الزر
       if (nightMode) {
         dayNightToggle.textContent = '🌙 أنت في الليل';
         dayNightToggle.className = 'day-night-toggle night';
@@ -917,10 +919,13 @@
     }
 
     async function fetchPlayers() {
+      console.log('🔄 جلب اللاعبين للغرفة:', roomCode);
       const data = await getPlayers(roomCode);
+      console.log('👥 اللاعبين:', data);
       renderPlayers(data);
     }
 
+    // ===== الاستماع لتغييرات اللاعبين =====
     listenToPlayers(roomCode, (data) => {
       renderPlayers(data);
     });
@@ -979,8 +984,7 @@
       }
     });
 
-    // زر إنهاء الجولة موجود في أسفل الصفحة (تحت رسائل اللاعبين)
-    // تم نقل الزر إلى أسفل الـ container
+    console.log('🚀 تم تحميل صفحة تحكم الراوي للغرفة:', roomCode);
   </script>
 </body>
 </html>
