@@ -121,6 +121,16 @@ async function getPlayers(roomCode) {
 // ===== دوال القتل والتحويل =====
 function killPlayer(roomCode, playerId) { 
   update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true }); 
+  // إضافة إشعار وفاة
+  const player = await getPlayer(roomCode, playerId);
+  if (player) {
+    const deathsRef = ref(db, `rooms/${roomCode}/deathNotifications`);
+    await push(deathsRef, {
+      playerId: playerId,
+      playerName: player.name || 'لاعب مجهول',
+      timestamp: Date.now()
+    });
+  }
 }
 
 function infectPlayer(roomCode, playerId) { 
@@ -132,15 +142,16 @@ async function convertToWolf(roomCode, playerId) {
   // 1. تحديث حالة اللاعب إلى ذئب
   await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { 
     isWolf: true,
-    isInfected: false // نزيل حالة المستذئب إذا كانت موجودة
+    isInfected: false
   });
   
   // 2. إضافة اللاعب إلى دردشة الذئاب
   const wolfChatRef = ref(db, `rooms/${roomCode}/wolvesChat`);
+  const player = await getPlayer(roomCode, playerId);
   await push(wolfChatRef, {
     playerId: playerId,
-    playerName: (await getPlayer(roomCode, playerId))?.name || 'ذئب',
-    message: `🐺 ${(await getPlayer(roomCode, playerId))?.name || 'لاعب'} انضم إلى الذئاب!`,
+    playerName: player?.name || 'ذئب',
+    message: `🐺 ${player?.name || 'لاعب'} انضم إلى الذئاب!`,
     timestamp: Date.now(),
     systemMessage: true
   });
@@ -150,7 +161,7 @@ async function convertToWolf(roomCode, playerId) {
   await push(messagesRef, {
     playerId: playerId,
     playerName: 'النظام',
-    message: `🐺 ${(await getPlayer(roomCode, playerId))?.name || 'لاعب'} أصبح ذئباً!`,
+    message: `🐺 ${player?.name || 'لاعب'} أصبح ذئباً!`,
     timestamp: Date.now(),
     fromNarrator: true,
     systemMessage: true
@@ -162,7 +173,14 @@ async function convertToWolf(roomCode, playerId) {
 // ===== دالة إضافة لاعب =====
 async function addPlayer(roomCode, name) {
   const newRef = push(ref(db, `rooms/${roomCode}/players`));
-  await set(newRef, { name, role: null, roleImage: "", isDead: false, isInfected: false, isWolf: false });
+  await set(newRef, { 
+    name, 
+    role: null, 
+    roleImage: "", 
+    isDead: false, 
+    isInfected: false, 
+    isWolf: false 
+  });
   return newRef.key;
 }
 
@@ -289,10 +307,8 @@ async function isPlayerWolf(roomCode, playerId) {
   const player = await getPlayer(roomCode, playerId);
   if (!player) return false;
   
-  // التحقق من isWolf مباشرة
   if (player.isWolf === true) return true;
   
-  // التحقق من الدور
   if (!player.role) return false;
   
   const rolesSnap = await get(ref(db, 'global_roles'));
@@ -369,5 +385,5 @@ export {
   listenToWolfMessages,
   clearWolfMessages,
   isPlayerWolf,
-  convertToWolf // تصدير الدالة الجديدة
+  convertToWolf
 };
