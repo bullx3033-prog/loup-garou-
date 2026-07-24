@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -263,6 +263,12 @@
         </div>
 
         <div class="section">
+          <span class="section-title">📖 إدارة محتوى "عن اللعبة"</span>
+          <button class="btn btn-primary" id="openAboutModalBtn" style="width:auto; padding:10px 20px; background:rgba(212,160,23,0.15); color:#d4a017; border:1px solid rgba(212,160,23,0.2); border-radius:8px; cursor:pointer;">📖 تحرير صفحة عن اللعبة</button>
+          <p style="color:rgba(255,255,255,0.3); font-size:12px; margin-top:6px;">تعديل النصوص والشرح الذي يظهر عند النقر على زر "عن اللعبة".</p>
+        </div>
+
+        <div class="section">
           <span class="section-title">🔗 إدارة روابط التواصل الاجتماعي</span>
           <button class="btn btn-primary" id="openSocialModalBtn" style="width:auto; padding:10px 20px; background:rgba(212,160,23,0.15); color:#d4a017; border:1px solid rgba(212,160,23,0.2); border-radius:8px; cursor:pointer;">🔗 تحرير الروابط</button>
           <p id="socialHint" style="color:rgba(255,255,255,0.3); font-size:12px; margin-top:6px;">أضف أو عدّل حسابات التواصل التي تظهر للاعبين.</p>
@@ -287,6 +293,20 @@
         </div>
 
       </div>
+    </div>
+  </div>
+
+  <!-- ===== نافذة تحرير محتوى "عن اللعبة" ===== -->
+  <div class="modal" id="aboutModalAdmin">
+    <div class="modal-content">
+      <h3 style="color:#d4a017; text-align:center; margin-bottom:10px;">📖 تحرير محتوى "عن اللعبة"</h3>
+      <textarea id="aboutContentInput" placeholder="اكتب محتوى عن اللعبة هنا (يدعم الأسطر المتعددة)..." rows="10" style="width:100%; padding:12px; border-radius:10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); color:#fff; font-family:'Cinzel',serif; resize:vertical; margin-bottom:10px;"></textarea>
+      
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <button class="btn" id="saveAboutBtn" style="flex:1; background:rgba(46,204,113,0.15); color:#66bb6a; border:1px solid rgba(46,204,113,0.3); padding:12px; border-radius:10px; cursor:pointer;">💾 حفظ المحتوى</button>
+      </div>
+      <p id="aboutStatus" style="font-size:12px; margin-top:8px; text-align:center;"></p>
+      <button class="btn" id="closeAboutModal" style="width:100%; padding:10px; margin-top:8px; background:rgba(255,255,255,0.02); color:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.04); border-radius:10px; cursor:pointer;">إلغاء</button>
     </div>
   </div>
 
@@ -422,6 +442,13 @@
     const deleteNoticeBtn = document.getElementById('deleteNoticeBtn');
     const noticeStatus = document.getElementById('noticeStatus');
 
+    const aboutModalAdmin = document.getElementById('aboutModalAdmin');
+    const openAboutModalBtn = document.getElementById('openAboutModalBtn');
+    const closeAboutModal = document.getElementById('closeAboutModal');
+    const aboutContentInput = document.getElementById('aboutContentInput');
+    const saveAboutBtn = document.getElementById('saveAboutBtn');
+    const aboutStatus = document.getElementById('aboutStatus');
+
     const socialModal = document.getElementById('socialModal');
     const openSocialModalBtn = document.getElementById('openSocialModalBtn');
     const closeSocialModal = document.getElementById('closeSocialModal');
@@ -459,6 +486,35 @@
       if (!json.success) throw new Error('فشل رفع الصورة');
       return json.data.url;
     }
+
+    // ===== إدارة محتوى "عن اللعبة" =====
+    async function loadAboutContent() {
+      try {
+        const snap = await get(ref(db, 'about_game/content'));
+        if (snap.exists()) {
+          aboutContentInput.value = snap.val();
+        } else {
+          aboutContentInput.value = '';
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    async function saveAboutContent() {
+      const content = aboutContentInput.value.trim();
+      try {
+        await set(ref(db, 'about_game/content'), content);
+        aboutStatus.textContent = '✅ تم حفظ محتوى "عن اللعبة" بنجاح';
+        aboutStatus.style.color = '#2ecc71';
+        setTimeout(() => { aboutStatus.textContent = ''; }, 3000);
+      } catch (e) {
+        aboutStatus.textContent = '❌ حدث خطأ: ' + e.message;
+        aboutStatus.style.color = '#e74c3c';
+      }
+    }
+
+    openAboutModalBtn.addEventListener('click', () => { aboutModalAdmin.style.display = 'flex'; loadAboutContent(); });
+    closeAboutModal.addEventListener('click', () => aboutModalAdmin.style.display = 'none');
+    saveAboutBtn.addEventListener('click', saveAboutContent);
 
     // ===== إدارة الإشعار =====
     async function loadNotice() {
@@ -838,6 +894,7 @@
     window.addEventListener('click', (e) => {
       if (e.target === roleModal) roleModal.style.display = 'none';
       if (e.target === noticeModal) noticeModal.style.display = 'none';
+      if (e.target === aboutModalAdmin) aboutModalAdmin.style.display = 'none';
       if (e.target === socialModal) socialModal.style.display = 'none';
     });
   </script>
