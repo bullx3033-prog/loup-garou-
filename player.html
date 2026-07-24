@@ -1047,6 +1047,7 @@
       }
     }
 
+    // 🛑 الاستماع لحالة الوقت لتحديث شات الذئاب ومظهر النهار/الليل فوراً
     function listenToGameState(roomCode, playerId) {
       if (!roomCode) return;
       const stateRef = ref(db, `rooms/${roomCode}/gameState`);
@@ -1072,7 +1073,7 @@
       });
     }
 
-    // 🛑 إشعار الموت العلوي يكشف كل أسرار الميت (الاسم، الدور، وحالته مع الذئاب/الاستذئاب) ومنع التكرار
+    // 🛑 إشعار الموت العام لكافة اللاعبين الأحياء عند حلول النهار مع كشف تفاصيل الميت بالكامل
     function renderDeathNotificationsAndCards(data) {
       if (!data) {
         deathContainer.style.display = 'none';
@@ -1545,7 +1546,12 @@
         listenToGameState(roomCode, playerId);
         listenToRoomDeletion(roomCode);
 
-        if (player.isDead) {
+        // 🛑 التحقق من حالة الموت: إذا مات اللاعب ليلاً، يظل في حالته ولا يظهر له إشعار الموت وشاشة الجمجمة إلا بعد حلول النهار (عندما يتم تسجيله في deathNotifications)
+        const deathsSnap = await get(ref(db, `rooms/${roomCode}/deathNotifications`));
+        const deathsData = deathsSnap.val() || {};
+        const isDeclaredDead = Object.values(deathsData).some(d => d.playerName === player.name);
+
+        if (player.isDead && isDeclaredDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
           roleBox.innerHTML = '';
