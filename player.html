@@ -980,6 +980,7 @@
     let deathListener = null;
     let roomListener = null;
     let cardRenderedOnce = false;
+    let displayedDeathsMap = new Set();
 
     const hasRoomCode = roomCode ? true : false;
 
@@ -1046,7 +1047,6 @@
       }
     }
 
-    // 🛑 تحديث لحظي دائم لحالة الوقت (ليل/نهار) وإظهار/إخفاء شات الذئاب فورياً
     function listenToGameState(roomCode, playerId) {
       if (!roomCode) return;
       const stateRef = ref(db, `rooms/${roomCode}/gameState`);
@@ -1057,7 +1057,6 @@
           const isNight = data.isNight === true;
           updateTimeStatus(isNight);
 
-          // التحقق اللحظي من صلاحية شات الذئاب فور تغير الوقت
           if (playerId) {
             const player = await getPlayer(roomCode, playerId);
             const isWolfStatus = await isPlayerWolf(roomCode, playerId);
@@ -1073,16 +1072,19 @@
       });
     }
 
+    // 🛑 إشعار الموت العلوي يكشف كل أسرار الميت (الاسم، الدور، وحالته مع الذئاب/الاستذئاب) ومنع التكرار
     function renderDeathNotificationsAndCards(data) {
       if (!data) {
         deathContainer.style.display = 'none';
         deadPlayersContainer.style.display = 'none';
+        displayedDeathsMap.clear();
         return;
       }
       const entries = Object.entries(data);
       if (entries.length === 0) {
         deathContainer.style.display = 'none';
         deadPlayersContainer.style.display = 'none';
+        displayedDeathsMap.clear();
         return;
       }
 
@@ -1090,16 +1092,25 @@
       deathContainer.innerHTML = '';
       
       entries.forEach(([key, death]) => {
+        let statusBadge = '';
+        if (death.isInfected) {
+          statusBadge = ' <span style="color:#2ecc71;">(مستذئب 🐺)</span>';
+        } else if (death.isWolf) {
+          statusBadge = ' <span style="color:#66bb6a;">(يلعب مع الذئاب 🐺)</span>';
+        }
+
         const notif = document.createElement('div');
         notif.className = 'death-notification';
         notif.innerHTML = `
-          <span class="death-text">💀 ${death.playerName} قد مات!</span>
+          <span class="death-text">💀 مات اللاعب: <b>${death.playerName}</b> | الدور: <b>${death.role || 'غير معروف'}</b>${statusBadge}</span>
           <button class="death-close" data-key="${key}">مسح</button>
         `;
         notif.querySelector('.death-close').addEventListener('click', async () => {
           await remove(ref(db, `rooms/${roomCode}/deathNotifications/${key}`));
+          displayedDeathsMap.delete(key);
         });
         deathContainer.appendChild(notif);
+        displayedDeathsMap.add(key);
       });
 
       deadPlayersContainer.style.display = 'block';
