@@ -322,7 +322,6 @@
       border-radius: 12px;
     }
 
-    /* 🛠️ دعم تخليف الأسطر (Enter) في وصف الدور */
     .role-description {
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.04);
@@ -1047,14 +1046,29 @@
       }
     }
 
-    function listenToGameState(roomCode) {
+    // 🛑 تحديث لحظي دائم لحالة الوقت (ليل/نهار) وإظهار/إخفاء شات الذئاب فورياً
+    function listenToGameState(roomCode, playerId) {
       if (!roomCode) return;
       const stateRef = ref(db, `rooms/${roomCode}/gameState`);
       if (gameStateListener) gameStateListener();
-      gameStateListener = onValue(stateRef, (snapshot) => {
+      gameStateListener = onValue(stateRef, async (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          updateTimeStatus(data.isNight === true);
+          const isNight = data.isNight === true;
+          updateTimeStatus(isNight);
+
+          // التحقق اللحظي من صلاحية شات الذئاب فور تغير الوقت
+          if (playerId) {
+            const player = await getPlayer(roomCode, playerId);
+            const isWolfStatus = await isPlayerWolf(roomCode, playerId);
+            const isInfected = player?.isInfected === true;
+
+            if ((isWolfStatus || isInfected) && isNight && !player?.isDead) {
+              wolfChatContainer.style.display = 'block';
+            } else {
+              wolfChatContainer.style.display = 'none';
+            }
+          }
         }
       });
     }
@@ -1270,21 +1284,11 @@
       const isWolfStatus = await isPlayerWolf(roomCode, playerId);
       const isInfected = player?.isInfected === true;
       if (isWolfStatus || isInfected) {
-        wolfChatContainer.style.display = 'block';
         if (wolfMessagesListener) wolfMessagesListener();
         wolfMessagesListener = listenToWolfMessages(roomCode, (data) => {
           renderWolfMessages(data);
         });
-        if (gameStateListener) gameStateListener();
-        const stateRef = ref(db, `rooms/${roomCode}/gameState`);
-        gameStateListener = onValue(stateRef, (snapshot) => {
-          const state = snapshot.val();
-          if (state && state.isNight === true) {
-            wolfChatContainer.style.display = 'block';
-          } else {
-            wolfChatContainer.style.display = 'none';
-          }
-        });
+        listenToGameState(roomCode, playerId);
       } else {
         wolfChatContainer.style.display = 'none';
       }
@@ -1393,7 +1397,6 @@
         wrapper.appendChild(img);
         roleBox.appendChild(wrapper);
 
-        // 🛑 إظهار عبارة التحويل للذئاب تماماً مثل خاصية الاستذئاب أسفل الصورة
         const noticeDiv = document.createElement('div');
         noticeDiv.className = 'wolf-converted-notice';
         noticeDiv.textContent = '🐺 أصبحت تلعب مع الذئاب!';
@@ -1483,7 +1486,6 @@
       roleBox.appendChild(btnRow);
       await initWolfChat(roomCode, playerId);
       listenToNarratorNotifications(roomCode, playerId);
-      listenToGameState(roomCode);
     }
 
     function renderShowCardButton(player, isSpecialContent) {
@@ -1529,7 +1531,7 @@
         }
         updateDiscordLink(roomCode);
         listenToDeathNotifications(roomCode);
-        listenToGameState(roomCode);
+        listenToGameState(roomCode, playerId);
         listenToRoomDeletion(roomCode);
 
         if (player.isDead) {
