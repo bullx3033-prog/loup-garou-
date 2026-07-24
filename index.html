@@ -3,432 +3,166 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لو ڨارو</title>
+  <title>Loup Garou</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <style>
-    .container {
-      text-align: center;
-      padding: 40px 20px;
-    }
-    h1 {
-      font-size: 38px;
-      color: crimson;
-      text-shadow: 0 0 20px red, 0 0 40px darkred;
-      letter-spacing: 4px;
-      font-weight: 900;
-    }
-    .sub {
-      color: #ccc;
-      font-size: 14px;
-      margin-bottom: 30px;
-      border-bottom: 1px solid #222;
-      padding-bottom: 10px;
-    }
-    .footer-actions {
-      max-width: 500px;
-      width: 100%;
-      margin: 0 auto;
-    }
-    .download-count {
-      color: #aaa;
-      font-size: 14px;
-      text-align: center;
-      margin-top: 5px;
-    }
-    .btn-about {
-      background: transparent;
-      border: 1px solid crimson;
-      color: #ccc;
-      padding: 10px 20px;
-      border-radius: 30px;
-      font-family: 'Cinzel', serif;
-      font-size: 14px;
-      cursor: pointer;
-      transition: 0.3s;
-      width: auto;
-      margin: 10px auto 0;
-      display: inline-block;
-    }
-    .btn-about:hover {
-      background: crimson;
-      color: #fff;
-      box-shadow: 0 0 20px crimson;
-    }
-    .about-modal-content {
-      max-width: 500px;
-      width: 95%;
-      max-height: 80vh;
-      overflow-y: auto;
-      text-align: right;
-      line-height: 1.8;
-      padding: 25px 20px;
-    }
-    .about-modal-content h3 {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    .about-modal-content p {
-      color: #ddd;
-      font-size: 15px;
-      margin-bottom: 12px;
-    }
-    .about-modal-content .highlight {
-      color: crimson;
-      font-weight: bold;
-    }
-    .about-modal-content .btn-close-about {
-      margin-top: 15px;
-    }
-    .about-modal-content hr {
-      border-color: #d4a017;
-      margin: 15px 0;
-    }
-    .about-modal-content h4 {
-      color: #d4a017;
-      margin-bottom: 10px;
-      font-size: 18px;
-    }
-    .about-modal-content .how-to-play p {
-      font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 8px;
-    }
-    .about-modal-content .how-to-play strong {
-      color: #d4a017;
-    }
-    .about-modal-content .tip {
-      font-size: 13px;
-      color: #aaa;
-      margin-top: 15px;
-      text-align: center;
-      font-style: italic;
-    }
-
-    /* ===== أيقونات التواصل الاجتماعي ===== */
-    #socialIconsContainer {
-      text-align: center;
-      margin: 15px 0 5px;
-      display: none;
-    }
-    #socialIconsContainer p {
-      color: #ccc;
-      font-size: 14px;
-      margin-bottom: 10px;
-      font-family: 'Cinzel', serif;
-      letter-spacing: 1px;
-    }
-    #socialIcons {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-    #socialIcons a {
-      display: inline-block;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(212, 160, 23, 0.05);
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 0;
-      text-decoration: none;
-    }
-    #socialIcons a:hover {
-      transform: translateY(-3px) scale(1.08);
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(212, 160, 23, 0.5);
-      box-shadow: 0 6px 25px rgba(212, 160, 23, 0.25), 0 0 40px rgba(212, 160, 23, 0.08);
-    }
-    #socialIcons a svg {
-      width: 24px;
-      height: 24px;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-    }
-    /* تحسين خاص لأيقونة تويتر */
-    #socialIcons a[href*="twitter"] svg,
-    #socialIcons a[href*="x.com"] svg {
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)) brightness(1.2);
-    }
-    #socialIcons a[href*="twitter"]:hover svg,
-    #socialIcons a[href*="x.com"]:hover svg {
-      filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.3)) brightness(1.5);
-    }
-    /* أيقونة تيك توك */
-    #socialIcons a[href*="tiktok"] svg {
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)) brightness(1.1);
-    }
-
-    /* ===== قسم الإشعارات (في الأسفل) ===== */
-    .notice-container {
-      max-width: 500px;
-      width: 100%;
-      margin: 20px auto 0;
-      text-align: right;
-      display: none;
-    }
-    .notice-box {
-      background: #2a1a0a;
-      border: 2px solid #d4a017;
-      border-radius: 12px;
-      padding: 15px 20px;
-    }
-    .notice-box h4 {
-      color: #d4a017;
-      margin-bottom: 8px;
-      font-size: 17px;
-    }
-    .notice-box p {
-      color: #ddd;
-      font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 10px;
-    }
-    .notice-box .notice-image {
-      text-align: center;
-      margin: 10px 0;
-    }
-    .notice-box .notice-image img {
-      max-width: 100%;
-      border-radius: 8px;
-      border: 1px solid #555;
-    }
-    .notice-box .highlight-yellow {
-      color: #d4a017;
-      font-weight: bold;
-    }
-    .notice-box .tip {
-      font-size: 13px;
-      color: #aaa;
-      margin-top: 10px;
-      text-align: center;
-      font-style: italic;
-    }
-
-    /* ===== نافذة QR Code (مع تمرير) ===== */
-    .qr-modal-content {
-      text-align: center;
-      max-width: 400px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    .qr-modal-content .qr-image {
-      margin: 15px 0;
-    }
-    .qr-modal-content .qr-image img {
-      max-width: 100%;
-      border-radius: 12px;
-      border: 2px solid #555;
-      box-shadow: 0 0 30px rgba(212, 160, 23, 0.15);
-    }
-    .qr-modal-content .qr-message {
-      color: #ddd;
-      font-size: 14px;
-      line-height: 1.8;
-      margin-bottom: 15px;
-      text-align: right;
-    }
-    .qr-modal-content .qr-message strong {
-      color: #d4a017;
-    }
-    .qr-modal-content .btn-download {
-      background: #1a4a1a;
-      color: #fff;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-family: 'Cinzel', serif;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-      width: 100%;
-      box-shadow: 0 0 15px rgba(26, 74, 26, 0.3);
-    }
-    .qr-modal-content .btn-download:hover {
-      background: #2e7d32;
-      box-shadow: 0 0 25px #2e7d32;
-      transform: scale(1.02);
-    }
-
-    /* تخصيص شريط التمرير */
-    .about-modal-content::-webkit-scrollbar {
-      width: 6px;
-    }
-    .about-modal-content::-webkit-scrollbar-track {
-      background: #1a1a1a;
-      border-radius: 10px;
-    }
-    .about-modal-content::-webkit-scrollbar-thumb {
-      background: #d4a017;
-      border-radius: 10px;
-    }
-    .about-modal-content::-webkit-scrollbar-thumb:hover {
-      background: #b8860b;
-    }
-
-    .lang-flags {
-      position: fixed;
-      top: 8px;
-      left: 8px;
-      display: flex;
-      gap: 4px;
-      z-index: 999;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 4px 6px;
-      border-radius: 30px;
-      border: 1px solid #444;
-      backdrop-filter: blur(4px);
-    }
-    .lang-flags button {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-      background: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      filter: grayscale(0.6);
-      opacity: 0.7;
-      padding: 0;
-    }
-    .lang-flags button.active-flag {
-      border-color: #d4a017;
-      filter: grayscale(0);
-      opacity: 1;
-      box-shadow: 0 0 12px #d4a017;
-      transform: scale(1.1);
-    }
-    .lang-flags button:hover {
-      filter: grayscale(0);
-      opacity: 1;
-      transform: scale(1.1);
-    }
-  </style>
 </head>
 <body>
-  <!-- ===== أزرار تغيير اللغة ===== -->
-  <div class="lang-flags">
-    <button class="flag-btn" data-lang="ar" title="العربية">🇩🇿</button>
-    <button class="flag-btn" data-lang="fr" title="Français">🇫🇷</button>
-    <button class="flag-btn" data-lang="en" title="English">🇬🇧</button>
-  </div>
 
-  <div class="container">
-    <h1 id="appName">🐺 لو ڨارو</h1>
-    <div class="sub" id="welcome">مرحباً بك في عالم القرويين والذئاب</div>
+  <!-- الجسيمات -->
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
 
-    <div class="btn-group">
-      <button class="btn btn-primary" id="hostBtn">👑 أنا الراوي</button>
-      <button class="btn btn-primary" id="playerBtn">🎭 أنا اللاعب</button>
+  <div class="main-container">
+    <div class="app-card">
+
+      <div class="app-header">
+        <div class="app-icon">🐺</div>
+        <div class="app-title">Loup Garou</div>
+        <div class="app-subtitle">مرحباً بك في عالم القرويين والذئاب</div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn-main btn-host" id="hostBtn">
+          <span class="btn-icon">👑</span>
+          <span class="btn-text">أنا الراوي</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        <button class="btn-main btn-player" id="playerBtn">
+          <span class="btn-icon">🎭</span>
+          <span class="btn-text">أنا اللاعب</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        <button class="btn-main btn-rooms" id="roomsBtn">
+          <span class="btn-icon">🚪</span>
+          <span class="btn-text">عرض الغرف المفتوحة</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        <button class="btn-main btn-exit-room" id="exitRoomBtn" style="display:none;">
+          <span class="btn-icon">🚪</span>
+          <span class="btn-text">خروج من الغرفة</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </div>
+
+      <div class="divider">
+        <span class="divider-line"></span>
+        <span class="divider-dot"></span>
+        <span class="divider-line"></span>
+      </div>
+
+      <div class="social-section" id="socialSection">
+        <div class="social-label">تابعنا على</div>
+        <div class="social-icons" id="socialIcons"></div>
+      </div>
+
+      <div class="secondary-actions">
+        <button class="btn-secondary" id="aboutBtn">
+          <span class="icon">📖</span> عن اللعبة
+        </button>
+        <button class="btn-secondary" id="qrBtn">
+          <span class="icon">📷</span> رمز الاستجابة السريعة
+        </button>
+        <button class="btn-secondary" id="suggestBtn">
+          <span class="icon">💬</span> اقتراحات
+        </button>
+        <button class="btn-secondary" id="installBtn">
+          <span class="icon">📲</span> تحميل التطبيق
+        </button>
+      </div>
+
+      <div class="download-counter" id="downloadCounter">عدد مرات التحميل: 0</div>
+
+      <div class="notice-container" id="noticeContainer">
+        <div class="notice-box">
+          <h4>📢 إشعار</h4>
+          <div id="noticeText"></div>
+          <div id="noticeImageContainer" class="notice-image"></div>
+          <div class="tip">💡 تابع آخر التحديثات والإعلانات</div>
+        </div>
+      </div>
+
     </div>
-
-    <div id="socialIconsContainer">
-      <p id="followUsLabel"></p>
-      <div id="socialIcons"></div>
-    </div>
-
-    <button class="btn-about" id="aboutBtn">📖 عن اللعبة</button>
   </div>
 
-  <!-- ===== أزرار التحميل والاقتراحات ===== -->
-  <div class="footer-actions">
-    <button class="btn btn-suggest" id="suggestBtn">💬 اقتراحات للمطور</button>
-    <button class="btn btn-install" id="installBtn">📲 تحميل التطبيق (APK)</button>
-    <button class="btn btn-primary" id="qrBtn" style="background:#2c2c2c; border:1px solid #d4a017; margin-top:8px;"></button>
-    <div class="download-count" id="downloadCounter">عدد مرات التحميل: 0</div>
-  </div>
-
-  <!-- ===== قسم الإشعارات (يتم تعبئته من Firebase) ===== -->
-  <div id="noticeContainer" class="notice-container">
-    <div class="notice-box">
-      <h4 id="noticeTitle"></h4>
-      <div id="noticeText"></div>
-      <div id="noticeImageContainer" class="notice-image"></div>
-      <div class="tip" id="noticeFooter"></div>
+  <!-- المودالات -->
+  <div class="modal" id="roomsModal">
+    <div class="modal-content">
+      <div class="modal-title">🚪 الغرف المفتوحة</div>
+      <div class="modal-subtitle">الغرف التي لم تبدأ اللعبة بعد ويمكنك الانضمام إليها</div>
+      <div style="display:flex; justify-content:center; gap:10px; margin-bottom:10px;">
+        <button class="rooms-refresh" id="roomsRefreshBtn">🔄 تحديث</button>
+      </div>
+      <div class="rooms-list" id="roomsList">
+        <div class="no-rooms">⏳ جاري التحميل...</div>
+      </div>
+      <button class="modal-close-btn" id="closeRoomsModal">إغلاق</button>
     </div>
   </div>
 
-  <!-- ===== نافذة الاقتراحات ===== -->
   <div class="modal" id="suggestModal">
     <div class="modal-content">
-      <h3 id="suggestTitle">📢 شارك فكرتك</h3>
-      <p id="suggestDesc">ساعدنا في تطوير اللعبة بأفكارك الجديدة!</p>
+      <div class="modal-title">📢 شارك فكرتك</div>
+      <div class="modal-subtitle">ساعدنا في تطوير اللعبة بأفكارك الجديدة!</div>
       <input type="text" id="suggestName" placeholder="اسمك (اختياري)" />
       <textarea id="suggestMessage" placeholder="اكتب اقتراحك هنا..."></textarea>
-      <button class="btn btn-primary" id="sendSuggest">🚀 إرسال</button>
-      <button class="btn" id="closeSuggest" style="margin-top:8px;">إلغاء</button>
+      <button class="btn-primary-modal" id="sendSuggest">🚀 إرسال</button>
+      <button class="modal-close-btn" id="closeSuggest" style="margin-top:6px;">إلغاء</button>
     </div>
   </div>
 
-  <!-- ===== نافذة عن اللعبة ===== -->
   <div class="modal" id="aboutModal">
-    <div class="modal-content about-modal-content">
-      <h3 id="aboutTitle" style="color:crimson;">📖 ما هي لعبة لو ڨارو؟</h3>
-      
-      <p id="aboutP1"><span class="highlight">لو ڨارو</span> هي نسخة رقمية ذكية من لعبة الورق الشهيرة <span class="highlight">"القرويون والذئاب"</span>.</p>
-      <p id="aboutP2">بدلاً من توزيع البطاقات الورقية التقليدية، يقوم هذا التطبيق بتوزيع الأدوار <span class="highlight">عشوائياً</span> على جميع اللاعبين، مما يضمن <span class="highlight">الخصوصية التامة</span> لكل لاعب.</p>
-      <p id="aboutP3"><span class="highlight">الراوي</span> هو اللاعب الوحيد الذي يمتلك الصلاحية المطلقة في إدارة اللعبة، حيث يمكنه <span class="highlight">قتل</span> أو <span class="highlight">استذئاب</span> أي لاعب.</p>
-      <p id="aboutP4">الهدف من هذه اللعبة هو توفير تجربة سلسة وعادلة لجميع اللاعبين، مع الحفاظ على السرية التامة ومنع أي محاولة للغش.</p>
-
-      <hr />
-      <h4 style="color:#d4a017; margin-bottom:10px; font-size:18px;">📖 كيف تلعب؟ (دليل المبتدئين)</h4>
-      
-      <div class="how-to-play">
-        <p style="font-size:14px; line-height:1.7; margin-bottom:8px;">
-          <strong style="color:#d4a017;">🔹 الراوي (المضيف):</strong><br />
+    <div class="modal-content">
+      <div class="modal-title" style="color:crimson;">📖 ما هي لعبة Loup Garou؟</div>
+      <div class="about-content">
+        <p><span class="highlight">Loup Garou</span> هي نسخة رقمية ذكية من لعبة الورق الشهيرة <span class="highlight">"القرويون والذئاب"</span>.</p>
+        <p>بدلاً من توزيع البطاقات الورقية التقليدية، يقوم هذا التطبيق بتوزيع الأدوار <span class="highlight">عشوائياً</span> على جميع اللاعبين، مما يضمن <span class="highlight">الخصوصية التامة</span> لكل لاعب.</p>
+        <p><span class="highlight">الراوي</span> هو اللاعب الوحيد الذي يمتلك الصلاحية المطلقة في إدارة اللعبة، حيث يمكنه <span class="highlight">قتل</span> أو <span class="highlight">استذئاب</span> أي لاعب.</p>
+        <p>الهدف من هذه اللعبة هو توفير تجربة سلسة وعادلة لجميع اللاعبين، مع الحفاظ على السرية التامة ومنع أي محاولة للغش.</p>
+        <hr />
+        <h4>📖 كيف تلعب؟ (دليل المبتدئين)</h4>
+        <div class="how-to-play">
+          <p><strong>🔹 الراوي (المضيف):</strong><br />
           • اضغط على زر <strong>"أنا الراوي"</strong>.<br />
-          • ستظهر لك غرفة خاصة برقم فريد (مثل <strong>480</strong>).<br />
+          • اختر نوع الغرفة (عامة / خاصة).<br />
+          • اضغط <strong>"إنشاء غرفة"</strong> وستظهر لك غرفة برقم فريد من 4 أرقام.<br />
           • قم بإعداد اللعبة: اختر الأدوار الإضافية، وحدد عدد الذئاب والقرويين.<br />
-          • أعطِ رقم الغرفة للاعبين الآخرين شفهياً.<br />
-          • بعد انضمام جميع اللاعبين، اضغط <strong>"بدء اللعبة"</strong> وستنطلق المغامرة!
-        </p>
-        <p style="font-size:14px; line-height:1.7; margin-bottom:8px;">
-          <strong style="color:#d4a017;">🔸 اللاعبون:</strong><br />
+          • أعطِ رقم الغرفة للاعبين الآخرين (أو انشر الرابط).<br />
+          • بعد انضمام جميع اللاعبين، اضغط <strong>"بدء اللعبة"</strong> وستنطلق المغامرة!</p>
+          <p><strong>🔸 اللاعبون:</strong><br />
           • اضغط على زر <strong>"أنا اللاعب"</strong>.<br />
           • اكتب <strong>رقم الغرفة</strong> الذي أعطاك إياه الراوي.<br />
           • اكتب <strong>اسمك</strong> (حتى يعرفك الراوي).<br />
           • اضغط <strong>"انضم"</strong> وانتظر حتى يبدأ الراوي اللعبة.<br />
-          • بعد البدء، ستظهر لك بطاقة دورك – لا تُظهرها لأحد! 🤫
-        </p>
-        <p class="tip" style="font-size:13px; color:#aaa; margin-top:15px; text-align:center; font-style:italic;">
-          💡 نصيحة: الراوي هو المسؤول الوحيد عن إدارة الجولة، واللاعبون يتبعون توجيهاته.
-        </p>
+          • بعد البدء، ستظهر لك بطاقة دورك – لا تُظهرها لأحد! 🤫</p>
+          <div class="tip">💡 نصيحة: الراوي هو المسؤول الوحيد عن إدارة الجولة، واللاعبون يتبعون توجيهاته.</div>
+        </div>
       </div>
-
-      <button class="btn btn-danger btn-close-about" id="closeAboutBtn">إغلاق</button>
+      <button class="modal-close-btn" id="closeAboutBtn">إغلاق</button>
     </div>
   </div>
 
-  <!-- ===== نافذة QR Code (مع إضافة overflow-y: auto) ===== -->
   <div class="modal" id="qrModal">
-    <div class="modal-content qr-modal-content">
-      <h3 id="qrModalTitle" style="color:#d4a017;">📷 رمز الاستجابة السريعة (QR Code)</h3>
+    <div class="modal-content qr-content">
+      <div class="modal-title" style="color:#d4a017;">📷 رمز الاستجابة السريعة</div>
       <div class="qr-message">
-        <p id="qrFastAccessP"><strong>📌 وصول سريع إلى اللعبة:</strong><br /></p>
-        <p id="qrDescriptionP">يمكن للاعبين الجدد الانضمام إلى عالم "لو ڨارو" بمجرد مسح هذا الرمز بكاميرا هواتفهم، دون الحاجة إلى نسخ الروابط أو الانتظار حتى يرسلها أحدهم عبر وسائل التواصل.</p>
-        <p id="qrShareP" style="margin-top:8px;">💡 شارك هذا الرمز مع أصدقائك ليتمكنوا من الدخول إلى اللعبة بكل سهولة ويُسر، واستمتعوا بأجمل الأوقات!</p>
+        <p><strong>📌 وصول سريع إلى اللعبة:</strong><br /></p>
+        <p>يمكن للاعبين الجدد الانضمام إلى عالم "Loup Garou" بمجرد مسح هذا الرمز بكاميرا هواتفهم، دون الحاجة إلى نسخ الروابط أو الانتظار حتى يرسلها أحدهم عبر وسائل التواصل.</p>
+        <p style="margin-top:6px;">💡 شارك هذا الرمز مع أصدقائك ليتمكنوا من الدخول إلى اللعبة بكل سهولة ويُسر، واستمتعوا بأجمل الأوقات!</p>
       </div>
       <div class="qr-image">
-        <img src="https://i.postimg.cc/DZc6JyFc/qrcode-600-(1).png" alt="QR Code للعبة لو ڨارو" />
+        <img src="https://i.postimg.cc/DZc6JyFc/qrcode-600-(1).png" alt="QR Code" />
       </div>
       <button class="btn-download" id="downloadQrBtn">📥 تحميل الصورة</button>
-      <button class="btn" id="closeQrModal" style="margin-top:8px;">إلغاء</button>
+      <button class="modal-close-btn" id="closeQrModal" style="margin-top:6px;">إلغاء</button>
     </div>
   </div>
 
   <script type="module">
-    import { t, setLanguage, getCurrentLang } from './translations.js';
+    // ===== استيراد الدوال =====
     import {
       sendSuggestion,
       incrementDownloadCount,
@@ -436,24 +170,30 @@
       get,
       ref,
       db,
-      onValue
+      onValue,
+      getPlayers,
+      setRoomCode,
+      getRoomCode,
+      clearRoomCode,
+      deleteRoom,
+      listenToOpenRooms
     } from "./logic.js";
 
-    // ===== أيقونات التواصل الاجتماعي =====
+    // ===== أيقونات التواصل =====
     const socialIconsConfig = {
-      facebook: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' },
-      instagram: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>' },
-      twitter: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' },
-      tiktok: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff"><path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0019 1.58h-3.45a4.27 4.27 0 01-.95 4.24zM12.9 8.5v11.2c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6c.3 0 .7 0 1 .1v3.3c-.3-.1-.7-.1-1-.1-1.5 0-2.7 1.2-2.7 2.7s1.2 2.7 2.7 2.7c1.5 0 2.6-1.1 2.7-2.5V1.58h3.3v.1c0 1.7.9 3.2 2.2 4.1z"/></svg>' },
-      youtube: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>' },
-      whatsapp: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' },
-      linkedin: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>' },
-      snapchat: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#FFFC00"><path d="M12.027 22.046c-1.147 0-2.232-.27-3.256-.792a12.992 12.992 0 01-2.227-1.422 9.822 9.822 0 01-1.322-1.322c-.354-.44-.585-.816-.693-1.127-.089-.254-.093-.485-.014-.694.09-.237.28-.441.554-.601.242-.142.551-.252.915-.332a6.76 6.76 0 011.729-.216c.162 0 .324.007.485.021.149.014.298.033.447.057.536.089 1.07.155 1.604.197.921.073 1.83.046 2.726-.077.229-.031.458-.069.687-.113.223-.041.445-.09.664-.146.199-.05.394-.109.583-.175.13-.045.252-.097.368-.155.088-.045.166-.1.234-.167.071-.067.117-.151.137-.251.03-.153-.03-.312-.15-.39-.215-.14-.553-.228-.994-.272-.977-.097-1.879-.262-2.633-.483-1.024-.3-1.69-.72-1.927-1.095-.264-.425-.124-.812.06-1.067.241-.334.74-.635 1.635-.987.296-.117.606-.236.928-.356.749-.277 1.563-.578 2.33-.952.709-.344 1.344-.77 1.886-1.271.482-.445.847-.97 1.079-1.556.254-.635.308-1.32.152-1.934-.15-.581-.498-1.033-.914-1.287-.31-.19-.666-.277-1.009-.299-.194-.012-.387-.005-.578.017-.196.023-.39.065-.58.123-.326.102-.646.226-.956.368-.18.082-.358.172-.533.269-.259.143-.502.305-.724.486-.179.146-.331.314-.455.5-.102.153-.173.307-.21.458-.029.119-.01.232.059.34.072.109.195.2.358.292.111.063.245.125.4.185.354.137.648.258.832.37.232.142.325.282.343.388.015.086.006.158-.028.219-.063.113-.207.184-.471.241-.188.041-.432.055-.718.046a6.068 6.068 0 01-.862-.102c-.355-.064-.749-.189-1.166-.368a6.452 6.452 0 01-1.214-.701c-.092-.068-.176-.14-.253-.217-.084-.08-.15-.168-.201-.265-.048-.091-.073-.189-.074-.293a.483.483 0 01.033-.179c.036-.113.103-.24.2-.383.145-.215.343-.432.588-.647.247-.214.537-.413.863-.594.273-.153.555-.29.839-.412.284-.122.573-.229.862-.322.282-.09.561-.169.833-.234.266-.064.525-.112.772-.143.24-.032.47-.047.687-.047.637 0 1.169.086 1.586.25.365.145.626.336.763.516.104.136.152.26.143.371-.008.111-.061.206-.157.286-.055.045-.122.076-.2.092a.62.62 0 01-.235-.001.496.496 0 01-.157-.068.807.807 0 01-.099-.076 1.62 1.62 0 00-.141-.094c-.065-.039-.171-.084-.315-.131-.395-.13-.908-.195-1.523-.195-.848 0-1.604.079-2.24.207-.607.122-1.115.302-1.454.513-.307.192-.493.387-.562.59-.043.134-.01.244.098.334.138.114.378.229.706.353.276.104.584.222.914.35.387.149.771.333 1.135.55.398.238.733.495.975.758.258.279.431.596.493.931.075.41-.004.814-.238 1.154-.265.384-.776.669-1.609.908-.68.195-1.414.346-2.136.451-.417.061-.83.108-1.234.139-.4.033-.788.05-1.161.05z"/></svg>' }
+      facebook: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' },
+      instagram: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>' },
+      twitter: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#ffffff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' },
+      tiktok: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#ffffff"><path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0019 1.58h-3.45a4.27 4.27 0 01-.95 4.24zM12.9 8.5v11.2c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6c.3 0 .7 0 1 .1v3.3c-.3-.1-.7-.1-1-.1-1.5 0-2.7 1.2-2.7 2.7s1.2 2.7 2.7 2.7c1.5 0 2.6-1.1 2.7-2.5V1.58h3.3v.1c0 1.7.9 3.2 2.2 4.1z"/></svg>' },
+      youtube: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>' },
+      whatsapp: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' },
+      linkedin: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>' },
+      snapchat: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#FFFC00"><path d="M12.027 22.046c-1.147 0-2.232-.27-3.256-.792a12.992 12.992 0 01-2.227-1.422 9.822 9.822 0 01-1.322-1.322c-.354-.44-.585-.816-.693-1.127-.089-.254-.093-.485-.014-.694.09-.237.28-.441.554-.601.242-.142.551-.252.915-.332a6.76 6.76 0 011.729-.216c.162 0 .324.007.485.021.149.014.298.033.447.057.536.089 1.07.155 1.604.197.921.073 1.83.046 2.726-.077.229-.031.458-.069.687-.113.223-.041.445-.09.664-.146.199-.05.394-.109.583-.175.13-.045.252-.097.368-.155.088-.045.166-.1.234-.167.071-.067.117-.151.137-.251.03-.153-.03-.312-.15-.39-.215-.14-.553-.228-.994-.272-.977-.097-1.879-.262-2.633-.483-1.024-.3-1.69-.72-1.927-1.095-.264-.425-.124-.812.06-1.067.241-.334.74-.635 1.635-.987.296-.117.606-.236.928-.356.749-.277 1.563-.578 2.33-.952.709-.344 1.344-.77 1.886-1.271.482-.445.847-.97 1.079-1.556.254-.635.308-1.32.152-1.934-.15-.581-.498-1.033-.914-1.287-.31-.19-.666-.277-1.009-.299-.194-.012-.387-.005-.578.017-.196.023-.39.065-.58.123-.326.102-.646.226-.956.368-.18.082-.358.172-.533.269-.259.143-.502.305-.724.486-.179.146-.331.314-.455.5-.102.153-.173.307-.21.458-.029.119-.01.232.059.34.072.109.195.2.358.292.111.063.245.125.4.185.354.137.648.258.832.37.232.142.325.282.343.388.015.086.006.158-.028.219-.063.113-.207.184-.471.241-.188.041-.432.055-.718.046a6.068 6.068 0 01-.862-.102c-.355-.064-.749-.189-1.166-.368a6.452 6.452 0 01-1.214-.701c-.092-.068-.176-.14-.253-.217-.084-.08-.15-.168-.201-.265-.048-.091-.073-.189-.074-.293a.483.483 0 01.033-.179c.036-.113.103-.24.2-.383.145-.215.343-.432.588-.647.247-.214.537-.413.863-.594.273-.153.555-.29.839-.412.284-.122.573-.229.862-.322.282-.09.561-.169.833-.234.266-.064.525-.112.772-.143.24-.032.47-.047.687-.047.637 0 1.169.086 1.586.25.365.145.626.336.763.516.104.136.152.26.143.371-.008.111-.061.206-.157.286-.055.045-.122.076-.2.092a.62.62 0 01-.235-.001.496.496 0 01-.157-.068.807.807 0 01-.099-.076 1.62 1.62 0 00-.141-.094c-.065-.039-.171-.084-.315-.131-.395-.13-.908-.195-1.523-.195-.848 0-1.604.079-2.24.207-.607.122-1.115.302-1.454.513-.307.192-.493.387-.562.59-.043.134-.01.244.098.334.138.114.378.229.706.353.276.104.584.222.914.35.387.149.771.333 1.135.55.398.238.733.495.975.758.258.279.431.596.493.931.075.41-.004.814-.238 1.154-.265.384-.776.669-1.609.908-.68.195-1.414.346-2.136.451-.417.061-.83.108-1.234.139-.4.033-.788.05-1.161.05z"/></svg>' }
     };
 
-    // ===== تحميل أيقونات التواصل الاجتماعي =====
+    // ===== تحميل روابط التواصل =====
     async function loadSocialIcons() {
-      const container = document.getElementById('socialIconsContainer');
+      const section = document.getElementById('socialSection');
       const iconsDiv = document.getElementById('socialIcons');
       try {
         const snap = await get(ref(db, 'social_links'));
@@ -471,107 +211,108 @@
             iconsDiv.appendChild(link);
           }
         }
-        container.style.display = hasLinks ? 'block' : 'none';
-        if (hasLinks) {
-          document.getElementById('followUsLabel').textContent = t('followUs');
-        }
+        section.style.display = hasLinks ? 'block' : 'none';
       } catch (e) {
         console.error('خطأ في تحميل روابط التواصل:', e);
-        container.style.display = 'none';
+        section.style.display = 'none';
       }
     }
 
-    // ===== تحميل الإشعارات =====
+    // ===== تحميل الإشعار =====
     async function loadNotice() {
-      const noticeContainer = document.getElementById('noticeContainer');
-      const noticeTextDiv = document.getElementById('noticeText');
-      const noticeImageContainer = document.getElementById('noticeImageContainer');
-      const noticeTitle = document.getElementById('noticeTitle');
-      const noticeFooter = document.getElementById('noticeFooter');
+      const container = document.getElementById('noticeContainer');
+      const textDiv = document.getElementById('noticeText');
+      const imageContainer = document.getElementById('noticeImageContainer');
       try {
         const snap = await get(ref(db, 'notifications/main'));
         const data = snap.val();
         if (data && (data.text || data.imageUrl)) {
-          noticeContainer.style.display = 'block';
-          const lang = getCurrentLang();
+          container.style.display = 'block';
           const textObj = data.text || {};
-          const text = textObj[lang] || textObj.ar || '';
-          noticeTitle.textContent = t('noticeTitle');
+          const text = textObj.ar || '';
           if (text) {
             const paragraphs = text.split('\n').filter(p => p.trim() !== '');
-            noticeTextDiv.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+            textDiv.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
           } else {
-            noticeTextDiv.innerHTML = '';
+            textDiv.innerHTML = '';
           }
           if (data.imageUrl) {
-            noticeImageContainer.innerHTML = `<img src="${data.imageUrl}" alt="صورة الإشعار" />`;
+            imageContainer.innerHTML = `<img src="${data.imageUrl}" alt="صورة الإشعار" />`;
           } else {
-            noticeImageContainer.innerHTML = '';
+            imageContainer.innerHTML = '';
           }
-          noticeFooter.textContent = t('noticeFooter');
         } else {
-          noticeContainer.style.display = 'none';
+          container.style.display = 'none';
         }
       } catch (e) {
         console.error('خطأ في تحميل الإشعار:', e);
-        noticeContainer.style.display = 'none';
+        container.style.display = 'none';
       }
     }
 
-    // ===== ترجمة =====
-    function applyTranslations() {
-      document.title = t('appName');
-      document.getElementById('appName').textContent = `🐺 ${t('appName')}`;
-      document.getElementById('welcome').textContent = t('welcome');
-      document.getElementById('hostBtn').textContent = `👑 ${t('iAmHost')}`;
-      document.getElementById('playerBtn').textContent = `🎭 ${t('iAmPlayer')}`;
-      document.getElementById('aboutBtn').textContent = `📖 ${t('aboutGame')}`;
-      document.getElementById('suggestBtn').textContent = `💬 ${t('suggestions')}`;
-      document.getElementById('installBtn').textContent = `📲 ${t('downloadApk')}`;
-      document.getElementById('qrBtn').textContent = `📷 ${t('qrCode')}`;
-      document.getElementById('suggestTitle').textContent = `📢 ${t('shareIdea')}`;
-      document.getElementById('suggestDesc').textContent = t('shareDesc');
-      document.getElementById('suggestName').placeholder = t('yourName');
-      document.getElementById('suggestMessage').placeholder = t('yourSuggestion');
-      document.getElementById('sendSuggest').textContent = `🚀 ${t('send')}`;
-      document.getElementById('closeSuggest').textContent = t('cancel');
-      document.getElementById('aboutTitle').textContent = t('aboutTitle');
-      document.getElementById('aboutP1').innerHTML = t('aboutP1');
-      document.getElementById('aboutP2').innerHTML = t('aboutP2');
-      document.getElementById('aboutP3').innerHTML = t('aboutP3');
-      document.getElementById('aboutP4').innerHTML = t('aboutP4');
-      document.getElementById('closeAboutBtn').textContent = t('close');
+    // ===== عرض الغرف المفتوحة (استماع لحظي حي) =====
+    let unsubscribeRooms = null;
 
-      document.getElementById('qrModalTitle').textContent = `📷 ${t('qrCode')}`;
-      document.getElementById('qrFastAccessP').innerHTML = `<strong>${t('qrFastAccess')}</strong><br />`;
-      document.getElementById('qrDescriptionP').textContent = t('qrDescription');
-      document.getElementById('qrShareP').textContent = t('qrShare');
-      document.getElementById('downloadQrBtn').textContent = t('downloadImage');
-      document.getElementById('closeQrModal').textContent = t('cancel');
-
-      if (document.getElementById('followUsLabel').textContent) {
-        document.getElementById('followUsLabel').textContent = t('followUs');
+    function loadOpenRooms() {
+      const roomsList = document.getElementById('roomsList');
+      roomsList.innerHTML = '<div class="no-rooms">⏳ جاري التحميل...</div>';
+      
+      if (unsubscribeRooms) {
+        unsubscribeRooms();
       }
 
-      const counter = document.getElementById('downloadCounter');
-      const count = counter.textContent.replace(/[^0-9]/g, '');
-      counter.textContent = t('downloads') + count;
+      unsubscribeRooms = listenToOpenRooms((openRooms) => {
+        if (openRooms.length === 0) {
+          roomsList.innerHTML = '<div class="no-rooms">📭 لا توجد غرف مفتوحة حالياً</div>';
+          return;
+        }
 
-      const lang = getCurrentLang();
-      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-      document.documentElement.lang = lang;
-    }
-
-    // ===== أزرار الأعلام =====
-    document.querySelectorAll('.flag-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const lang = btn.dataset.lang;
-        setLanguage(lang);
-        document.querySelectorAll('.flag-btn').forEach(b => b.classList.remove('active-flag'));
-        btn.classList.add('active-flag');
-        applyTranslations();
-        loadSocialIcons();
+        roomsList.innerHTML = '';
+        openRooms.forEach(room => {
+          const item = document.createElement('div');
+          item.className = 'room-item';
+          item.innerHTML = `
+            <div class="info">
+              <span class="code">🔑 ${room.code}</span>
+              <span class="players">👥 ${room.players} لاعبين</span>
+              <span class="status">⏳ انتظار</span>
+            </div>
+            <button class="btn-join" data-code="${room.code}">🚪 دخول</button>
+          `;
+          const joinBtn = item.querySelector('.btn-join');
+          joinBtn.addEventListener('click', () => {
+            setRoomCode(room.code);
+            window.location.href = 'player.html';
+          });
+          roomsList.appendChild(item);
+        });
       });
+    }
+
+    // ===== التحقق من وجود غرفة حالية =====
+    const currentRoomCode = getRoomCode();
+    const exitRoomBtn = document.getElementById('exitRoomBtn');
+
+    if (currentRoomCode) {
+      exitRoomBtn.style.display = 'flex';
+      exitRoomBtn.querySelector('.btn-text').textContent = `🚪 خروج من الغرفة ${currentRoomCode}`;
+    }
+
+    exitRoomBtn.addEventListener('click', async () => {
+      const roomCode = getRoomCode();
+      if (!roomCode) return;
+      
+      if (confirm(`⚠️ هل أنت متأكد من الخروج من الغرفة ${roomCode}؟`)) {
+        try {
+          await deleteRoom(roomCode);
+          clearRoomCode();
+          exitRoomBtn.style.display = 'none';
+          window.location.reload();
+        } catch (err) {
+          console.error(err);
+          alert('❌ حدث خطأ أثناء الخروج من الغرفة');
+        }
+      }
     });
 
     // ===== أحداث الأزرار =====
@@ -583,70 +324,80 @@
       window.location.href = 'player.html';
     });
 
-    const currentLang = getCurrentLang();
-    document.querySelector(`.flag-btn[data-lang="${currentLang}"]`)?.classList.add('active-flag');
-    applyTranslations();
+    document.getElementById('roomsBtn').addEventListener('click', () => {
+      document.getElementById('roomsModal').style.display = 'flex';
+      loadOpenRooms();
+    });
 
-    // ===== الاقتراحات =====
-    const suggestModal = document.getElementById("suggestModal");
+    document.getElementById('closeRoomsModal').addEventListener('click', () => {
+      document.getElementById('roomsModal').style.display = 'none';
+    });
+
+    document.getElementById('roomsRefreshBtn').addEventListener('click', loadOpenRooms);
+
+    window.addEventListener('click', (e) => {
+      if (e.target === document.getElementById('roomsModal')) {
+        document.getElementById('roomsModal').style.display = 'none';
+      }
+    });
+
+    // ===== اقتراحات =====
     document.getElementById("suggestBtn").addEventListener("click", () => {
-      suggestModal.style.display = "flex";
+      document.getElementById("suggestModal").style.display = "flex";
     });
     document.getElementById("closeSuggest").addEventListener("click", () => {
-      suggestModal.style.display = "none";
+      document.getElementById("suggestModal").style.display = "none";
     });
     window.addEventListener("click", (e) => {
-      if (e.target === suggestModal) suggestModal.style.display = "none";
+      if (e.target === document.getElementById("suggestModal")) {
+        document.getElementById("suggestModal").style.display = "none";
+      }
     });
 
     document.getElementById("sendSuggest").addEventListener("click", async () => {
       const name = document.getElementById("suggestName").value.trim();
       const message = document.getElementById("suggestMessage").value.trim();
       if (!message) {
-        alert(t('writeMessage'));
+        alert('⚠️ الرجاء كتابة رسالة!');
         return;
       }
       try {
         await sendSuggestion(name, message, "الصفحة الرئيسية");
-        alert("✅ " + t('suggestionSent'));
+        alert("✅ تم إرسال اقتراحك بنجاح! شكراً لك.");
         document.getElementById("suggestMessage").value = "";
-        suggestModal.style.display = "none";
+        document.getElementById("suggestModal").style.display = "none";
       } catch (err) {
-        alert("❌ " + t('errorOccurred') + ": " + err.message);
+        alert("❌ حدث خطأ: " + err.message);
       }
     });
 
     // ===== عن اللعبة =====
-    const aboutModal = document.getElementById("aboutModal");
     document.getElementById("aboutBtn").addEventListener("click", () => {
-      aboutModal.style.display = "flex";
+      document.getElementById("aboutModal").style.display = "flex";
     });
     document.getElementById("closeAboutBtn").addEventListener("click", () => {
-      aboutModal.style.display = "none";
+      document.getElementById("aboutModal").style.display = "none";
     });
     window.addEventListener("click", (e) => {
-      if (e.target === aboutModal) aboutModal.style.display = "none";
+      if (e.target === document.getElementById("aboutModal")) {
+        document.getElementById("aboutModal").style.display = "none";
+      }
     });
 
-    // ===== QR Code =====
-    const qrModal = document.getElementById('qrModal');
-    const qrBtn = document.getElementById('qrBtn');
-    const closeQrModal = document.getElementById('closeQrModal');
-    const downloadQrBtn = document.getElementById('downloadQrBtn');
-
-    qrBtn.addEventListener('click', () => {
-      qrModal.style.display = 'flex';
+    // ===== QR =====
+    document.getElementById("qrBtn").addEventListener("click", () => {
+      document.getElementById("qrModal").style.display = "flex";
+    });
+    document.getElementById("closeQrModal").addEventListener("click", () => {
+      document.getElementById("qrModal").style.display = "none";
+    });
+    window.addEventListener("click", (e) => {
+      if (e.target === document.getElementById("qrModal")) {
+        document.getElementById("qrModal").style.display = "none";
+      }
     });
 
-    closeQrModal.addEventListener('click', () => {
-      qrModal.style.display = 'none';
-    });
-
-    window.addEventListener('click', (e) => {
-      if (e.target === qrModal) qrModal.style.display = 'none';
-    });
-
-    downloadQrBtn.addEventListener('click', async () => {
+    document.getElementById("downloadQrBtn").addEventListener("click", async () => {
       try {
         const response = await fetch('https://i.postimg.cc/DZc6JyFc/qrcode-600-(1).png');
         if (!response.ok) throw new Error('فشل تحميل الصورة');
@@ -660,15 +411,15 @@
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       } catch (error) {
-        alert('❌ ' + t('errorOccurred') + ': ' + error.message);
+        alert('❌ حدث خطأ: ' + error.message);
         console.error(error);
       }
     });
 
-    // ===== عداد التحميلات =====
+    // ===== عداد التحميل =====
     async function updateCounter() {
       const count = await getDownloadCount();
-      document.getElementById("downloadCounter").textContent = t('downloads') + count;
+      document.getElementById("downloadCounter").textContent = 'عدد مرات التحميل: ' + count;
     }
     updateCounter();
 
@@ -683,11 +434,15 @@
       window.open(apkUrl, "_blank");
     });
 
-    // ===== تحميل الإشعارات والأيقونات =====
+    // ===== تحميل البيانات الأولية =====
     loadNotice();
     loadSocialIcons();
 
-    // ===== الاستماع للتغييرات =====
+    // ===== تحميل الغرف المفتوحة تلقائياً عند تحميل الصفحة (إذا لم يكن هناك غرفة حالية) =====
+    if (!getRoomCode()) {
+      loadOpenRooms();
+    }
+
     onValue(ref(db, 'social_links'), () => {
       loadSocialIcons();
     });
@@ -696,7 +451,18 @@
       loadNotice();
     });
 
-    console.log('🚀 تم تحميل الصفحة الرئيسية');
+    // 🔄 شرط التحديث التلقائي الدوري كل 3 ثوانٍ
+    setInterval(async () => {
+      await updateCounter();
+      await loadNotice();
+      await loadSocialIcons();
+      if (document.getElementById('roomsModal').style.display === 'flex' || !getRoomCode()) {
+        loadOpenRooms();
+      }
+    }, 3000);
+
+    console.log('🚀 تم تحميل الصفحة الرئيسية بنجاح');
+    console.log('🔑 roomCode:', getRoomCode());
   </script>
 </body>
 </html>
