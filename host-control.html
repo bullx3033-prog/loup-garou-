@@ -3,78 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لو ڨارو - تحكم الراوي</title>
+  <title>Loup Garou</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
   <style>
+    /* ===== أنماط خاصة بتحكم الراوي ===== */
     *[class*="discord"], *[id*="discord"] { display: none !important; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Cinzel', serif;
-      background: #000;
-      background-image: radial-gradient(circle at 20% 30%, #1a0a0a 0%, #000000 100%);
-      color: #f0e0c0;
-      min-height: 100vh;
-      padding: 15px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-    .container {
-      max-width: 700px;
-      width: 100%;
-      margin: 0 auto;
-      background: #111;
-      border: 2px solid crimson;
-      border-radius: 16px;
-      padding: 25px 20px;
-      padding-bottom: 100px;
-      box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
-    }
-    h2 {
-      font-size: 28px;
-      color: crimson;
-      text-shadow: 0 0 10px red, 0 0 20px darkred;
-      text-align: center;
-      border-bottom: 2px solid #222;
-      padding-bottom: 12px;
-      margin-bottom: 20px;
-      letter-spacing: 2px;
-    }
+
     .info-box {
-      background: #0d0805;
-      border: 1px solid #d4a017;
+      background: rgba(13, 8, 5, 0.6);
+      border: 1px solid rgba(212, 160, 23, 0.2);
       border-radius: 12px;
       padding: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       text-align: center;
     }
     .info-box .code {
       color: #d4a017;
       font-size: 28px;
       letter-spacing: 4px;
+      font-weight: 900;
     }
     .info-box .status {
-      color: #b8a08a;
+      color: rgba(255, 255, 255, 0.4);
       font-size: 14px;
       margin-top: 5px;
     }
     .refresh-btn {
-      background: #b8860b;
-      border: none;
-      color: #0d0805;
-      padding: 8px 18px;
+      background: rgba(184, 134, 11, 0.15);
+      border: 1px solid rgba(184, 134, 11, 0.2);
+      color: #d4a017;
+      padding: 6px 18px;
       border-radius: 30px;
       font-family: "Cinzel", serif;
       font-weight: bold;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
       transition: 0.3s;
       margin-right: 10px;
-      box-shadow: 0 0 15px rgba(184, 134, 11, 0.3);
     }
     .refresh-btn:hover {
-      background: #d4a017;
-      box-shadow: 0 0 30px #d4a017;
+      background: rgba(184, 134, 11, 0.25);
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.05);
       transform: scale(1.05);
     }
 
@@ -88,54 +58,56 @@
       cursor: pointer;
       transition: 0.3s;
       font-family: 'Cinzel', serif;
-      margin-bottom: 15px;
+      margin-bottom: 14px;
       text-align: center;
     }
     .day-night-toggle.day {
-      background: #4a3a0a;
+      background: rgba(74, 58, 10, 0.4);
       color: #d4a017;
-      border: 2px solid #d4a017;
-      box-shadow: 0 0 20px rgba(212, 160, 23, 0.2);
+      border: 2px solid rgba(212, 160, 23, 0.2);
+      box-shadow: 0 0 20px rgba(212, 160, 23, 0.05);
     }
     .day-night-toggle.day:hover {
-      background: #6a5a1a;
-      box-shadow: 0 0 30px rgba(212, 160, 23, 0.4);
+      background: rgba(74, 58, 10, 0.6);
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.1);
     }
     .day-night-toggle.night {
-      background: #1a1a4a;
+      background: rgba(26, 26, 74, 0.4);
       color: #4a4aff;
-      border: 2px solid #4a4aff;
-      box-shadow: 0 0 20px rgba(74, 74, 255, 0.2);
+      border: 2px solid rgba(74, 74, 255, 0.2);
+      box-shadow: 0 0 20px rgba(74, 74, 255, 0.05);
     }
     .day-night-toggle.night:hover {
-      background: #2a2a6a;
-      box-shadow: 0 0 30px rgba(74, 74, 255, 0.4);
+      background: rgba(26, 26, 74, 0.6);
+      box-shadow: 0 0 30px rgba(74, 74, 255, 0.1);
     }
 
+    /* 🛠️ تعديل تنسيق زر الخروج ليكون تحت العرَض وفي الترتيب الطبيعي للبطاقة */
     #exitBtn {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 95%;
-      max-width: 500px;
+      position: relative;
+      width: 100%;
+      margin-top: 20px;
       padding: 14px 20px;
-      border-radius: 10px;
-      border: none;
-      background: #a10d0d;
-      color: #fff;
+      border-radius: 12px;
+      background: rgba(161, 13, 13, 0.6);
+      color: #ff6b6b;
       font-family: 'Cinzel', serif;
       font-weight: bold;
       cursor: pointer;
       transition: 0.3s;
       font-size: 16px;
-      box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
-      z-index: 100;
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      box-sizing: border-box;
+      display: block;
     }
-    #exitBtn:hover { background: #8b0000; box-shadow: 0 0 25px #8b0000; }
-    
+    #exitBtn:hover {
+      background: rgba(139, 0, 0, 0.8);
+      box-shadow: 0 0 25px rgba(139, 0, 0, 0.3);
+      transform: scale(1.01);
+    }
+
     .infected-badge {
-      background: #6b1a1a;
+      background: rgba(107, 26, 26, 0.3);
       color: #ff6b6b;
       padding: 1px 8px;
       border-radius: 12px;
@@ -145,7 +117,7 @@
       display: inline-block;
     }
     .wolf-badge {
-      background: #1a3a1a;
+      background: rgba(26, 58, 26, 0.3);
       color: #66bb6a;
       padding: 1px 8px;
       border-radius: 12px;
@@ -155,7 +127,7 @@
       display: inline-block;
     }
     .convertible-badge {
-      background: #4a3a0a;
+      background: rgba(74, 58, 10, 0.3);
       color: #d4a017;
       padding: 1px 8px;
       border-radius: 12px;
@@ -165,11 +137,10 @@
       display: inline-block;
     }
 
-    /* ===== قائمة الوفيات المعلقة ===== */
     .pending-deaths {
-      background: #1a0a0a;
-      border: 2px solid #ff1a1a;
-      border-radius: 8px;
+      background: rgba(26, 10, 10, 0.5);
+      border: 2px solid rgba(255, 26, 26, 0.15);
+      border-radius: 10px;
       padding: 10px 12px;
       margin-bottom: 10px;
       display: none;
@@ -187,8 +158,8 @@
       margin-top: 6px;
     }
     .pending-deaths .list .dead-item {
-      background: #2a0a0a;
-      border: 1px solid #ff1a1a;
+      background: rgba(42, 10, 10, 0.5);
+      border: 1px solid rgba(255, 26, 26, 0.15);
       border-radius: 6px;
       padding: 4px 12px;
       color: #ff6b6b;
@@ -199,7 +170,7 @@
       gap: 6px;
     }
     .pending-deaths .list .dead-item .remove-death {
-      background: #6b1a1a;
+      background: rgba(107, 26, 26, 0.4);
       color: #fff;
       border: none;
       border-radius: 4px;
@@ -207,9 +178,10 @@
       font-size: 12px;
       cursor: pointer;
       font-family: 'Cinzel', serif;
+      transition: 0.3s;
     }
     .pending-deaths .list .dead-item .remove-death:hover {
-      background: #8b0000;
+      background: rgba(139, 0, 0, 0.6);
     }
 
     #players {
@@ -220,9 +192,9 @@
     }
 
     .player-card {
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
       padding: 3px 10px;
       display: flex;
       align-items: center;
@@ -230,23 +202,64 @@
       transition: 0.3s;
       min-height: 38px;
       height: 38px;
+      flex-wrap: wrap;
+      gap: 4px;
     }
-    .player-card:hover { border-color: crimson; box-shadow: 0 0 8px rgba(255, 0, 0, 0.2); }
-    .player-card.dead { opacity: 0.4; border-color: #555; background: #111; }
-    .player-card .info { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; height: 100%; }
-    .player-card .avatar { width: 28px; height: 28px; border-radius: 50%; border: 2px solid crimson; object-fit: cover; background: #0d0805; flex-shrink: 0; }
-    .player-card .details { display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .player-card .details .name { font-size: 14px; color: #f2f2f2; font-weight: 700; }
-    .player-card .details .role { font-size: 11px; color: #aaa; }
-    .player-card .details .role strong { color: #fff; }
+    .player-card:hover {
+      border-color: rgba(255, 0, 0, 0.15);
+      box-shadow: 0 0 8px rgba(255, 0, 0, 0.05);
+    }
+    .player-card.dead {
+      opacity: 0.4;
+      border-color: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.01);
+    }
+    .player-card .info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+    }
+    .player-card .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 0, 0, 0.1);
+      object-fit: cover;
+      background: rgba(13, 8, 5, 0.6);
+      flex-shrink: 0;
+    }
+    .player-card .details {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .player-card .details .name {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 700;
+    }
+    .player-card .details .role {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.3);
+    }
+    .player-card .details .role strong {
+      color: rgba(255, 255, 255, 0.5);
+    }
 
     .player-card .actions {
       display: flex;
       gap: 4px;
       flex-shrink: 0;
+      flex-wrap: wrap;
     }
     .player-card .actions button {
-      padding: 2px 8px;
+      padding: 2px 10px;
       border: none;
       border-radius: 4px;
       font-family: 'Cinzel', serif;
@@ -254,41 +267,68 @@
       font-size: 10px;
       cursor: pointer;
       transition: 0.3s;
-      background: #2c2c2c;
-      color: #fff;
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.6);
       white-space: nowrap;
       height: 24px;
       line-height: 1;
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
-    .player-card .actions button:hover:not(:disabled) { transform: scale(1.05); }
-    .player-card .actions .kill { background: #6b1a1a; color: #fff; }
-    .player-card .actions .kill:hover:not(:disabled) { background: #8b0000; box-shadow: 0 0 12px #8b0000; }
-    .player-card .actions .infect { background: #1a4a1a; color: #fff; }
-    .player-card .actions .infect:hover:not(:disabled) { background: #2e7d32; box-shadow: 0 0 12px #2e7d32; }
+    .player-card .actions button:hover:not(:disabled) {
+      transform: scale(1.05);
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .player-card .actions .kill {
+      background: rgba(107, 26, 26, 0.3);
+      color: #ff6b6b;
+      border-color: rgba(255, 0, 0, 0.1);
+    }
+    .player-card .actions .kill:hover:not(:disabled) {
+      background: rgba(139, 0, 0, 0.4);
+      box-shadow: 0 0 12px rgba(139, 0, 0, 0.15);
+    }
+    .player-card .actions .infect {
+      background: rgba(26, 74, 26, 0.3);
+      color: #66bb6a;
+      border-color: rgba(46, 204, 113, 0.1);
+    }
+    .player-card .actions .infect:hover:not(:disabled) {
+      background: rgba(46, 204, 113, 0.2);
+      box-shadow: 0 0 12px rgba(46, 204, 113, 0.1);
+    }
     .player-card .actions .convert-to-wolf {
-      background: #4a3a0a;
+      background: rgba(74, 58, 10, 0.3);
       color: #d4a017;
-      border: 1px solid #d4a017;
+      border-color: rgba(212, 160, 23, 0.1);
     }
     .player-card .actions .convert-to-wolf:hover:not(:disabled) {
-      background: #6a5a1a;
-      box-shadow: 0 0 12px #d4a017;
+      background: rgba(212, 160, 23, 0.15);
+      box-shadow: 0 0 12px rgba(212, 160, 23, 0.1);
     }
     .player-card .actions .message-btn {
-      background: #b8860b;
-      color: #fff;
+      background: rgba(184, 134, 11, 0.15);
+      color: #d4a017;
+      border-color: rgba(184, 134, 11, 0.1);
     }
     .player-card .actions .message-btn:hover:not(:disabled) {
-      background: #d4a017;
-      box-shadow: 0 0 12px #d4a017;
+      background: rgba(184, 134, 11, 0.25);
+      box-shadow: 0 0 12px rgba(184, 134, 11, 0.1);
     }
-    .player-card .actions button:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
-    .player-card.dead .actions button { opacity: 0.3; pointer-events: none; }
+    .player-card .actions button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none !important;
+      display: none !important; /* إخفاء الزر تماماً فور إيقافه */
+    }
+    .player-card.dead .actions button {
+      opacity: 0.2;
+      pointer-events: none;
+    }
 
     #messagesContainer {
       margin-top: 10px;
-      background: #0d0805;
-      border: 1px solid #d4a017;
+      background: rgba(13, 8, 5, 0.4);
+      border: 1px solid rgba(212, 160, 23, 0.08);
       border-radius: 12px;
       padding: 12px;
       touch-action: none;
@@ -305,15 +345,15 @@
       gap: 6px;
     }
     #messagesContainer .title .badge {
-      background: #d4a017;
-      color: #0d0805;
+      background: rgba(212, 160, 23, 0.1);
+      color: #d4a017;
       padding: 2px 10px;
       border-radius: 20px;
       font-size: 12px;
     }
     #messagesContainer .title .clear-btn {
-      background: #6b1a1a;
-      color: #fff;
+      background: rgba(107, 26, 26, 0.3);
+      color: #ff6b6b;
       border: none;
       border-radius: 6px;
       padding: 4px 12px;
@@ -323,14 +363,14 @@
       transition: 0.3s;
     }
     #messagesContainer .title .clear-btn:hover {
-      background: #8b0000;
-      box-shadow: 0 0 15px #8b0000;
+      background: rgba(139, 0, 0, 0.4);
+      box-shadow: 0 0 15px rgba(139, 0, 0, 0.1);
     }
 
     .messages-wrapper {
       position: relative;
       display: flex;
-      align-items: center;
+      align-items: stretch;
       gap: 8px;
     }
     #messagesList {
@@ -347,19 +387,27 @@
       scroll-behavior: smooth;
       scrollbar-width: thin;
     }
-    #messagesList::-webkit-scrollbar { width: 4px; }
-    #messagesList::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 10px; }
-    #messagesList::-webkit-scrollbar-thumb { background: #d4a017; border-radius: 10px; }
+    #messagesList::-webkit-scrollbar {
+      width: 4px;
+    }
+    #messagesList::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 10px;
+    }
+    #messagesList::-webkit-scrollbar-thumb {
+      background: rgba(212, 160, 23, 0.15);
+      border-radius: 10px;
+    }
 
     .scroll-btn {
-      background: #2c2c2c;
-      border: 1px solid #d4a017;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(212, 160, 23, 0.08);
       border-radius: 50%;
-      width: 44px;
-      height: 44px;
-      min-width: 44px;
-      color: #d4a017;
-      font-size: 22px;
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      color: rgba(212, 160, 23, 0.4);
+      font-size: 20px;
       cursor: pointer;
       transition: 0.3s;
       display: flex;
@@ -368,18 +416,32 @@
       font-family: 'Cinzel', serif;
       touch-action: manipulation;
       user-select: none;
-      box-shadow: 0 0 15px rgba(212, 160, 23, 0.1);
       flex-shrink: 0;
     }
-    .scroll-btn:hover { background: #3a3a3a; box-shadow: 0 0 25px rgba(212, 160, 23, 0.3); transform: scale(1.05); }
-    .scroll-btn:active { transform: scale(0.95); }
-    .scroll-btn.up { margin-bottom: auto; }
-    .scroll-btn.down { margin-top: auto; }
-    .scroll-buttons { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+    .scroll-btn:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(212, 160, 23, 0.6);
+      transform: scale(1.05);
+    }
+    .scroll-btn:active {
+      transform: scale(0.95);
+    }
+    .scroll-btn.up {
+      margin-bottom: auto;
+    }
+    .scroll-btn.down {
+      margin-top: auto;
+    }
+    .scroll-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
 
     .message-item {
-      background: #1a1a1a;
-      border: 1px solid #333;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
       border-radius: 6px;
       padding: 6px 10px;
       display: flex;
@@ -401,37 +463,37 @@
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      border: 2px solid #d4a017;
+      border: 2px solid rgba(212, 160, 23, 0.1);
       object-fit: cover;
-      background: #1a1a1a;
+      background: rgba(255, 255, 255, 0.02);
       flex-shrink: 0;
     }
     .message-item .sender .role-tag {
-      color: #aaa;
+      color: rgba(255, 255, 255, 0.2);
       font-size: 10px;
       font-weight: normal;
-      background: #1a1a1a;
+      background: rgba(255, 255, 255, 0.02);
       padding: 0 6px;
       border-radius: 10px;
-      border: 1px solid #333;
+      border: 1px solid rgba(255, 255, 255, 0.02);
     }
     .message-item .sender .narrator-tag {
       color: #d4a017;
       font-size: 10px;
       font-weight: normal;
-      background: #2a1a0a;
+      background: rgba(42, 26, 10, 0.3);
       padding: 0 6px;
       border-radius: 10px;
-      border: 1px solid #d4a017;
+      border: 1px solid rgba(212, 160, 23, 0.1);
     }
     .message-item .text {
-      color: #ccc;
+      color: rgba(255, 255, 255, 0.5);
       font-size: 13px;
       flex: 1;
       min-width: 100px;
     }
     .message-item .time {
-      color: #777;
+      color: rgba(255, 255, 255, 0.1);
       font-size: 10px;
       min-width: 50px;
       text-align: left;
@@ -439,8 +501,8 @@
       direction: ltr;
     }
     .message-item .delete-msg {
-      background: #6b1a1a;
-      color: #fff;
+      background: rgba(107, 26, 26, 0.3);
+      color: #ff6b6b;
       border: none;
       border-radius: 4px;
       padding: 2px 8px;
@@ -449,8 +511,17 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    .message-item .delete-msg:hover { background: #8b0000; box-shadow: 0 0 10px #8b0000; }
-    .no-messages { color: #777; font-size: 13px; text-align: center; padding: 15px 10px; font-style: italic; }
+    .message-item .delete-msg:hover {
+      background: rgba(139, 0, 0, 0.4);
+      box-shadow: 0 0 10px rgba(139, 0, 0, 0.1);
+    }
+    .no-messages {
+      color: rgba(255, 255, 255, 0.1);
+      font-size: 13px;
+      text-align: center;
+      padding: 15px 10px;
+      font-style: italic;
+    }
 
     .modal {
       display: none;
@@ -460,105 +531,222 @@
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       z-index: 1000;
       justify-content: center;
       align-items: center;
     }
     .modal-content {
-      background: #111;
-      border: 2px solid crimson;
+      background: rgba(17, 17, 17, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 16px;
       padding: 30px 25px;
       max-width: 400px;
       width: 90%;
       color: #fff;
     }
-    .modal-content h3 { color: #d4a017; font-size: 20px; margin-bottom: 10px; text-align: center; }
-    .modal-content p { color: #aaa; font-size: 13px; margin-bottom: 10px; text-align: center; }
+    .modal-content h3 {
+      color: #d4a017;
+      font-size: 20px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .modal-content p {
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 13px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
     .modal-content textarea {
-      width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #555;
-      background: #1a1a1a; color: #fff; font-family: 'Cinzel', serif; font-size: 14px;
-      resize: vertical; min-height: 80px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 80px;
+      transition: 0.3s;
     }
-    .modal-content textarea:focus { border-color: #d4a017; outline: none; box-shadow: 0 0 15px rgba(212, 160, 23, 0.2); }
-    .modal-content .flex { display: flex; gap: 10px; margin-top: 10px; }
+    .modal-content textarea:focus {
+      outline: none;
+      border-color: rgba(212, 160, 23, 0.15);
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.02);
+    }
+    .modal-content textarea::placeholder {
+      color: rgba(255, 255, 255, 0.1);
+    }
+    .modal-content .flex {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
     .modal-content .flex .btn {
-      flex: 1; padding: 10px; border-radius: 8px; border: none;
-      font-family: 'Cinzel', serif; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
     }
-    .modal-content .flex .btn-success { background: #1a4a1a; color: #fff; }
-    .modal-content .flex .btn-success:hover { background: #2e7d32; box-shadow: 0 0 15px #2e7d32; }
-    .modal-content .flex .btn-cancel { background: #2c2c2c; color: #fff; }
-    .modal-content .flex .btn-cancel:hover { background: #3a3a3a; }
-    .modal-content .status-msg { color: #7a4e2d; font-size: 13px; margin-top: 8px; text-align: center; }
+    .modal-content .flex .btn-success {
+      background: rgba(46, 204, 113, 0.08);
+      color: #66bb6a;
+      border: 1px solid rgba(46, 204, 113, 0.1);
+    }
+    .modal-content .flex .btn-success:hover {
+      background: rgba(46, 204, 113, 0.12);
+      box-shadow: 0 0 15px rgba(46, 204, 113, 0.05);
+    }
+    .modal-content .flex .btn-cancel {
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .modal-content .flex .btn-cancel:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .modal-content .status-msg {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 13px;
+      margin-top: 8px;
+      text-align: center;
+    }
 
     @media (max-width: 500px) {
-      .container { padding-bottom: 80px; }
-      .player-card { height: auto; min-height: 44px; padding: 6px 8px; flex-wrap: wrap; gap: 4px; }
-      .player-card .info { flex: 1 1 100%; }
-      .player-card .actions { flex: 1 1 100%; justify-content: flex-start; gap: 8px; }
-      .player-card .actions button { flex: 1; text-align: center; font-size: 12px; height: 30px; padding: 4px 10px; }
-      .player-card .avatar { width: 24px; height: 24px; }
-      .player-card .details .name { font-size: 13px; }
-      .player-card .details .role { font-size: 10px; }
-      #messagesList { max-height: 150px; }
-      .message-item { flex-wrap: wrap; gap: 4px; }
-      .message-item .sender { min-width: 60px; font-size: 11px; }
-      .message-item .sender-avatar { width: 24px; height: 24px; }
-      .message-item .text { font-size: 12px; width: 100%; order: 3; }
-      .message-item .time { font-size: 9px; min-width: 50px; }
-      .scroll-btn { width: 38px; height: 38px; min-width: 38px; font-size: 18px; }
-      .day-night-toggle { font-size: 15px; padding: 12px; }
-    }
-    @media (max-width: 380px) {
-      .player-card .avatar { width: 20px; height: 20px; }
-      .player-card .details .name { font-size: 12px; }
-      .player-card .details .role { font-size: 9px; }
-      #messagesList { max-height: 120px; }
-      .message-item .sender-avatar { width: 20px; height: 20px; }
-      .scroll-btn { width: 34px; height: 34px; min-width: 34px; font-size: 16px; }
-      .day-night-toggle { font-size: 13px; padding: 10px; }
+      .player-card {
+        height: auto;
+        min-height: 44px;
+        padding: 6px 8px;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .player-card .info {
+        flex: 1 1 100%;
+      }
+      .player-card .actions {
+        flex: 1 1 100%;
+        justify-content: flex-start;
+        gap: 8px;
+      }
+      .player-card .actions button {
+        flex: 1;
+        text-align: center;
+        font-size: 12px;
+        height: 30px;
+        padding: 4px 10px;
+      }
+      .player-card .avatar {
+        width: 24px;
+        height: 24px;
+      }
+      .player-card .details .name {
+        font-size: 13px;
+      }
+      .player-card .details .role {
+        font-size: 10px;
+      }
+      #messagesList {
+        max-height: 150px;
+      }
+      .message-item {
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .message-item .sender {
+        min-width: 60px;
+        font-size: 11px;
+      }
+      .message-item .sender-avatar {
+        width: 24px;
+        height: 24px;
+      }
+      .message-item .text {
+        font-size: 12px;
+        width: 100%;
+        order: 3;
+      }
+      .message-item .time {
+        font-size: 9px;
+        min-width: 50px;
+      }
+      .scroll-btn {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        font-size: 16px;
+      }
+      .day-night-toggle {
+        font-size: 15px;
+        padding: 12px;
+      }
+      #exitBtn {
+        font-size: 14px;
+        padding: 12px 16px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2 id="controlTitle">🐺 تحكم الراوي</h2>
+  <!-- الجسيمات -->
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
 
-    <button class="day-night-toggle day" id="dayNightToggle">☀️ أنت في النهار</button>
+  <div class="main-container">
+    <div class="app-card">
 
-    <!-- ===== قائمة الوفيات المعلقة ===== -->
-    <div id="pendingDeathsContainer" class="pending-deaths">
-      <div class="title">💀 وفيات معلقة (سيتم الإعلان عنها عند حلول النهار)</div>
-      <div id="pendingDeathsList" class="list"></div>
-    </div>
-
-    <div class="info-box">
-      <div id="roomLabel">🔑 الغرفة: <span class="code" id="roomCodeDisplay">---</span></div>
-      <div class="status" id="statusDisplay">⏳ جاري التحميل...</div>
-      <button class="refresh-btn" id="refreshBtn">🔄 تحديث</button>
-    </div>
-
-    <div id="players"></div>
-
-    <div id="messagesContainer">
-      <div class="title">
-        <span>📩 رسائل اللاعبين</span>
-        <span class="badge" id="messagesCount">0</span>
-        <button class="clear-btn" id="clearMessagesBtn">🗑️ مسح الكل</button>
+      <div class="app-header">
+        <div class="app-icon">🐺</div>
+        <div class="app-title">Loup Garou</div>
+        <div class="app-subtitle">👑 تحكم الراوي</div>
       </div>
-      <div class="messages-wrapper">
-        <div id="messagesList">
-          <div class="no-messages">📭 لا توجد رسائل من اللاعبين</div>
+
+      <button class="day-night-toggle day" id="dayNightToggle">☀️ أنت في النهار</button>
+
+      <div id="pendingDeathsContainer" class="pending-deaths">
+        <div class="title">💀 وفيات معلقة (سيتم الإعلان عنها عند حلول النهار)</div>
+        <div id="pendingDeathsList" class="list"></div>
+      </div>
+
+      <div class="info-box">
+        <div id="roomLabel">🔑 الغرفة: <span class="code" id="roomCodeDisplay">---</span></div>
+        <div class="status" id="statusDisplay">⏳ جاري التحميل...</div>
+        <button class="refresh-btn" id="refreshBtn">🔄 تحديث</button>
+      </div>
+
+      <div id="players"></div>
+
+      <div id="messagesContainer">
+        <div class="title">
+          <span>📩 رسائل اللاعبين</span>
+          <span class="badge" id="messagesCount">0</span>
+          <button class="clear-btn" id="clearMessagesBtn">🗑️ مسح الكل</button>
         </div>
-        <div class="scroll-buttons">
-          <button class="scroll-btn up" id="scrollUpBtn" title="تمرير للأعلى">▲</button>
-          <button class="scroll-btn down" id="scrollDownBtn" title="تمرير للأسفل">▼</button>
+        <div class="messages-wrapper">
+          <div id="messagesList">
+            <div class="no-messages">📭 لا توجد رسائل من اللاعبين</div>
+          </div>
+          <div class="scroll-buttons">
+            <button class="scroll-btn up" id="scrollUpBtn" title="تمرير للأعلى">▲</button>
+            <button class="scroll-btn down" id="scrollDownBtn" title="تمرير للأسفل">▼</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <button id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
+      <button id="exitBtn">⚰️ إنهاء الجولة والخروج</button>
+
+    </div>
   </div>
 
   <div class="modal" id="messageModal">
@@ -576,7 +764,7 @@
   </div>
 
   <script type="module">
-    import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
+    // ===== استيراد الدوال =====
     import {
       getRoomCode,
       clearRoomCode,
@@ -599,18 +787,16 @@
       isPlayerWolf
     } from "./logic.js";
 
-    function applyTranslations() {
-      document.title = t('appName') + ' - ' + t('controlTitle');
-      document.getElementById('controlTitle').textContent = `🐺 ${t('controlTitle')}`;
-      document.getElementById('refreshBtn').textContent = '🔄 ' + t('refresh');
-      document.getElementById('exitBtn').textContent = '⚰️ ' + t('endRound');
-
-      const lang = getCurrentLang();
-      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-      document.documentElement.lang = lang;
+    // ===== أداة لمساعدة تنسيق أسماء الأدوار بوضوح =====
+    function getRoleText(roleVal) {
+      if (!roleVal) return 'غير معروف';
+      if (typeof roleVal === 'object') {
+        return roleVal.ar || roleVal.fr || roleVal.en || 'غير معروف';
+      }
+      return roleVal;
     }
-    applyTranslations();
 
+    // ===== عناصر الصفحة =====
     const roomCode = getRoomCode();
     console.log('🔑 roomCode من localStorage:', roomCode);
 
@@ -626,7 +812,6 @@
     const dayNightToggle = document.getElementById("dayNightToggle");
     const pendingDeathsContainer = document.getElementById('pendingDeathsContainer');
     const pendingDeathsList = document.getElementById('pendingDeathsList');
-
     const messageModal = document.getElementById("messageModal");
     const targetPlayerName = document.getElementById("targetPlayerName");
     const targetPlayerId = document.getElementById("targetPlayerId");
@@ -635,9 +820,32 @@
     const closeMessageModal = document.getElementById("closeMessageModal");
     const modalStatus = document.getElementById("modalStatus");
 
-    // ===== قائمة الوفيات المعلقة =====
     let pendingDeaths = [];
+    let playersData = {};
+    let rolesData = {};
+    let isNight = false;
 
+    if (!roomCode) {
+      roomDisplay.textContent = "⚠️ غير معروف";
+      statusDisplay.textContent = "❌ لا يوجد رمز غرفة";
+      playerContainer.innerHTML =
+        `<p style="color:#e74c3c; text-align:center;">❌ لا يوجد رمز غرفة. سيتم تحويلك إلى صفحة الراوي...</p>`;
+      setTimeout(() => (window.location.href = "host.html"), 2000);
+      throw new Error("No roomCode");
+    }
+
+    roomDisplay.textContent = roomCode;
+    statusDisplay.textContent = "⏳ جاري التحميل...";
+
+    // ===== التحقق من صلاحية الغرفة =====
+    const valid = await checkRoomExpiry(roomCode);
+    if (!valid) {
+      alert("⏰ انتهت صلاحية الغرفة، سيتم تحويلك إلى الصفحة الرئيسية.");
+      window.location.href = "index.html";
+      throw new Error("Expired");
+    }
+
+    // ===== دوال الوفيات المعلقة =====
     function updatePendingDeathsUI() {
       if (pendingDeaths.length === 0) {
         pendingDeathsContainer.style.display = 'none';
@@ -661,7 +869,6 @@
       });
     }
 
-    // ===== إرسال جميع الوفيات المعلقة =====
     async function sendAllPendingDeaths() {
       if (pendingDeaths.length === 0) return;
       
@@ -676,67 +883,11 @@
         });
       }
       
-      // مسح القائمة
       pendingDeaths = [];
       updatePendingDeathsUI();
     }
 
-    if (!roomCode) {
-      roomDisplay.textContent = "⚠️ " + t('unknown');
-      statusDisplay.textContent = "❌ " + t('noRoomCode');
-      playerContainer.innerHTML =
-        `<p style="color:#e74c3c; text-align:center;">❌ ${t('noRoomCode')}</p>`;
-      setTimeout(() => (window.location.href = "host.html"), 2000);
-      throw new Error("No roomCode");
-    }
-
-    roomDisplay.textContent = roomCode;
-    statusDisplay.textContent = "⏳ جاري التحميل...";
-
-    const valid = await checkRoomExpiry(roomCode);
-    if (!valid) {
-      alert("⏰ " + t('roomExpired'));
-      window.location.href = "index.html";
-      throw new Error("Expired");
-    }
-
-    let isNight = false;
-
-    async function updateGameState(nightMode) {
-      isNight = nightMode;
-      await update(ref(db, `rooms/${roomCode}/gameState`), { isNight: nightMode });
-      
-      if (nightMode) {
-        dayNightToggle.textContent = '🌙 أنت في الليل';
-        dayNightToggle.className = 'day-night-toggle night';
-      } else {
-        dayNightToggle.textContent = '☀️ أنت في النهار';
-        dayNightToggle.className = 'day-night-toggle day';
-        
-        // ✅ عند التبديل إلى النهار، نرسل جميع الوفيات المعلقة
-        await sendAllPendingDeaths();
-        await clearWolfMessages(roomCode);
-        alert('☀️ حل النهار! تم الإعلان عن الوفيات.');
-      }
-    }
-
-    dayNightToggle.addEventListener('click', async () => {
-      const newState = !isNight;
-      await updateGameState(newState);
-    });
-
-    function listenToGameState(roomCode) {
-      const stateRef = ref(db, `rooms/${roomCode}/gameState`);
-      onValue(stateRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          updateGameState(data.isNight === true);
-        }
-      });
-    }
-    listenToGameState(roomCode);
-
-    // ===== دوال القتل والتحويل مع تأكيد (تضاف إلى القائمة المعلقة) =====
+    // ===== دوال القتل والاستذئاب والتحويل =====
     window.killPlayer = async (id) => {
       const player = await getPlayer(roomCode, id);
       const playerName = player?.name || 'لاعب مجهول';
@@ -748,11 +899,10 @@
       try {
         await killPlayer(roomCode, id);
         
-        // ✅ إضافة إلى قائمة الوفيات المعلقة
         pendingDeaths.push({
           id: id,
           name: playerName,
-          role: player?.role || 'غير معروف',
+          role: getRoleText(player?.role),
           roleImage: player?.roleImage || ''
         });
         updatePendingDeathsUI();
@@ -764,6 +914,7 @@
       }
     };
 
+    // 🛑 دالة الاستذئاب (بدون convertToWolf المسببة للمشكلة)
     window.infectPlayer = async (id) => {
       const player = await getPlayer(roomCode, id);
       const playerName = player?.name || 'لاعب مجهول';
@@ -774,26 +925,16 @@
       
       try {
         await infectPlayer(roomCode, id);
-        await convertToWolf(roomCode, id);
-        
-        // ✅ إضافة إلى قائمة الوفيات المعلقة
-        pendingDeaths.push({
-          id: id,
-          name: playerName,
-          role: player?.role || 'مستذئب',
-          roleImage: player?.roleImage || ''
-        });
-        updatePendingDeathsUI();
         
         fetchPlayers();
-        alert(`✅ تم استذئاب ${playerName} (سيتم الإعلان عنه عند حلول النهار)`);
+        alert(`✅ تم استذئاب ${playerName} بنجاح!`);
       } catch (err) {
         alert('❌ خطأ: ' + err.message);
       }
     };
 
     window.convertToWolfHandler = async (id, playerName) => {
-      if (!confirm(`⚠️ هل أنت متأكد من تحويل "${playerName || t('unknown')}" إلى ذئب؟\nهذا الدور قابل للتحويل (مثل فتى البريه).`)) {
+      if (!confirm(`⚠️ هل أنت متأكد من تحويل "${playerName || 'اللاعب'}" إلى ذئب؟\nهذا الدور قابل للتحويل (مثل فتى البريه).`)) {
         return;
       }
       
@@ -802,7 +943,7 @@
         fetchPlayers();
         alert(`✅ تم تحويل ${playerName || 'اللاعب'} إلى ذئب وأضيف إلى دردشة الذئاب!`);
       } catch (err) {
-        alert('❌ ' + t('errorOccurred') + ': ' + err.message);
+        alert('❌ حدث خطأ: ' + err.message);
       }
     };
 
@@ -815,9 +956,7 @@
       messageModal.style.display = 'flex';
     };
 
-    let playersData = {};
-    let rolesData = {};
-
+    // ===== دوال تحميل الأدوار =====
     async function loadRolesData() {
       const snap = await get(ref(db, 'global_roles'));
       rolesData = snap.val() || {};
@@ -837,6 +976,7 @@
       return false;
     }
 
+    // ===== دوال عرض الرسائل =====
     function formatTime(timestamp) {
       if (!timestamp) return '--:--';
       const date = new Date(timestamp);
@@ -870,7 +1010,7 @@
 
         const player = playersData[msg.playerId] || {};
         const playerName = player.name || msg.playerName || 'لاعب مجهول';
-        const roleDisplay = translateDynamicRole(player.role) || t('unknown');
+        const roleDisplay = getRoleText(player.role);
         const roleImage = player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
         
         const senderHTML = `
@@ -898,7 +1038,7 @@
         `;
 
         if (isWolfVote) {
-          div.style.borderColor = '#ff1a1a';
+          div.style.borderColor = 'rgba(255, 26, 26, 0.2)';
           div.style.borderWidth = '2px';
         }
 
@@ -922,25 +1062,13 @@
       });
     }
 
-    clearMessagesBtn.addEventListener('click', async () => {
-      if (confirm('⚠️ هل أنت متأكد من مسح جميع الرسائل؟')) {
-        await remove(ref(db, `rooms/${roomCode}/messages`));
-      }
-    });
-
-    scrollUpBtn.addEventListener('click', () => {
-      messagesList.scrollBy({ top: -80, behavior: 'smooth' });
-    });
-    scrollDownBtn.addEventListener('click', () => {
-      messagesList.scrollBy({ top: 80, behavior: 'smooth' });
-    });
-
+    // ===== دوال عرض اللاعبين =====
     function renderPlayers(data) {
       console.log('👥 عرض اللاعبين:', data);
       playerContainer.innerHTML = "";
       if (!data || Object.keys(data).length === 0) {
-        playerContainer.innerHTML = `<p style="color:#b8a08a; text-align:center;">📭 ${t('noPlayersInRoom')}</p>`;
-        statusDisplay.textContent = "⏳ " + t('waitingPlayers');
+        playerContainer.innerHTML = `<p style="color:rgba(255,255,255,0.15); text-align:center;">📭 لا يوجد لاعبون في الغرفة</p>`;
+        statusDisplay.textContent = "⏳ في انتظار اللاعبين...";
         playersData = {};
         return;
       }
@@ -948,9 +1076,10 @@
       playersData = data;
 
       const entries = Object.entries(data);
-      statusDisplay.textContent = `✅ ${entries.length} ${t('playersInRoom')}`;
+      statusDisplay.textContent = `✅ ${entries.length} لاعب في الغرفة`;
 
-      const infectedPlayer = entries.find(([id, p]) => p.isInfected && !p.isDead);
+      // 🛑 الفحص الصارم: هل يوجد أي لاعب مستذئب في هذه الغرفة؟
+      const hasAnyInfectedInRoom = entries.some(([id, p]) => p.isInfected === true);
 
       entries.forEach(([id, player]) => {
         const card = document.createElement("div");
@@ -961,9 +1090,9 @@
         
         let badge = '';
         if (player.isInfected && !player.isDead) {
-          badge = `<span class="infected-badge">🐺 ${t('infected')}</span>`;
+          badge = `<span class="infected-badge">🐺 مستذئب</span>`;
         } else if (player.isWolf && !player.isDead) {
-          badge = `<span class="wolf-badge">🐺 ${t('role_wolf')}</span>`;
+          badge = `<span class="wolf-badge">🐺 ذئب</span>`;
         }
         
         const convertible = isRoleConvertible(player.role);
@@ -971,11 +1100,11 @@
           badge += `<span class="convertible-badge">🔄 قابل للتحويل</span>`;
         }
 
-        const roleDisplay = translateDynamicRole(player.role) || t('unknown');
+        const roleDisplay = getRoleText(player.role);
 
         let actionsHTML = `
-          <button class="kill" data-id="${id}">🗡️ ${t('kill')}</button>
-          <button class="infect" data-id="${id}">🐺 ${t('infect')}</button>
+          <button class="kill" data-id="${id}">🗡️ قتل</button>
+          <button class="infect" data-id="${id}">🐺 استذئاب</button>
         `;
 
         if (convertible && !player.isDead && !player.isInfected && !player.isWolf) {
@@ -989,7 +1118,7 @@
             <img src="${avatarUrl}" class="avatar" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
             <div class="details">
               <span class="name">${player.name} ${badge}</span>
-              <span class="role">${t('role')} <strong>${roleDisplay}</strong></span>
+              <span class="role">الدور <strong>${roleDisplay}</strong></span>
             </div>
           </div>
           <div class="actions">
@@ -1021,12 +1150,11 @@
           window.sendMessageToPlayer(id, player.name);
         });
 
-        if (infectedPlayer && infectedPlayer[0] !== id) {
+        // 🔒 إخفاء وتعطيل زر الاستذئاب لجميع اللاعبين فور قيام الراوي باستذئاب أي لاعب
+        if (hasAnyInfectedInRoom || player.isDead || player.isInfected) {
           infectBtn.disabled = true;
         }
-        if (player.isInfected && !player.isDead) {
-          infectBtn.disabled = true;
-        }
+
         if (player.isDead) {
           killBtn.disabled = true;
           infectBtn.disabled = true;
@@ -1045,15 +1173,53 @@
       renderPlayers(data);
     }
 
-    listenToPlayers(roomCode, (data) => {
-      renderPlayers(data);
+    // ===== دوال التحكم بالليل والنهار =====
+    async function updateGameState(nightMode) {
+      isNight = nightMode;
+      await update(ref(db, `rooms/${roomCode}/gameState`), { isNight: nightMode });
+      
+      if (nightMode) {
+        dayNightToggle.textContent = '🌙 أنت في الليل';
+        dayNightToggle.className = 'day-night-toggle night';
+      } else {
+        dayNightToggle.textContent = '☀️ أنت في النهار';
+        dayNightToggle.className = 'day-night-toggle day';
+        await sendAllPendingDeaths();
+        await clearWolfMessages(roomCode);
+        alert('☀️ حل النهار! تم الإعلان عن الوفيات.');
+      }
+    }
+
+    function listenToGameState(roomCode) {
+      const stateRef = ref(db, `rooms/${roomCode}/gameState`);
+      onValue(stateRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          updateGameState(data.isNight === true);
+        }
+      });
+    }
+
+    // ===== أحداث الأزرار =====
+    dayNightToggle.addEventListener('click', async () => {
+      const newState = !isNight;
+      await updateGameState(newState);
     });
 
-    listenToMessages(roomCode);
+    clearMessagesBtn.addEventListener('click', async () => {
+      if (confirm('⚠️ هل أنت متأكد من مسح جميع الرسائل؟')) {
+        await remove(ref(db, `rooms/${roomCode}/messages`));
+      }
+    });
+
+    scrollUpBtn.addEventListener('click', () => {
+      messagesList.scrollBy({ top: -80, behavior: 'smooth' });
+    });
+    scrollDownBtn.addEventListener('click', () => {
+      messagesList.scrollBy({ top: 80, behavior: 'smooth' });
+    });
 
     refreshBtn.addEventListener("click", fetchPlayers);
-    setInterval(fetchPlayers, 5000);
-    await fetchPlayers();
 
     closeMessageModal.addEventListener('click', () => {
       messageModal.style.display = 'none';
@@ -1102,18 +1268,35 @@
     });
 
     document.getElementById("exitBtn").addEventListener("click", async () => {
-      if (!confirm(t('confirmEndRound'))) return;
+      if (!confirm('⚠️ هل أنت متأكد من إنهاء الجولة والخروج؟ سيتم حذف الغرفة بالكامل.')) return;
       try {
         await deleteRoom(roomCode);
       } catch (err) {
         console.error(err);
-        alert("⚠️ " + t('errorOccurred'));
+        alert("⚠️ حدث خطأ أثناء حذف الغرفة");
       }
       clearRoomCode();
       window.location.href = "index.html";
     });
 
-    console.log('🚀 تم تحميل صفحة تحكم الراوي للغرفة:', roomCode);
+    // ===== بدء الاستماع =====
+    listenToPlayers(roomCode, (data) => {
+      renderPlayers(data);
+    });
+
+    listenToMessages(roomCode);
+    listenToGameState(roomCode);
+
+    await fetchPlayers();
+
+    // 🔄 شرط التحديث التلقائي الدوري كل 3 ثوانٍ
+    setInterval(async () => {
+      if (roomCode) {
+        await fetchPlayers();
+      }
+    }, 3000);
+
+    console.log('🚀 تم تحميل صفحة تحكم الراوي (host-control.html) بنجاح للغرفة:', roomCode);
   </script>
 </body>
 </html>
