@@ -87,12 +87,7 @@
       display: none;
     }
     .role-description-box .desc-title { color: #d4a017; font-weight: bold; font-size: 16px; display: block; margin-bottom: 5px; }
-    
-    /* 🛠️ تعديل لدعم نزول الأسطر المتعددة بشكل صحيح */
-    .role-description-box .desc-text { 
-      color: #ccc; 
-      white-space: pre-line !important; 
-    }
+    .role-description-box .desc-text { color: #ccc; white-space: pre-line !important; }
 
     .counter-group { display: flex; gap: 40px; flex-wrap: wrap; margin: 10px 0; justify-content: center; }
     .counter-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -654,6 +649,7 @@
 
     let selectedRoles = {};
     let currentPlayers = [];
+    let rolesLoadedOnce = false; // 🛑 لمنع إعادة تحميل الأدوار ومسح اختيار الراوي
 
     function showRoleDescription(role) {
       if (!role) {
@@ -700,6 +696,7 @@
     }
 
     async function loadRoles() {
+      if (rolesLoadedOnce) return; // 🛑 إذا تم تحميل الأدوار مسبقاً، لا تقم بإعادة تحميلها لتفادي مسح اختيار الراوي
       try {
         const snap = await get(ref(db, 'global_roles'));
         const data = snap.val() || {};
@@ -740,6 +737,7 @@
         renderRolesGrid(filteredRoles);
         rolesLoading.classList.add('hidden');
         rolesGrid.classList.remove('hidden');
+        rolesLoadedOnce = true;
       } catch (e) {
         console.error(e);
         rolesLoading.textContent = '❌ حدث خطأ أثناء تحميل الأدوار';
@@ -916,16 +914,11 @@
       window.location.href = 'index.html';
     });
 
-    // ===== تحديث =====
-    refreshBtn.addEventListener('click', loadRoles);
-
-    // 🔄 شرط التحديث التلقائي الدوري كل 3 ثوانٍ
-    setInterval(async () => {
-      const currentCode = getRoomCode();
-      if (currentCode) {
-        await loadRoles();
-      }
-    }, 3000);
+    // ===== تحديث اليدوي =====
+    refreshBtn.addEventListener('click', () => {
+      rolesLoadedOnce = false;
+      loadRoles();
+    });
 
     console.log('🚪 كود الغرفة:', roomCode);
   </script>
