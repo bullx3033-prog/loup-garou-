@@ -322,20 +322,21 @@
       border-radius: 12px;
     }
 
+    /* 🛠️ دعم تخليف الأسطر (Enter) في وصف الدور */
     .role-description {
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.04);
       border-radius: 10px;
       padding: 10px 12px;
       margin-top: 10px;
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(255, 255, 255, 0.6);
       font-size: 13px;
-      line-height: 1.5;
-      text-align: center;
+      line-height: 1.6;
+      text-align: right;
       font-family: 'Cinzel', serif;
-      letter-spacing: 0.3px;
+      white-space: pre-line !important;
     }
-    .role-description strong { color: #d4a017; }
+    .role-description strong { color: #d4a017; display: block; margin-bottom: 4px; text-align: center; }
 
     .role-name {
       font-size: 20px;
@@ -353,15 +354,16 @@
       text-shadow: 0 0 20px rgba(102, 187, 106, 0.15);
     }
 
-    .infected-notice {
-      color: #2ecc71;
+    .infected-notice, .wolf-converted-notice {
+      color: #ff6b6b;
       font-weight: bold;
-      font-size: 18px;
+      font-size: 16px;
       text-align: center;
       margin-top: 8px;
       font-family: 'Cinzel', serif;
-      text-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+      text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
     }
+    .infected-notice { color: #2ecc71; text-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
 
     #wolfChatContainer {
       margin-top: 15px;
@@ -978,8 +980,6 @@
     let narratorNotifListener = null;
     let deathListener = null;
     let roomListener = null;
-    let shownDeaths = new Set();
-    let shownNarratorNotifs = new Set();
     let cardRenderedOnce = false;
 
     const hasRoomCode = roomCode ? true : false;
@@ -1059,7 +1059,6 @@
       });
     }
 
-    // 🛑 دالة منع تكرار إشعارات الموت وعرضها بمرتبة صحيحة مع زر مسح واضح
     function renderDeathNotificationsAndCards(data) {
       if (!data) {
         deathContainer.style.display = 'none';
@@ -1393,6 +1392,12 @@
         img.alt = 'ذئب';
         wrapper.appendChild(img);
         roleBox.appendChild(wrapper);
+
+        // 🛑 إظهار عبارة التحويل للذئاب تماماً مثل خاصية الاستذئاب أسفل الصورة
+        const noticeDiv = document.createElement('div');
+        noticeDiv.className = 'wolf-converted-notice';
+        noticeDiv.textContent = '🐺 أصبحت تلعب مع الذئاب!';
+        roleBox.appendChild(noticeDiv);
       } else {
         const nameDiv = document.createElement('div');
         nameDiv.className = 'role-name';
@@ -1412,7 +1417,7 @@
       if (description) {
         const descDiv = document.createElement('div');
         descDiv.className = 'role-description';
-        descDiv.innerHTML = `<strong>📖 وصف الدور:</strong> ${description}`;
+        descDiv.innerHTML = `<strong>📖 وصف الدور:</strong><br>${description}`;
         roleBox.appendChild(descDiv);
       }
 
@@ -1555,7 +1560,6 @@
           return;
         }
 
-        // إذا كانت البطاقة معروضة بالفعل أو تم إخفاؤها، نتجنب إعادة الرسم التلقائي
         if (cardRenderedOnce || roleBox.querySelector('.btn-show-card')) {
           return;
         }
