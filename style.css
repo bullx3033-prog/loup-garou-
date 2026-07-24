@@ -1,4 +1,6 @@
-/* ===== التصميم الأساسي (أسود/أحمر) ===== */
+/* ============================================================
+   الأساسيات والعناصر العامة (تستخدمها كل الصفحات)
+   ============================================================ */
 * {
   margin: 0;
   padding: 0;
@@ -7,304 +9,1284 @@
 
 body {
   font-family: 'Cinzel', serif;
-  background: #000;
-  background-image: radial-gradient(circle at 20% 30%, #1a0a0a 0%, #000000 100%);
-  color: #f0e0c0;
+  background: #0a0a0a;
   min-height: 100vh;
-  padding: 15px;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-start;
+  padding: 20px;
+  position: relative;
+  overflow-x: hidden;
 }
 
-/* ===== الحاوية الرئيسية ===== */
-.container {
-  max-width: 500px;
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(180, 20, 20, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 50%, rgba(180, 20, 20, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(212, 160, 23, 0.04) 0%, transparent 50%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ============================================================
+   الجسيمات المتحركة (الخلفية)
+   ============================================================ */
+.particle {
+  position: fixed;
+  width: 3px;
+  height: 3px;
+  background: rgba(212, 160, 23, 0.2);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: float 20s infinite linear;
+  z-index: 0;
+}
+.particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+.particle:nth-child(2) { left: 30%; animation-delay: -3s; width: 2px; height: 2px; }
+.particle:nth-child(3) { left: 50%; animation-delay: -7s; }
+.particle:nth-child(4) { left: 70%; animation-delay: -11s; width: 4px; height: 4px; background: rgba(255, 0, 0, 0.12); }
+.particle:nth-child(5) { left: 90%; animation-delay: -15s; }
+
+@keyframes float {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* ============================================================
+   الحاوية الرئيسية والبطاقة (جميع الصفحات)
+   ============================================================ */
+.main-container {
+  position: relative;
+  z-index: 1;
   width: 100%;
+  max-width: 480px;
   margin: 0 auto;
-  background: #111;
-  border: 2px solid crimson;
-  border-radius: 16px;
-  padding: 25px 20px;
-  box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
 }
 
-h2 {
-  font-size: 28px;
-  color: crimson;
-  text-shadow: 0 0 10px red, 0 0 20px darkred;
+.app-card {
+  background: rgba(17, 17, 17, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 32px;
+  padding: 35px 28px 30px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 60px rgba(180, 20, 20, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.app-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(212, 160, 23, 0.02) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ============================================================
+   رأس الصفحة (العنوان الموحد)
+   ============================================================ */
+.app-header {
   text-align: center;
-  border-bottom: 2px solid #222;
-  padding-bottom: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 28px;
+}
+
+.app-icon {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, #1a0a0a 0%, #2a0a0a 100%);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  border: 2px solid rgba(255, 0, 0, 0.12);
+  box-shadow: 0 10px 40px rgba(180, 20, 20, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  font-size: 36px;
+  transition: 0.3s;
+}
+.app-icon:hover {
+  transform: scale(1.05) rotate(-5deg);
+  border-color: rgba(212, 160, 23, 0.2);
+}
+
+.app-title {
+  font-size: 32px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #f0e0c0 0%, #d4a017 50%, #f0e0c0 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s ease-in-out infinite;
   letter-spacing: 2px;
 }
 
-/* ===== الأزرار ===== */
-.btn {
-  padding: 14px 20px;
-  border-radius: 10px;
-  border: none;
-  background: #2c2c2c;
-  color: #fff;
-  font-family: 'Cinzel', serif;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-  width: 100%;
-  text-align: center;
-  font-size: 16px;
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
-}
-.btn:hover {
-  background: #3a3a3a;
-  box-shadow: 0 0 15px crimson;
-  transform: scale(1.02);
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
-.btn-primary {
-  background: #2c2c2c;
-  color: #fff;
-}
-.btn-primary:hover {
-  background: #3a3a3a;
-}
-
-.btn-danger {
-  background: #a10d0d;
-  color: #fff;
-}
-.btn-danger:hover {
-  background: #8b0000;
-  box-shadow: 0 0 25px #8b0000;
+.app-subtitle {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+  letter-spacing: 3px;
+  margin-top: 4px;
+  font-weight: 400;
 }
 
-.btn-install {
-  background: #a10d0d;
-  color: #fff;
-  font-size: 18px;
-}
-.btn-install:hover {
-  background: #8b0000;
-  box-shadow: 0 0 25px #8b0000;
-}
-
-.btn-suggest {
-  background: #2c2c2c;
-  color: #fff;
-}
-.btn-suggest:hover {
-  background: #3a3a3a;
-}
-
-/* ===== مجموعات الأزرار (لترتيب الصفحة) ===== */
+/* ============================================================
+   الأزرار الرئيسية (الصفحة الرئيسية - index)
+   ============================================================ */
 .btn-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 20px;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
-.footer-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 15px;
-  max-width: 500px;
-  width: 100%;
-}
-
-/* ===== حقول الإدخال ===== */
-input,
-textarea {
-  width: 100%;
-  padding: 14px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: 1px solid #555;
-  background: #1a1a1a;
-  color: #fff;
-  font-family: 'Cinzel', serif;
-  font-size: 16px;
-}
-input:focus,
-textarea:focus {
-  border-color: crimson;
-  outline: none;
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
-}
-
-/* ===== بطاقات اللاعبين (في تحكم الراوي) ===== */
-#players {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding-bottom: 100px;
-}
-
-.player-card {
-  background: #111;
-  border: 1px solid crimson;
-  border-radius: 12px;
-  padding: 15px 18px;
-  box-shadow: 0 0 12px rgba(255, 0, 0, 0.15);
-  transition: 0.3s;
+.btn-main {
   display: flex;
   align-items: center;
-  gap: 15px;
+  justify-content: center;
+  gap: 14px;
+  padding: 16px 24px;
+  border-radius: 16px;
+  border: none;
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+.btn-main:active { transform: scale(0.97); }
+.btn-main .btn-icon { font-size: 20px; flex-shrink: 0; }
+.btn-main .btn-text { flex: 1; text-align: center; }
+.btn-main .btn-arrow { font-size: 16px; opacity: 0.5; transition: 0.3s; }
+.btn-main:hover .btn-arrow { opacity: 1; transform: translateX(-4px); }
+.btn-main::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.btn-host {
+  background: linear-gradient(135deg, #1a0a0a 0%, #3a0a0a 100%);
+  border: 1px solid rgba(255, 0, 0, 0.15);
+  box-shadow: 0 4px 20px rgba(180, 20, 20, 0.1);
+}
+.btn-host:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(180, 20, 20, 0.25);
+  border-color: rgba(255, 0, 0, 0.25);
+}
+
+.btn-player {
+  background: linear-gradient(135deg, #0a1a0a 0%, #0a3a0a 100%);
+  border: 1px solid rgba(46, 204, 113, 0.12);
+  box-shadow: 0 4px 20px rgba(46, 204, 113, 0.05);
+}
+.btn-player:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(46, 204, 113, 0.15);
+  border-color: rgba(46, 204, 113, 0.2);
+}
+
+.btn-rooms {
+  background: linear-gradient(135deg, #1a1a0a 0%, #3a2a0a 100%);
+  border: 1px solid rgba(212, 160, 23, 0.12);
+  box-shadow: 0 4px 20px rgba(212, 160, 23, 0.05);
+}
+.btn-rooms:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(212, 160, 23, 0.2);
+  border-color: rgba(212, 160, 23, 0.25);
+}
+
+.btn-exit-room {
+  display: none;
+  background: linear-gradient(135deg, #3a0a0a 0%, #5a0a0a 100%);
+  border: 1px solid rgba(255, 0, 0, 0.15);
+  color: #ff6b6b;
+}
+.btn-exit-room:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(180, 20, 20, 0.25);
+  border-color: rgba(255, 0, 0, 0.25);
+}
+.btn-exit-room .btn-icon { font-size: 18px; }
+
+/* ============================================================
+   أزرار ثانوية (جميع الصفحات)
+   ============================================================ */
+.secondary-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
   flex-wrap: wrap;
 }
-.player-card:hover {
-  border-color: #ff4444;
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
-}
-
-.player-card .info {
+.secondary-actions .btn-secondary,
+.btn-secondary {
+  flex: 1;
+  min-width: calc(50% - 4px);
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
   display: flex;
   align-items: center;
-  gap: 15px;
-  flex: 2;
-  min-width: 150px;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
 }
-.player-card .avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: 2px solid crimson;
-  object-fit: cover;
-  background: #0d0805;
+.secondary-actions .btn-secondary:hover,
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
 }
-.player-card .details .name {
-  font-size: 22px;
-  color: #f2f2f2;
-  font-weight: 900;
-}
-.player-card .details .role {
-  font-size: 14px;
-  color: #ccc;
-}
-.player-card .details .role strong {
-  color: #fff;
-}
+.secondary-actions .btn-secondary .icon { font-size: 15px; }
 
-.player-card .actions {
+/* ============================================================
+   فواصل وروابط اجتماعية (index)
+   ============================================================ */
+.divider {
   display: flex;
-  gap: 10px;
-  flex: 1;
-  justify-content: flex-end;
-  min-width: 160px;
+  align-items: center;
+  gap: 16px;
+  margin: 16px 0;
 }
-.player-card .actions button {
-  padding: 10px 18px;
-  border: none;
-  border-radius: 8px;
-  background: #2c2c2c;
-  color: #fff;
-  font-family: 'Cinzel', serif;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s;
+.divider-line {
   flex: 1;
-  min-width: 70px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+}
+.divider-dot {
+  width: 6px;
+  height: 6px;
+  background: rgba(212, 160, 23, 0.2);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.social-section {
   text-align: center;
+  margin: 16px 0 10px;
+  display: none;
 }
-.player-card .actions button:hover {
-  background: #3a3a3a;
-  box-shadow: 0 0 15px crimson;
+.social-section .social-label {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 11px;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+  font-weight: 400;
 }
-.player-card .actions .kill {
-  background: #6b1a1a;
-  color: #fff;
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
-.player-card .actions .kill:hover {
-  background: #8b0000;
-  box-shadow: 0 0 25px #8b0000;
+.social-icons a {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
 }
-.player-card .actions .infect {
-  background: #1a4a1a;
-  color: #fff;
+.social-icons a:hover {
+  transform: translateY(-3px) scale(1.08);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(212, 160, 23, 0.15);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
-.player-card .actions .infect:hover {
-  background: #2e7d32;
-  box-shadow: 0 0 25px #2e7d32;
+.social-icons a svg { width: 20px; height: 20px; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)); }
+
+.download-counter {
+  text-align: center;
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 11px;
+  letter-spacing: 1px;
 }
 
-.player-card.dead {
-  opacity: 0.6;
-  background: #1a1a1a;
-  border-color: #444;
-}
-.player-card.dead .name {
-  color: #888;
-}
-.player-card.dead .avatar {
-  border-color: #555;
-  filter: grayscale(1);
-}
-
-/* ===== نافذة منبثقة (مودال) ===== */
+/* ============================================================
+   النوافذ المنبثقة (مودالات عامة)
+   ============================================================ */
 .modal {
   display: none;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   z-index: 1000;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 }
 .modal-content {
-  background: #111;
-  border: 2px solid crimson;
-  border-radius: 16px;
-  padding: 30px 25px;
-  max-width: 450px;
-  width: 90%;
-  color: #fff;
-  box-shadow: 0 0 50px rgba(255, 0, 0, 0.3);
+  background: rgba(17, 17, 17, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 28px;
+  padding: 30px 24px;
+  max-width: 520px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
 }
-.modal-content h3 {
-  color: crimson;
-  font-size: 24px;
-  margin-bottom: 10px;
-  text-shadow: 0 0 10px red;
+.modal-content::-webkit-scrollbar { width: 4px; }
+.modal-content::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+.modal-content::-webkit-scrollbar-thumb { background: rgba(212,160,23,0.15); border-radius: 10px; }
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  color: #f0e0c0;
+  margin-bottom: 6px;
 }
-.modal-content p {
-  color: #ccc;
+.modal-subtitle {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: 400;
+}
+.modal-close-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Cinzel', serif;
   font-size: 14px;
-  margin-bottom: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 14px;
+}
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+}
+.modal input, .modal textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.02);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  transition: all 0.3s;
+  margin: 4px 0;
+}
+.modal input:focus, .modal textarea:focus {
+  outline: none;
+  border-color: rgba(212, 160, 23, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 30px rgba(212, 160, 23, 0.02);
+}
+.modal textarea { min-height: 80px; resize: vertical; }
+.btn-primary-modal {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #1a0a0a 0%, #3a0a0a 100%);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid rgba(255, 0, 0, 0.1);
+  margin-top: 6px;
+}
+.btn-primary-modal:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 30px rgba(180, 20, 20, 0.12);
 }
 
-/* ===== صفحة اللاعب (دوره) ===== */
-#roleBox {
-  background: #111;
-  border: 1px solid crimson;
+/* قائمة الغرف في المودال */
+.rooms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0 14px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.rooms-list::-webkit-scrollbar { width: 4px; }
+.rooms-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+.rooms-list::-webkit-scrollbar-thumb { background: rgba(212,160,23,0.12); border-radius: 10px; }
+.room-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s;
+}
+.room-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(212, 160, 23, 0.08);
+}
+.room-item .info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.room-item .code {
+  color: #d4a017;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 2px;
+}
+.room-item .players {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 13px;
+}
+.room-item .status {
+  font-size: 10px;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  background: rgba(46, 204, 113, 0.08);
+  color: #66bb6a;
+  border: 1px solid rgba(46, 204, 113, 0.08);
+}
+.room-item .btn-join {
+  background: rgba(212, 160, 23, 0.08);
+  color: #d4a017;
+  border: 1px solid rgba(212, 160, 23, 0.1);
+  border-radius: 10px;
+  padding: 6px 16px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.room-item .btn-join:hover {
+  background: rgba(212, 160, 23, 0.15);
+  transform: scale(1.02);
+  box-shadow: 0 4px 20px rgba(212, 160, 23, 0.05);
+}
+.rooms-refresh {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 30px;
+  padding: 8px 20px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.rooms-refresh:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+}
+.no-rooms {
+  color: rgba(255, 255, 255, 0.15);
+  text-align: center;
+  padding: 30px 10px;
+  font-style: italic;
+  font-size: 14px;
+}
+
+/* محتوى "عن اللعبة" */
+.about-content {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.about-content .highlight {
+  color: #d4a017;
+  font-weight: 700;
+}
+.about-content h4 {
+  color: #d4a017;
+  font-size: 16px;
+  margin: 14px 0 10px;
+}
+.about-content hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  margin: 14px 0;
+}
+.about-content .how-to-play p {
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+.about-content .how-to-play strong {
+  color: #d4a017;
+}
+.about-content .tip {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 12px;
+  text-align: center;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* محتوى QR */
+.qr-content { text-align: center; }
+.qr-content .qr-image { margin: 14px 0; }
+.qr-content .qr-image img { max-width: 100%; border-radius: 16px; border: 1px solid rgba(255,255,255,0.04); }
+.qr-content .qr-message { color: rgba(255,255,255,0.5); font-size: 14px; line-height: 1.8; text-align: right; }
+.qr-content .qr-message strong { color: #d4a017; }
+.btn-download {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #0a1a0a 0%, #0a3a0a 100%);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid rgba(46, 204, 113, 0.1);
+  margin-top: 6px;
+}
+.btn-download:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 30px rgba(46, 204, 113, 0.1);
+}
+
+/* الإشعارات */
+.notice-container {
+  margin-top: 18px;
+  display: none;
+}
+.notice-box {
+  background: rgba(42, 26, 10, 0.5);
+  border: 1px solid rgba(212, 160, 23, 0.08);
+  border-radius: 16px;
+  padding: 14px 18px;
+  backdrop-filter: blur(10px);
+}
+.notice-box h4 { color: #d4a017; font-size: 15px; margin-bottom: 6px; }
+.notice-box p { color: rgba(255,255,255,0.5); font-size: 13px; line-height: 1.7; margin-bottom: 6px; }
+.notice-box .notice-image { text-align: center; margin: 8px 0; }
+.notice-box .notice-image img { max-width: 100%; border-radius: 10px; border: 1px solid rgba(255,255,255,0.04); }
+.notice-box .tip { color: rgba(255,255,255,0.15); font-size: 12px; text-align: center; font-style: italic; }
+
+/* ============================================================
+   الصفحة: الراوي (host.html)
+   ============================================================ */
+/* خيارات الخصوصية */
+.privacy-options {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.privacy-options .option {
+  flex: 1;
+  padding: 12px;
   border-radius: 12px;
-  padding: 20px;
-  margin-top: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: bold;
 }
-#roleBox .role-name {
+.privacy-options .option:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.privacy-options .option.selected {
+  border-color: #d4a017;
+  background: rgba(212, 160, 23, 0.05);
+  color: #d4a017;
+  box-shadow: 0 0 30px rgba(212, 160, 23, 0.03);
+}
+.privacy-options .option .icon { font-size: 28px; display: block; margin-bottom: 4px; }
+.privacy-options .option .desc {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.2);
+  font-weight: normal;
+  display: block;
+  margin-top: 2px;
+}
+
+.btn-create {
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #1a0a0a 0%, #3a0a0a 100%);
+  color: #d4a017;
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  border: 1px solid rgba(212, 160, 23, 0.1);
+}
+.btn-create:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 40px rgba(212, 160, 23, 0.1);
+  border-color: rgba(212, 160, 23, 0.2);
+}
+.btn-create:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* عرض الغرفة بعد الإنشاء */
+.room-display {
+  background: rgba(13, 8, 5, 0.6);
+  border: 1px solid #d4a017;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 16px;
+  display: none;
+}
+.room-display .room-label {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+.room-display .room-code {
+  color: #d4a017;
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: 10px;
+  font-family: 'Cinzel', serif;
+  margin: 6px 0;
+}
+.room-display .room-status {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+}
+.room-display .privacy-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.room-display .privacy-badge.public {
+  background: rgba(46, 204, 113, 0.1);
+  color: #66bb6a;
+  border: 1px solid #66bb6a;
+}
+.room-display .privacy-badge.private {
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+}
+.room-display .copy-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  padding: 6px 18px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  transition: 0.3s;
+  margin-top: 8px;
+}
+.room-display .copy-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #d4a017;
+  color: #fff;
+}
+
+/* قسم ديسكورد (في host) */
+.discord-section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(88, 101, 242, 0.2);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.discord-section .discord-label {
+  color: #5865F2;
+  font-size: 14px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+}
+.discord-section .discord-row {
+  display: flex;
+  gap: 10px;
+}
+.discord-section .discord-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  direction: ltr;
+}
+.discord-section .discord-row input:focus {
+  outline: none;
+  border-color: #5865F2;
+  background: rgba(255, 255, 255, 0.05);
+}
+.discord-section .discord-row .btn-discord {
+  background: #5865F2;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  white-space: nowrap;
+}
+.discord-section .discord-row .btn-discord:hover {
+  background: #4752C4;
+  box-shadow: 0 0 20px rgba(88, 101, 242, 0.2);
+}
+.discord-section .hint-text {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 12px;
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* شبكة الأدوار (host) */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+  justify-items: center;
+}
+.role-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.3s;
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.role-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.role-circle:hover {
+  border-color: rgba(212, 160, 23, 0.2);
+  transform: scale(1.05);
+}
+.role-circle .role-name-tooltip {
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: 0.3s;
+  pointer-events: none;
+  font-family: 'Cinzel', serif;
+}
+.role-circle:hover .role-name-tooltip { opacity: 1; }
+.role-circle.selected {
+  border-color: #d4a017;
+  box-shadow: 0 0 30px rgba(212, 160, 23, 0.15);
+  transform: scale(1.08);
+}
+.role-circle .check-mark {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #d4a017;
+  color: #000;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border: 2px solid #000;
+}
+.role-circle.selected .check-mark { display: flex; }
+
+.role-description-box {
+  background: rgba(13, 8, 5, 0.4);
+  border: 1px solid rgba(212, 160, 23, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  min-height: 50px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  line-height: 1.7;
+  text-align: right;
+  transition: 0.3s;
+  display: none;
+}
+.role-description-box .desc-title {
+  color: #d4a017;
+  font-weight: bold;
+  font-size: 16px;
+  display: block;
+  margin-bottom: 4px;
+}
+.role-description-box .desc-text { color: rgba(255, 255, 255, 0.6); }
+.role-description-box .empty-desc { color: rgba(255, 255, 255, 0.2); font-style: italic; }
+
+/* عدادات الأدوار (host) */
+.counter-group {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+  justify-content: center;
+}
+.counter-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.counter-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+  transition: 0.3s;
+}
+.counter-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.counter-circle:hover {
+  border-color: rgba(212, 160, 23, 0.15);
+}
+.counter-item input {
+  width: 60px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 18px;
+  padding: 6px 10px;
+  font-family: 'Cinzel', serif;
+  transition: 0.3s;
+}
+.counter-item input:focus {
+  border-color: #d4a017;
+  outline: none;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* مطابقة العداد (host) */
+.match-counter {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.match-counter .info {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.match-counter .info span {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+}
+.match-counter .info .count {
+  color: #d4a017;
+  font-weight: bold;
+  font-size: 18px;
+}
+.match-counter .status {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+.match-counter .status.ready {
+  background: rgba(46, 204, 113, 0.1);
+  color: #66bb6a;
+  border: 1px solid #66bb6a;
+}
+.match-counter .status.not-ready {
+  background: rgba(255, 0, 0, 0.08);
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+}
+
+/* قائمة اللاعبين (host) */
+.player-list {
+  margin-top: 10px;
+}
+.player-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 8px 14px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.player-item .name {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+}
+.player-item .badge {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 2px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* أزرار عامة في host */
+.btn {
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.02);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+.btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
+}
+.btn-success {
+  background: rgba(46, 204, 113, 0.08);
+  border-color: rgba(46, 204, 113, 0.1);
+  color: #66bb6a;
+}
+.btn-success:hover {
+  background: rgba(46, 204, 113, 0.12);
+  box-shadow: 0 8px 30px rgba(46, 204, 113, 0.05);
+}
+.btn-danger {
+  background: rgba(255, 0, 0, 0.05);
+  border-color: rgba(255, 0, 0, 0.1);
+  color: #ff6b6b;
+}
+.btn-danger:hover {
+  background: rgba(255, 0, 0, 0.08);
+}
+.flex {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.flex .btn { flex: 1; }
+.hidden { display: none !important; }
+.start-btn-wrapper { margin-top: 16px; }
+.start-btn-wrapper .btn { font-size: 18px; padding: 16px; width: 100%; }
+
+/* ============================================================
+   الصفحة: اللاعب (player.html)
+   ============================================================ */
+.suggest-fab {
+  position: fixed;
+  top: 20px;
+  z-index: 999;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(255, 0, 0, 0.15);
+  color: #fff;
   font-size: 22px;
-  color: crimson;
-  margin: 10px 0;
-  text-shadow: 0 0 10px red;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.05);
+  font-family: 'Cinzel', serif;
+  touch-action: manipulation;
+  user-select: none;
+  left: 20px;
 }
-#roleBox .role-image-wrapper {
+.suggest-fab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.1);
+}
+.suggest-fab:active { transform: scale(0.95); }
+
+/* إشعارات الموت */
+#deathNotificationsContainer {
+  position: fixed;
+  top: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 998;
+  width: 90%;
+  max-width: 500px;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+}
+#deathNotificationsContainer .death-notification {
+  background: rgba(26, 10, 10, 0.9);
+  border: 2px solid #ff1a1a;
+  border-radius: 10px;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: auto;
+  animation: slideDownDeath 0.4s ease;
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
+}
+#deathNotificationsContainer .death-notification .death-text {
+  color: #ff6b6b;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Cinzel', serif;
+  flex: 1;
+}
+#deathNotificationsContainer .death-notification .death-close {
+  background: rgba(107, 26, 26, 0.8);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 2px 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#deathNotificationsContainer .death-notification .death-close:hover {
+  background: #8b0000;
+  box-shadow: 0 0 15px #8b0000;
+}
+@keyframes slideDownDeath {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* إشعارات الراوي */
+#narratorNotifications {
+  position: fixed;
+  top: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 997;
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+}
+#narratorNotifications .narrator-notif {
+  background: rgba(42, 26, 10, 0.9);
+  border: 2px solid #d4a017;
+  border-radius: 10px;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: auto;
+  animation: slideDownNotif 0.4s ease;
+  box-shadow: 0 0 30px rgba(212, 160, 23, 0.1);
+}
+#narratorNotifications .narrator-notif .notif-text {
+  color: #f0e0c0;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Cinzel', serif;
+  flex: 1;
+  margin-left: 10px;
+}
+#narratorNotifications .narrator-notif .notif-icon {
+  color: #d4a017;
+  font-size: 18px;
+  margin-left: 8px;
+}
+#narratorNotifications .narrator-notif .notif-close {
+  background: rgba(107, 26, 26, 0.8);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 2px 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#narratorNotifications .narrator-notif .notif-close:hover {
+  background: #8b0000;
+  box-shadow: 0 0 15px #8b0000;
+}
+@keyframes slideDownNotif {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* أزرار الإجراءات (player) */
+.action-buttons-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.action-buttons-row .btn {
+  flex: 0 1 auto;
+  min-width: 50px;
+  width: 54px;
+  height: 48px;
+  padding: 0;
+  font-size: 20px;
+  text-align: center;
+  border-radius: 10px;
+  border: none;
+  font-family: 'Cinzel', serif;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.02);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.action-buttons-row .btn:hover {
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.05);
+}
+.action-buttons-row .btn-hide { border-color: rgba(255, 255, 255, 0.06); }
+.action-buttons-row .btn-hide:hover { border-color: rgba(255, 255, 255, 0.1); }
+.action-buttons-row .btn-suicide {
+  border-color: rgba(255, 0, 0, 0.15);
+  color: #ff6b6b;
+}
+.action-buttons-row .btn-suicide:hover {
+  background: rgba(255, 0, 0, 0.05);
+  border-color: rgba(255, 0, 0, 0.2);
+}
+.action-buttons-row .btn-message {
+  border-color: rgba(212, 160, 23, 0.15);
+  color: #d4a017;
+}
+.action-buttons-row .btn-message:hover {
+  background: rgba(212, 160, 23, 0.05);
+  border-color: rgba(212, 160, 23, 0.2);
+}
+
+.btn-show-card {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: 'Cinzel', serif;
+}
+.btn-show-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(212, 160, 23, 0.1);
+  box-shadow: 0 0 30px rgba(212, 160, 23, 0.02);
+}
+
+.role-image-wrapper {
   position: relative;
   width: 100%;
   max-width: 300px;
   margin: 10px auto;
 }
-#roleBox .role-image-wrapper img.role-img {
+.role-image-wrapper img.role-img {
   width: 100%;
   border-radius: 12px;
-  border: 2px solid crimson;
+  border: 2px solid rgba(255, 0, 0, 0.1);
 }
-#roleBox .role-image-wrapper img.blood-overlay {
+.role-image-wrapper img.blood-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -313,73 +1295,996 @@ textarea:focus {
   object-fit: contain;
   pointer-events: none;
 }
-#skull {
-  font-size: 80px;
-  color: #8b0000;
+.role-description {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.3px;
 }
-#death-text {
-  color: #e74c3c;
+.role-description strong { color: #d4a017; }
+
+.role-name {
+  font-size: 20px;
   font-weight: bold;
-  font-size: 18px;
+  text-align: center;
+  margin-bottom: 10px;
+  color: #d4a017;
+}
+.role-name.role-name-infected {
+  color: #2ecc71 !important;
+  text-shadow: 0 0 20px rgba(46, 204, 113, 0.15);
+}
+.role-name.role-name-wolf-converted {
+  color: #66bb6a !important;
+  text-shadow: 0 0 20px rgba(102, 187, 106, 0.15);
 }
 
-/* ===== أدوات مساعدة ===== */
-.hidden {
-  display: none !important;
+/* غرفة الذئاب (player) */
+#wolfChatContainer {
+  margin-top: 15px;
+  background: rgba(13, 8, 5, 0.6);
+  border: 2px solid rgba(255, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 12px;
+  display: none;
 }
-.text-center {
-  text-align: center;
-}
-.mt-10 {
-  margin-top: 10px;
-}
-.mb-10 {
+#wolfChatContainer .wolf-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
 }
-.flex {
+#wolfChatContainer .wolf-title span {
+  color: #ff1a1a;
+  font-size: 16px;
+  font-weight: bold;
+}
+#wolfChatContainer .wolf-title small {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 11px;
+}
+
+.wolf-vote-section {
+  background: rgba(26, 10, 10, 0.5);
+  border: 1px solid rgba(255, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+}
+.wolf-vote-label {
+  color: #ff6b6b;
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  font-family: 'Cinzel', serif;
+}
+.wolf-vote-row {
+  display: flex;
+  gap: 6px;
+}
+.wolf-vote-row input {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  height: 34px;
+}
+.wolf-vote-row input:focus {
+  border-color: #ff1a1a;
+  outline: none;
+  background: rgba(255, 255, 255, 0.04);
+}
+.wolf-vote-row input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 12px;
+}
+.wolf-vote-btn-small {
+  background: rgba(139, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-family: 'Cinzel', serif;
+  font-weight: bold;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+  height: 34px;
+  white-space: nowrap;
+}
+.wolf-vote-btn-small:hover {
+  background: rgba(170, 0, 0, 0.6);
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.2);
+}
+
+.wolf-chat-section {
+  background: rgba(13, 8, 5, 0.6);
+  border: 1px solid rgba(255, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+}
+.wolf-chat-label {
+  color: #ff1a1a;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  font-family: 'Cinzel', serif;
+}
+#wolfMessagesList {
+  max-height: 180px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 8px;
+  scrollbar-width: thin;
+}
+#wolfMessagesList::-webkit-scrollbar { width: 4px; }
+#wolfMessagesList::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
+#wolfMessagesList::-webkit-scrollbar-thumb { background: rgba(255, 0, 0, 0.15); border-radius: 10px; }
+#wolfMessagesList .wolf-msg {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+}
+#wolfMessagesList .wolf-msg .wolf-name {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+#wolfMessagesList .wolf-msg .wolf-time {
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 10px;
+  float: left;
+  direction: ltr;
+}
+
+.wolf-input-row {
+  display: flex;
+  gap: 8px;
+}
+.wolf-input-row input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+}
+.wolf-input-row input:focus {
+  border-color: #ff1a1a;
+  outline: none;
+  background: rgba(255, 255, 255, 0.04);
+}
+.wolf-input-row input::placeholder {
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 12px;
+}
+.wolf-input-row button {
+  background: rgba(255, 0, 0, 0.15);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-family: 'Cinzel', serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.wolf-input-row button:hover {
+  background: rgba(255, 0, 0, 0.2);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.05);
+}
+
+/* قسم ديسكورد (player) */
+.discord-player-section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(88, 101, 242, 0.15);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 15px;
+}
+.discord-player-section .title {
+  color: #5865F2;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.discord-player-section .link-box {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  background: rgba(13, 13, 13, 0.4);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+.discord-player-section .link-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  padding: 5px;
+  min-width: 120px;
+  direction: ltr;
+}
+.discord-player-section .link-box input:focus { outline: none; }
+.discord-player-section .btn-discord-join {
+  background: #5865F2;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: 'Cinzel', serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 14px;
+}
+.discord-player-section .btn-discord-join:hover {
+  background: #4752C4;
+  box-shadow: 0 0 15px rgba(88, 101, 242, 0.15);
+}
+
+/* نماذج الدخول (player) */
+.join-form-buttons {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  margin-top: 10px;
+}
+.join-form-buttons .btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-family: 'Cinzel', serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 14px;
+}
+.btn-primary {
+  background: rgba(212, 160, 23, 0.08);
+  color: #d4a017;
+  border: 1px solid rgba(212, 160, 23, 0.1);
+}
+.btn-primary:hover {
+  background: rgba(212, 160, 23, 0.12);
+  box-shadow: 0 8px 30px rgba(212, 160, 23, 0.05);
 }
 
-/* ===== التجاوب مع الهواتف ===== */
-@media (max-width: 480px) {
-  .container {
-    padding: 15px;
-  }
-  h2 {
-    font-size: 24px;
-  }
-  .player-card {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 12px 15px;
-  }
-  .player-card .info {
-    min-width: unset;
-  }
-  .player-card .actions {
-    min-width: unset;
-    justify-content: stretch;
-    margin-top: 8px;
-  }
-  .player-card .actions button {
-    font-size: 14px;
-    padding: 10px 12px;
-  }
-  .player-card .avatar {
-    width: 50px;
-    height: 50px;
-  }
-  .player-card .details .name {
-    font-size: 18px;
-  }
+.input-group {
+  margin-bottom: 12px;
 }
-@media (max-width: 380px) {
-  .player-card .actions {
-    flex-direction: column;
-  }
-  .player-card .actions button {
-    width: 100%;
-  }
+.input-group input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  transition: 0.3s;
+}
+.input-group input:focus {
+  outline: none;
+  border-color: rgba(212, 160, 23, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 30px rgba(212, 160, 23, 0.02);
+}
+.input-group input::placeholder {
+  color: rgba(255, 255, 255, 0.15);
+}
+.room-code-field-hidden { display: none !important; }
+
+#status {
+  text-align: center;
+  margin: 20px 0;
+}
+#status .waiting-text {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 16px;
+}
+#status .leave-btn {
+  margin-top: 15px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 0, 0, 0.1);
+  background: rgba(255, 0, 0, 0.05);
+  color: #ff6b6b;
+  font-family: 'Cinzel', serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 14px;
+}
+#status .leave-btn:hover {
+  background: rgba(255, 0, 0, 0.08);
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.05);
+}
+
+.error-msg {
+  color: #ff6b6b;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 8px;
+  display: none;
+  font-family: 'Cinzel', serif;
+  padding: 8px 12px;
+  background: rgba(255, 0, 0, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 0, 0, 0.05);
+}
+.error-msg.show { display: block; }
+
+/* إشعار الطرد */
+#kickedNotification {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(26, 10, 10, 0.95);
+  border: 2px solid #ff1a1a;
+  border-radius: 16px;
+  padding: 30px 25px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  z-index: 2000;
+  box-shadow: 0 0 60px rgba(255, 0, 0, 0.15);
+  animation: kickPulse 0.5s ease;
+}
+@keyframes kickPulse {
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+  50% { transform: translate(-50%, -50%) scale(1.05); }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+#kickedNotification .kick-icon { font-size: 60px; display: block; margin-bottom: 10px; }
+#kickedNotification .kick-title {
+  color: #ff6b6b;
+  font-size: 22px;
+  font-weight: bold;
+  font-family: 'Cinzel', serif;
+}
+#kickedNotification .kick-text {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+  margin: 12px 0;
+  font-family: 'Cinzel', serif;
+}
+#kickedNotification .kick-btn {
+  background: rgba(139, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 30px;
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#kickedNotification .kick-btn:hover {
+  background: rgba(170, 0, 0, 0.6);
+  box-shadow: 0 0 25px rgba(139, 0, 0, 0.15);
+}
+
+#skull {
+  font-size: 80px;
+  text-align: center;
+  margin: 20px 0;
+}
+#death-text {
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  font-size: 16px;
+  font-family: 'Cinzel', serif;
+}
+
+/* شريط الوقت (player) */
+#timeStatusBar {
+  background: rgba(13, 8, 5, 0.6);
+  border: 2px solid rgba(212, 160, 23, 0.2);
+  border-radius: 10px;
+  padding: 8px 16px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: bold;
+  transition: 0.3s;
+  display: none;
+}
+#timeStatusBar.day {
+  color: #d4a017;
+  border-color: #d4a017;
+  background: rgba(42, 26, 10, 0.4);
+  box-shadow: 0 0 20px rgba(212, 160, 23, 0.05);
+}
+#timeStatusBar.night {
+  color: #4a4aff;
+  border-color: #4a4aff;
+  background: rgba(10, 10, 42, 0.4);
+  box-shadow: 0 0 20px rgba(74, 74, 255, 0.05);
+}
+#timeStatusBar .time-icon { margin-left: 8px; }
+
+/* ============================================================
+   الصفحة: تحكم الراوي (host-control.html)
+   ============================================================ */
+.info-box {
+  background: rgba(13, 8, 5, 0.4);
+  border: 1px solid rgba(212, 160, 23, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.info-box .code {
+  color: #d4a017;
+  font-size: 28px;
+  letter-spacing: 4px;
+  font-weight: 900;
+}
+.info-box .status {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.day-night-toggle {
+  width: 100%;
+  padding: 14px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: 'Cinzel', serif;
+  margin-bottom: 14px;
+  text-align: center;
+  background: rgba(74, 58, 10, 0.15);
+  color: #d4a017;
+  border: 2px solid rgba(212, 160, 23, 0.08);
+  box-shadow: 0 0 20px rgba(212, 160, 23, 0.02);
+}
+.day-night-toggle:hover {
+  background: rgba(74, 58, 10, 0.25);
+  box-shadow: 0 0 30px rgba(212, 160, 23, 0.05);
+  transform: scale(1.01);
+}
+.day-night-toggle.night {
+  background: rgba(26, 26, 74, 0.15);
+  color: #4a4aff;
+  border-color: rgba(74, 74, 255, 0.08);
+}
+.day-night-toggle.night:hover {
+  background: rgba(26, 26, 74, 0.25);
+  box-shadow: 0 0 30px rgba(74, 74, 255, 0.05);
+}
+
+.pending-deaths {
+  background: rgba(26, 10, 10, 0.3);
+  border: 2px solid rgba(255, 26, 26, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  display: none;
+}
+.pending-deaths .title {
+  color: #ff6b6b;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Cinzel', serif;
+}
+.pending-deaths .list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+.pending-deaths .list .dead-item {
+  background: rgba(42, 10, 10, 0.3);
+  border: 1px solid rgba(255, 26, 26, 0.08);
+  border-radius: 6px;
+  padding: 4px 12px;
+  color: #ff6b6b;
+  font-size: 13px;
+  font-family: 'Cinzel', serif;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pending-deaths .list .dead-item .remove-death {
+  background: rgba(107, 26, 26, 0.2);
+  color: #ff6b6b;
+  border: none;
+  border-radius: 4px;
+  padding: 0 8px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  transition: 0.3s;
+}
+.pending-deaths .list .dead-item .remove-death:hover {
+  background: rgba(139, 0, 0, 0.3);
+}
+
+#players {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 10px;
+}
+
+/* بطاقات اللاعبين في تحكم الراوي */
+.player-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: 0.3s;
+  min-height: 38px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.player-card:hover {
+  border-color: rgba(212, 160, 23, 0.08);
+  box-shadow: 0 0 8px rgba(212, 160, 23, 0.02);
+}
+.player-card.dead {
+  opacity: 0.35;
+  border-color: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.01);
+}
+.player-card .info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+.player-card .avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(212, 160, 23, 0.08);
+  object-fit: cover;
+  background: rgba(13, 8, 5, 0.6);
+  flex-shrink: 0;
+}
+.player-card .details {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.player-card .details .name {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 700;
+}
+.player-card .details .role {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.25);
+}
+.player-card .details .role strong {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.player-card .actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.player-card .actions button {
+  padding: 2px 10px;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Cinzel', serif;
+  font-weight: bold;
+  font-size: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+  height: 24px;
+  line-height: 1;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+.player-card .actions button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.04);
+  transform: scale(1.05);
+}
+.player-card .actions .kill {
+  background: rgba(107, 26, 26, 0.2);
+  color: #ff6b6b;
+  border-color: rgba(255, 0, 0, 0.06);
+}
+.player-card .actions .kill:hover:not(:disabled) {
+  background: rgba(139, 0, 0, 0.25);
+  box-shadow: 0 0 12px rgba(139, 0, 0, 0.05);
+}
+.player-card .actions .infect {
+  background: rgba(26, 74, 26, 0.2);
+  color: #66bb6a;
+  border-color: rgba(46, 204, 113, 0.06);
+}
+.player-card .actions .infect:hover:not(:disabled) {
+  background: rgba(46, 204, 113, 0.15);
+  box-shadow: 0 0 12px rgba(46, 204, 113, 0.05);
+}
+.player-card .actions .convert-to-wolf {
+  background: rgba(74, 58, 10, 0.2);
+  color: #d4a017;
+  border-color: rgba(212, 160, 23, 0.06);
+}
+.player-card .actions .convert-to-wolf:hover:not(:disabled) {
+  background: rgba(212, 160, 23, 0.12);
+  box-shadow: 0 0 12px rgba(212, 160, 23, 0.05);
+}
+.player-card .actions .message-btn {
+  background: rgba(184, 134, 11, 0.1);
+  color: #d4a017;
+  border-color: rgba(184, 134, 11, 0.06);
+}
+.player-card .actions .message-btn:hover:not(:disabled) {
+  background: rgba(184, 134, 11, 0.2);
+  box-shadow: 0 0 12px rgba(184, 134, 11, 0.05);
+}
+.player-card .actions button:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+  transform: none !important;
+}
+.player-card.dead .actions button {
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+/* شارات الحالات */
+.infected-badge {
+  background: rgba(107, 26, 26, 0.2);
+  color: #ff6b6b;
+  padding: 1px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  border: 1px solid #ff6b6b;
+  margin-right: 5px;
+  display: inline-block;
+}
+.wolf-badge {
+  background: rgba(26, 58, 26, 0.2);
+  color: #66bb6a;
+  padding: 1px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  border: 1px solid #66bb6a;
+  margin-right: 5px;
+  display: inline-block;
+}
+.convertible-badge {
+  background: rgba(74, 58, 10, 0.2);
+  color: #d4a017;
+  padding: 1px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  border: 1px solid #d4a017;
+  margin-right: 5px;
+  display: inline-block;
+}
+
+/* حاوية الرسائل في تحكم الراوي */
+#messagesContainer {
+  margin-top: 10px;
+  background: rgba(13, 8, 5, 0.3);
+  border: 1px solid rgba(212, 160, 23, 0.06);
+  border-radius: 12px;
+  padding: 12px;
+  touch-action: none;
+}
+#messagesContainer .title {
+  color: #d4a017;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+#messagesContainer .title .badge {
+  background: rgba(212, 160, 23, 0.06);
+  color: #d4a017;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+#messagesContainer .title .clear-btn {
+  background: rgba(107, 26, 26, 0.2);
+  color: #ff6b6b;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#messagesContainer .title .clear-btn:hover {
+  background: rgba(139, 0, 0, 0.25);
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.05);
+}
+
+.messages-wrapper {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+#messagesList {
+  flex: 1;
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 4px;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+#messagesList::-webkit-scrollbar { width: 4px; }
+#messagesList::-webkit-scrollbar-track { background: rgba(255,255,255,0.01); border-radius: 10px; }
+#messagesList::-webkit-scrollbar-thumb { background: rgba(212,160,23,0.08); border-radius: 10px; }
+
+.scroll-btn {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(212, 160, 23, 0.06);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  color: rgba(212, 160, 23, 0.2);
+  font-size: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  touch-action: manipulation;
+  user-select: none;
+  flex-shrink: 0;
+}
+.scroll-btn:hover {
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(212, 160, 23, 0.4);
+  transform: scale(1.05);
+}
+.scroll-btn:active { transform: scale(0.95); }
+.scroll-btn.up { margin-bottom: auto; }
+.scroll-btn.down { margin-top: auto; }
+.scroll-buttons { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+
+/* عناصر الرسائل في تحكم الراوي */
+.message-item {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.message-item .sender {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #d4a017;
+  font-size: 12px;
+  font-weight: bold;
+  min-width: 70px;
+}
+.message-item .sender-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(212, 160, 23, 0.06);
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.01);
+  flex-shrink: 0;
+}
+.message-item .sender .role-tag {
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 10px;
+  font-weight: normal;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+.message-item .sender .narrator-tag {
+  color: #d4a017;
+  font-size: 10px;
+  font-weight: normal;
+  background: rgba(42, 26, 10, 0.2);
+  padding: 0 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(212, 160, 23, 0.06);
+}
+.message-item .text {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+  flex: 1;
+  min-width: 100px;
+}
+.message-item .time {
+  color: rgba(255, 255, 255, 0.08);
+  font-size: 10px;
+  min-width: 50px;
+  text-align: left;
+  font-feature-settings: "tnum";
+  direction: ltr;
+}
+.message-item .delete-msg {
+  background: rgba(107, 26, 26, 0.2);
+  color: #ff6b6b;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.message-item .delete-msg:hover {
+  background: rgba(139, 0, 0, 0.25);
+  box-shadow: 0 0 10px rgba(139, 0, 0, 0.05);
+}
+.no-messages {
+  color: rgba(255, 255, 255, 0.08);
+  font-size: 13px;
+  text-align: center;
+  padding: 15px 10px;
+  font-style: italic;
+}
+
+/* 🛠️ زر الخروج الطبيعي المرن (تم تعديله لمنع الحجب وتداخل الأزرار) */
+#exitBtn {
+  position: relative;
+  width: 100%;
+  margin-top: 15px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 0, 0, 0.12);
+  background: rgba(161, 13, 13, 0.2);
+  color: #ff6b6b;
+  font-family: 'Cinzel', serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 16px;
+  display: block;
+}
+#exitBtn:hover {
+  background: rgba(139, 0, 0, 0.35);
+  box-shadow: 0 0 25px rgba(139, 0, 0, 0.15);
+  transform: scale(1.01);
+}
+
+/* ============================================================
+   التجاوب مع الشاشات الصغيرة (جميع الصفحات)
+   ============================================================ */
+@media (max-width: 600px) {
+  .app-card { padding: 24px 16px 22px; border-radius: 24px; }
+  .app-title { font-size: 26px; }
+  .app-icon { width: 60px; height: 60px; font-size: 30px; border-radius: 20px; }
+  .btn-main { padding: 14px 16px; font-size: 13px; border-radius: 14px; }
+  .secondary-actions .btn-secondary { font-size: 11px; padding: 10px 10px; }
+
+  /* host */
+  .role-grid { grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .role-circle { width: 50px; height: 50px; border-width: 2px; }
+  .role-circle .role-name-tooltip { font-size: 8px; bottom: -18px; }
+  .role-circle .check-mark { width: 16px; height: 16px; font-size: 10px; top: -4px; right: -4px; }
+  .counter-circle { width: 80px; height: 80px; }
+  .counter-item input { width: 50px; font-size: 16px; padding: 4px 8px; }
+  .counter-group { gap: 25px; }
+  .match-counter { flex-direction: column; align-items: stretch; gap: 8px; }
+  .match-counter .info { justify-content: center; }
+  .match-counter .status { text-align: center; }
+  .role-description-box { font-size: 13px; }
+  .privacy-options { flex-direction: column; }
+  .room-display .room-code { font-size: 32px; letter-spacing: 6px; }
+
+  /* player */
+  .action-buttons-row .btn { width: 46px; height: 42px; font-size: 17px; }
+  .suggest-fab { width: 40px; height: 40px; font-size: 18px; top: 12px; left: 12px; }
+  #wolfMessagesList { max-height: 120px; }
+  .wolf-vote-row { flex-wrap: wrap; }
+  .wolf-vote-btn-small { width: 100%; }
+  #narratorNotifications { top: 115px; }
+  #deathNotificationsContainer { top: 65px; }
+
+  /* host-control */
+  .player-card { min-height: 44px; padding: 6px 8px; }
+  .player-card .info { flex: 1 1 100%; }
+  .player-card .actions { flex: 1 1 100%; justify-content: flex-start; gap: 6px; }
+  .player-card .actions button { flex: 1; text-align: center; font-size: 11px; height: 28px; padding: 4px 8px; }
+  .player-card .avatar { width: 24px; height: 24px; }
+  .player-card .details .name { font-size: 13px; }
+  .player-card .details .role { font-size: 10px; }
+  #messagesList { max-height: 150px; }
+  .message-item { flex-wrap: wrap; gap: 4px; }
+  .message-item .sender { min-width: 60px; font-size: 11px; }
+  .message-item .sender-avatar { width: 24px; height: 24px; }
+  .message-item .text { font-size: 12px; width: 100%; order: 3; }
+  .message-item .time { font-size: 9px; min-width: 50px; }
+  .scroll-btn { width: 36px; height: 36px; min-width: 36px; font-size: 18px; }
+  .day-night-toggle { font-size: 15px; padding: 12px; }
+  #exitBtn { font-size: 14px; padding: 12px 16px; }
+}
+
+@media (max-width: 400px) {
+  /* host */
+  .role-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .role-circle { width: 40px; height: 40px; border-width: 2px; }
+  .role-circle .role-name-tooltip { display: none; }
+  .counter-circle { width: 70px; height: 70px; }
+  .counter-item input { width: 45px; font-size: 14px; padding: 3px 6px; }
+  .counter-group { gap: 20px; }
+  .room-display .room-code { font-size: 26px; letter-spacing: 4px; }
+
+  /* player */
+  .action-buttons-row .btn { width: 40px; height: 36px; font-size: 15px; }
+  #wolfMessagesList { max-height: 100px; }
+  .dead-player-card { width: 60px; }
+  .dead-player-card .dead-avatar { width: 50px; height: 50px; }
+  #kickedNotification { padding: 20px; }
+  #kickedNotification .kick-title { font-size: 18px; }
+
+  /* host-control */
+  .player-card .avatar { width: 20px; height: 20px; }
+  .player-card .details .name { font-size: 12px; }
+  .player-card .details .role { font-size: 9px; }
+  #messagesList { max-height: 120px; }
+  .message-item .sender-avatar { width: 20px; height: 20px; }
+  .scroll-btn { width: 32px; height: 32px; min-width: 32px; font-size: 16px; }
+  .day-night-toggle { font-size: 13px; padding: 10px; }
 }
