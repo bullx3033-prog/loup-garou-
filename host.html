@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -133,7 +133,6 @@
       gap: 12px;
     }
 
-    /* 🛠️ إلغاء أي وضع ثابت لزر الخروج ليكون حراً تحت زر البدء تماماً */
     #exitBtn {
       position: static !important;
       bottom: auto !important;
@@ -155,7 +154,6 @@
       box-shadow: 0 0 20px rgba(255, 0, 0, 0.4) !important;
     }
 
-    /* ===== إضافات جديدة ===== */
     .create-section {
       background: #1a1a1a;
       border: 1px solid #d4a017;
@@ -381,7 +379,7 @@
 </head>
 <body>
   <div class="container">
-    <h2 id="hostTitle">🐺 لو ڨارو - الراوي</h2>
+    <h2>🐺 لو ڨارو - الراوي</h2>
 
     <!-- ===== قسم إنشاء الغرفة ===== -->
     <div class="create-section" id="createSection">
@@ -426,20 +424,20 @@
       </div>
 
       <div class="section">
-        <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية</span>
+        <span class="section-title">🃏 اختر الأدوار الإضافية</span>
         <div id="rolesGridContainer">
-          <div id="rolesLoading" style="color:#777; text-align:center;"></div>
+          <div id="rolesLoading" style="color:#777; text-align:center;">جاري التحميل...</div>
           <div id="rolesGrid" class="role-grid hidden"></div>
         </div>
         <div id="roleDescriptionBox" class="role-description-box">
           <span class="desc-title" id="descTitle">📖 الوصف:</span>
           <span class="desc-text" id="descText"></span>
         </div>
-        <p id="clickHint" style="color:#777; font-size:12px; margin-top:10px; text-align:center;"></p>
+        <p id="clickHint" style="color:#777; font-size:12px; margin-top:10px; text-align:center;">انقر على الدور لعرض الوصف أو الاختيار</p>
       </div>
 
       <div class="section">
-        <span class="section-title" id="roomSettingsTitle">⚙️ إعدادات الغرفة</span>
+        <span class="section-title">⚙️ إعدادات الغرفة</span>
         <div class="counter-group">
           <div class="counter-item">
             <div class="counter-circle">
@@ -457,20 +455,20 @@
       </div>
 
       <div class="section">
-        <span class="section-title" id="readyStatusTitle">📊 حالة التجهيز</span>
+        <span class="section-title">📊 حالة التجهيز</span>
         <div class="match-counter" id="matchCounter">
           <div class="info">
-            <span id="playersLabel"></span> <span class="count" id="playerCount">0</span>
-            <span id="rolesLabel"></span> <span class="count" id="roleCount">0</span>
+            <span>اللاعبون:</span> <span class="count" id="playerCount">0</span>
+            <span>الأدوار:</span> <span class="count" id="roleCount">0</span>
           </div>
           <div class="status not-ready" id="matchStatus">⛔ غير متطابق</div>
         </div>
       </div>
 
       <div class="section">
-        <span class="section-title" id="playersTitle">👥 اللاعبون في الغرفة</span>
+        <span class="section-title">👥 اللاعبون في الغرفة</span>
         <div id="playersList" class="player-list">
-          <p id="noPlayersMsg" style="color:#777; text-align:center;"></p>
+          <p id="noPlayersMsg" style="color:#777; text-align:center;">لا توجد لاعبون حتى الآن</p>
         </div>
         <div class="flex" style="margin-top:10px;">
           <button class="btn btn-secondary" id="backBtn">🔙 رجوع</button>
@@ -478,7 +476,6 @@
         </div>
       </div>
 
-      <!-- ===== أزرار الإجراءات الرئيسية أسفل الشاشة بترتيب سليم ===== -->
       <div class="start-btn-wrapper">
         <button class="btn btn-success" id="startGameBtn">🚀 بدء اللعبة</button>
         <button class="btn btn-danger" id="exitBtn">🚪 خروج</button>
@@ -488,7 +485,6 @@
   </div>
 
   <script type="module">
-    import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
     import {
       getRoomCode, setRoomCode, clearRoomCode,
       createOrGetRoom, deleteRoom, checkRoomExpiry,
@@ -496,32 +492,6 @@
       distributeRoles,
       db, ref, update, remove, get, onValue, push, set
     } from "./logic.js";
-
-    // ===== ترجمة =====
-    function applyTranslations() {
-      document.title = t('appName') + ' - ' + t('hostTitle');
-      document.getElementById('hostTitle').textContent = `🐺 ${t('appName')} - ${t('hostTitle')}`;
-      document.getElementById('exitBtn').textContent = '🚪 ' + t('exit');
-      document.getElementById('refreshBtn').textContent = '🔄 ' + t('refresh');
-      document.getElementById('startGameBtn').textContent = '🚀 ' + t('startGame');
-      document.getElementById('backBtn').textContent = '🔙 ' + t('back');
-      document.getElementById('extraRolesTitle').textContent = '🃏 ' + t('chooseExtraRoles');
-      document.getElementById('roomSettingsTitle').textContent = '⚙️ ' + t('roomSettings');
-      document.getElementById('playersTitle').textContent = '👥 ' + t('playersInRoom');
-      document.getElementById('clickHint').textContent = t('clickToSelectRole');
-      document.getElementById('readyStatusTitle').textContent = '📊 ' + t('readyStatus');
-      document.getElementById('playersLabel').innerHTML = t('playersLabel');
-      document.getElementById('rolesLabel').innerHTML = t('rolesLabel');
-      document.getElementById('noPlayersMsg').textContent = t('noPlayersYet');
-      document.getElementById('rolesLoading').textContent = t('loading');
-      document.getElementById('saveDiscordBtn').textContent = '💾 ' + t('save');
-      document.getElementById('createRoomBtn').textContent = '🚀 ' + t('createRoom');
-
-      const lang = getCurrentLang();
-      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-      document.documentElement.lang = lang;
-    }
-    applyTranslations();
 
     // ===== عناصر واجهة المستخدم =====
     const createSection = document.getElementById('createSection');
@@ -647,7 +617,7 @@
       }
     });
 
-    // ===== عناصر اللعبة الأصليّة =====
+    // ===== العناصر الأصلية =====
     const rolesGrid = document.getElementById('rolesGrid');
     const rolesLoading = document.getElementById('rolesLoading');
     const playersList = document.getElementById('playersList');
@@ -673,12 +643,11 @@
         descBox.style.display = 'none';
         return;
       }
-      const displayName = translateDynamicRole(role.name);
-      const lang = getCurrentLang();
+      const displayName = typeof role.name === 'object' ? (role.name.ar || role.name.fr || 'دور') : role.name;
       let description = '';
       if (role.description) {
         if (typeof role.description === 'object') {
-          description = role.description[lang] || role.description.ar || role.description.fr || role.description.en || '';
+          description = role.description.ar || role.description.fr || role.description.en || '';
         } else {
           description = role.description;
         }
@@ -689,7 +658,7 @@
         descBox.style.display = 'block';
       } else {
         descTitle.textContent = `📖 ${displayName}:`;
-        descText.textContent = '⚠️ ' + t('noDescription');
+        descText.textContent = '⚠️ لا يوجد وصف لهذا الدور.';
         descBox.style.display = 'block';
       }
     }
@@ -705,10 +674,10 @@
       roleCountSpan.textContent = totalRoles;
 
       if (playerCount === totalRoles && playerCount > 0) {
-        matchStatus.textContent = '✅ ' + t('ready');
+        matchStatus.textContent = '✅ جاهز';
         matchStatus.className = 'status ready';
       } else {
-        matchStatus.textContent = '⛔ ' + t('notMatched') + ` (${playerCount} / ${totalRoles})`;
+        matchStatus.textContent = `⛔ غير متطابق (${playerCount} / ${totalRoles})`;
         matchStatus.className = 'status not-ready';
       }
     }
@@ -719,7 +688,6 @@
         const data = snap.val() || {};
         const allRoles = Object.values(data);
 
-        // 🔍 تحديث صور العدادات السفلية ديناميكياً من قواعد البيانات
         const wolfRole = allRoles.find(r => {
           const n = typeof r.name === 'object' ? (r.name.ar || r.name.fr || r.name.en || '') : String(r.name || '');
           return n.trim().includes("ذئب") || r.isWol === true;
@@ -736,7 +704,6 @@
           villagerCounterImg.src = villagerRole.imageUrl;
         }
 
-        // 🛑 استثناء القروي والذئب العادي من الشبكة العلوية للأدوار الإضافية
         const filteredRoles = allRoles.filter(role => {
           const nameStr = typeof role.name === 'object' ? (role.name.ar || role.name.fr || role.name.en || '') : String(role.name || '');
           const cleanName = nameStr.trim().toLowerCase();
@@ -748,7 +715,7 @@
         });
 
         if (filteredRoles.length === 0) {
-          rolesLoading.textContent = '📭 ' + t('noCustomRoles');
+          rolesLoading.textContent = '📭 لا توجد أدوار إضافية مضافة';
           rolesLoading.classList.remove('hidden');
           rolesGrid.classList.add('hidden');
           return;
@@ -758,7 +725,7 @@
         rolesGrid.classList.remove('hidden');
       } catch (e) {
         console.error(e);
-        rolesLoading.textContent = '❌ ' + t('errorOccurred');
+        rolesLoading.textContent = '❌ حدث خطأ أثناء تحميل الأدوار';
       }
     }
 
@@ -809,7 +776,7 @@
 
     function renderPlayers(playersData) {
       if (!playersData || Object.keys(playersData).length === 0) {
-        playersList.innerHTML = `<p style="color:#777; text-align:center;">${t('noPlayersYet')}</p>`;
+        playersList.innerHTML = `<p style="color:#777; text-align:center;">لا يوجد لاعبون في الغرفة بعد</p>`;
         currentPlayers = [];
         updateMatchCounter();
         return;
@@ -817,10 +784,11 @@
       currentPlayers = Object.values(playersData);
       let html = '';
       currentPlayers.forEach(p => {
+        const roleText = p.role ? (typeof p.role === 'object' ? (p.role.ar || 'دور') : p.role) : 'في الانتظار';
         html += `
           <div class="player-item">
             <span class="name">👤 ${p.name}</span>
-            <span class="badge">${p.role ? '🎭 ' + translateDynamicRole(p.role) : '⏳'}</span>
+            <span class="badge">🎭 ${roleText}</span>
           </div>
         `;
       });
@@ -857,7 +825,7 @@
       const totalRoles = wolves + villagers + selected.length;
 
       if (currentPlayers.length !== totalRoles) {
-        alert(`❌ ${t('playersRolesMismatch')} (${currentPlayers.length} / ${totalRoles})`);
+        alert(`❌ عدد اللاعبين (${currentPlayers.length}) لا يتطابق مع إجمالي الأدوار المحددة (${totalRoles})`);
         return;
       }
 
@@ -872,10 +840,10 @@
 
       try {
         await distributeRoles(roomCode, wolves, villagers, selected);
-        alert('✅ ' + t('rolesDistributed'));
+        alert('✅ تم توزيع الأدوار بنجاح!');
         window.location.href = 'host-control.html';
       } catch (err) {
-        alert('❌ ' + t('errorOccurred') + ': ' + err.message);
+        alert('❌ حدث خطأ: ' + err.message);
       }
     });
 
@@ -884,7 +852,7 @@
       const roomCode = getRoomCode();
       if (!roomCode) return;
       
-      if (!confirm(t('confirmExit'))) return;
+      if (!confirm('⚠️ هل أنت متأكد من إنهاء الغرفة والخروج؟')) return;
       
       try {
         await deleteRoom(roomCode);
@@ -892,7 +860,7 @@
         window.location.href = 'index.html';
       } catch (err) {
         console.error(err);
-        alert('⚠️ ' + t('errorOccurred'));
+        alert('⚠️ حدث خطأ أثناء إغلاق الغرفة');
       }
     });
 
