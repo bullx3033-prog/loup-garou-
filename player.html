@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -975,6 +975,7 @@
     let roomListener = null;
     let shownDeaths = new Set();
     let shownNarratorNotifs = new Set();
+    let isCardManuallyHidden = false; // تتبع ما إذا أغلق اللاعب البطاقة بنفسه
 
     const hasRoomCode = roomCode ? true : false;
 
@@ -1404,11 +1405,13 @@
       hideBtn.textContent = '🔒';
       hideBtn.title = 'إخفاء البطاقة';
       hideBtn.addEventListener('click', function() {
+        isCardManuallyHidden = true; // تسجيل أن اللاعب أغلق البطاقة بنفسه
         roleBox.innerHTML = '';
         const showBtn = document.createElement('button');
         showBtn.className = 'btn-show-card';
         showBtn.textContent = '🃏 إظهار البطاقة';
         showBtn.addEventListener('click', function() {
+          isCardManuallyHidden = false; // إعادة فتح البطاقة
           renderRoleContent(player);
         });
         roleBox.appendChild(showBtn);
@@ -1466,7 +1469,6 @@
       listenToGameState(roomCode);
     }
 
-    // ===== عرض بطاقة المستذئب مع تركيب الصورة وتنبيه "أنت مستذئب" =====
     async function renderInfectedContent(player) {
       const description = await fetchRoleDescription(player.role);
       roleBox.innerHTML = '';
@@ -1478,7 +1480,6 @@
       nameDiv.textContent = `🎭 دورك: ${roleDisplay}`;
       roleBox.appendChild(nameDiv);
 
-      // 🖼️ تركيب طبقة الاستذئاب فوق صورة الدور الأصلية
       const wrapper = document.createElement('div');
       wrapper.className = 'role-image-wrapper';
       
@@ -1497,7 +1498,6 @@
 
       roleBox.appendChild(wrapper);
 
-      // ⚠️ تنبيه "أنت مستذئب" أسفل صورة الدور
       const noticeDiv = document.createElement('div');
       noticeDiv.className = 'infected-notice';
       noticeDiv.textContent = '⚠️ أنت مستذئب!';
@@ -1518,11 +1518,13 @@
       hideBtn.textContent = '🔒';
       hideBtn.title = 'إخفاء البطاقة';
       hideBtn.addEventListener('click', function() {
+        isCardManuallyHidden = true; // تسجيل إغلاق البطاقة يدوياً
         roleBox.innerHTML = '';
         const showBtn = document.createElement('button');
         showBtn.className = 'btn-show-card';
         showBtn.textContent = '🃏 إظهار البطاقة';
         showBtn.addEventListener('click', function() {
+          isCardManuallyHidden = false; // إعادة فتح البطاقة
           renderInfectedContent(player);
         });
         roleBox.appendChild(showBtn);
@@ -1614,11 +1616,13 @@
       hideBtn.textContent = '🔒';
       hideBtn.title = 'إخفاء البطاقة';
       hideBtn.addEventListener('click', function() {
+        isCardManuallyHidden = true; // تسجيل إغلاق البطاقة يدوياً
         roleBox.innerHTML = '';
         const showBtn = document.createElement('button');
         showBtn.className = 'btn-show-card';
         showBtn.textContent = '🃏 إظهار البطاقة';
         showBtn.addEventListener('click', function() {
+          isCardManuallyHidden = false; // إعادة فتح البطاقة
           renderWolfContent(player);
         });
         roleBox.appendChild(showBtn);
@@ -1694,6 +1698,7 @@
         listenToDeathNotifications(roomCode);
         listenToGameState(roomCode);
         listenToRoomDeletion(roomCode);
+
         if (player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
@@ -1721,45 +1726,40 @@
           roleBox.appendChild(exitBtn);
           return;
         }
+
+        // 🛑 شرط ذكي: إذا كان اللاعب قد أغلق البطاقة بنفسه، فلا تقم بإعادة فتحها تلقائياً عند التحديث
+        if (isCardManuallyHidden) {
+          return;
+        }
+
         if (player.isInfected && !player.isDead) {
-          statusDiv.classList.add("hidden");
-          roleBox.classList.remove("hidden");
-          roleBox.innerHTML = '';
-          const showBtn = document.createElement('button');
-          showBtn.className = 'btn-show-card';
-          showBtn.textContent = '🃏 إظهار البطاقة';
-          showBtn.addEventListener('click', function() {
+          // إذا كانت البطاقة مرسومة ومفتوحة مسبقاً، لا تعيد رسمها لمنع الوميض
+          if (!roleBox.querySelector('.role-img') && roleBox.classList.contains('hidden')) {
+            statusDiv.classList.add("hidden");
+            roleBox.classList.remove("hidden");
             renderInfectedContent(player);
-          });
-          roleBox.appendChild(showBtn);
+          }
           return;
         }
+
         if (player.isWolf && !player.isDead) {
-          statusDiv.classList.add("hidden");
-          roleBox.classList.remove("hidden");
-          roleBox.innerHTML = '';
-          const showBtn = document.createElement('button');
-          showBtn.className = 'btn-show-card';
-          showBtn.textContent = '🃏 إظهار البطاقة';
-          showBtn.addEventListener('click', function() {
+          if (!roleBox.querySelector('.role-img') && roleBox.classList.contains('hidden')) {
+            statusDiv.classList.add("hidden");
+            roleBox.classList.remove("hidden");
             renderWolfContent(player);
-          });
-          roleBox.appendChild(showBtn);
+          }
           return;
         }
+
         if (player.role) {
-          statusDiv.classList.add("hidden");
-          roleBox.classList.remove("hidden");
-          roleBox.innerHTML = '';
-          const showBtn = document.createElement('button');
-          showBtn.className = 'btn-show-card';
-          showBtn.textContent = '🃏 إظهار البطاقة';
-          showBtn.addEventListener('click', function() {
+          if (!roleBox.querySelector('.role-img') && roleBox.classList.contains('hidden')) {
+            statusDiv.classList.add("hidden");
+            roleBox.classList.remove("hidden");
             renderRoleContent(player);
-          });
-          roleBox.appendChild(showBtn);
+          }
           return;
         }
+
         statusDiv.classList.remove("hidden");
         waitingText.textContent = `⏳ في انتظار بدء اللعبة... (رمز الغرفة: ${roomCode})`;
         if (playersListener) playersListener();
