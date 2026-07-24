@@ -43,7 +43,6 @@
       white-space: nowrap; opacity: 0; transition: 0.3s; pointer-events: none; font-family: 'Cinzel', serif; }
     .role-circle:hover .role-name-tooltip { opacity: 1; }
 
-    /* 🔴 التعديل الرئيسي: لون التحديد أحمر دموي متوهج */
     .role-circle.selected {
       border-color: #ff1a1a;
       box-shadow: 0 0 30px #ff1a1a, 0 0 60px rgba(255, 0, 0, 0.4);
@@ -52,13 +51,11 @@
     }
     .role-circle .check-mark {
       position: absolute;
-      top: -6px;
-      right: -6px;
+      top: -6px; right: -6px;
       background: #8b0000;
       color: #fff;
       border-radius: 50%;
-      width: 20px;
-      height: 20px;
+      width: 20px; height: 20px;
       font-size: 12px;
       display: none;
       align-items: center;
@@ -69,14 +66,12 @@
     }
     .role-circle.selected .check-mark { display: flex; }
 
-    /* حركة نبض الدم */
     @keyframes pulseRed {
       0% { box-shadow: 0 0 20px #ff1a1a, 0 0 40px rgba(255, 0, 0, 0.2); }
       50% { box-shadow: 0 0 40px #ff1a1a, 0 0 80px rgba(255, 0, 0, 0.5); }
       100% { box-shadow: 0 0 20px #ff1a1a, 0 0 40px rgba(255, 0, 0, 0.2); }
     }
 
-    /* ===== منطقة عرض وصف الدور ===== */
     .role-description-box {
       background: #0d0805;
       border: 1px solid #d4a017;
@@ -95,7 +90,6 @@
     .role-description-box .desc-text { color: #ccc; }
     .role-description-box .empty-desc { color: #777; font-style: italic; }
 
-    /* ===== عدادات الذئاب والقرويين ===== */
     .counter-group { display: flex; gap: 40px; flex-wrap: wrap; margin: 10px 0; justify-content: center; }
     .counter-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
     .counter-circle { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #555; overflow: hidden;
@@ -107,7 +101,6 @@
       transition: 0.3s; }
     .counter-item input:focus { border-color: crimson; outline: none; box-shadow: 0 0 15px rgba(255, 0, 0, 0.3); }
 
-    /* ===== عداد التطابق ===== */
     .match-counter {
       background: #1a1a1a;
       border: 1px solid #555;
@@ -127,15 +120,238 @@
     .match-counter .status.ready { background: #1a4a1a; color: #66bb6a; border: 1px solid #66bb6a; }
     .match-counter .status.not-ready { background: #6b1a1a; color: #ff6b6b; border: 1px solid #ff6b6b; }
 
-    /* ===== قائمة اللاعبين ===== */
     .player-list { margin-top: 10px; }
     .player-item { background: #1a1a1a; border: 1px solid #333; border-radius: 8px;
       padding: 8px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
     .player-item .name { color: #f0e0c0; font-size: 16px; }
     .player-item .badge { background: #2c2c2c; padding: 2px 10px; border-radius: 20px; font-size: 12px; color: #ccc; }
 
-    .start-btn-wrapper { margin-top: 15px; }
-    .start-btn-wrapper .btn { font-size: 20px; padding: 16px; }
+    .start-btn-wrapper {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* 🛠️ إلغاء أي وضع ثابت لزر الخروج ليكون حراً تحت زر البدء تماماً */
+    #exitBtn {
+      position: static !important;
+      bottom: auto !important;
+      left: auto !important;
+      right: auto !important;
+      top: auto !important;
+      transform: none !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 14px 20px !important;
+      font-size: 16px !important;
+      border-radius: 10px !important;
+      background: #a10d0d !important;
+      color: #fff !important;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.2) !important;
+    }
+    #exitBtn:hover {
+      background: #8b0000 !important;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.4) !important;
+    }
+
+    /* ===== إضافات جديدة ===== */
+    .create-section {
+      background: #1a1a1a;
+      border: 1px solid #d4a017;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .create-section .label {
+      color: #ccc;
+      font-size: 14px;
+      display: block;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .privacy-options {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .privacy-options .option {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid #555;
+      background: #1a1a1a;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+      color: #aaa;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .privacy-options .option:hover {
+      border-color: #888;
+    }
+    .privacy-options .option.selected {
+      border-color: #d4a017;
+      background: #2a1a0a;
+      color: #d4a017;
+      box-shadow: 0 0 20px rgba(212, 160, 23, 0.1);
+    }
+    .privacy-options .option .icon { font-size: 28px; display: block; margin-bottom: 4px; }
+    .privacy-options .option .desc {
+      font-size: 10px;
+      color: #777;
+      font-weight: normal;
+      display: block;
+      margin-top: 2px;
+    }
+    .btn-create {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      background: #d4a017;
+      color: #000;
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-create:hover {
+      background: #b8860b;
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.3);
+      transform: scale(1.02);
+    }
+    .btn-create:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .room-display {
+      display: none;
+      background: #0d0805;
+      border: 1px solid #d4a017;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .room-display .room-label {
+      color: #aaa;
+      font-size: 12px;
+      display: block;
+    }
+    .room-display .room-code {
+      color: #d4a017;
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: 10px;
+      font-family: 'Cinzel', serif;
+      margin: 6px 0;
+    }
+    .room-display .room-status {
+      color: #aaa;
+      font-size: 13px;
+    }
+    .room-display .privacy-badge {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 3px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .room-display .privacy-badge.public {
+      background: #1a4a1a;
+      color: #66bb6a;
+      border: 1px solid #66bb6a;
+    }
+    .room-display .privacy-badge.private {
+      background: #4a1a1a;
+      color: #ff6b6b;
+      border: 1px solid #ff6b6b;
+    }
+    .room-display .copy-btn {
+      background: transparent;
+      border: 1px solid #555;
+      color: #ccc;
+      padding: 6px 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      transition: 0.3s;
+      margin-top: 8px;
+    }
+    .room-display .copy-btn:hover {
+      background: #333;
+      border-color: #d4a017;
+      color: #fff;
+    }
+
+    .discord-section {
+      background: #1a1a1a;
+      border: 1px solid #5865F2;
+      border-radius: 12px;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+    }
+    .discord-section .discord-label {
+      color: #5865F2;
+      font-size: 13px;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .discord-section .discord-row {
+      display: flex;
+      gap: 10px;
+    }
+    .discord-section .discord-row input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #111;
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      direction: ltr;
+    }
+    .discord-section .discord-row input:focus {
+      outline: none;
+      border-color: #5865F2;
+    }
+    .discord-section .discord-row .btn-discord {
+      background: #5865F2;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      white-space: nowrap;
+    }
+    .discord-section .discord-row .btn-discord:hover {
+      background: #4752C4;
+      box-shadow: 0 0 20px rgba(88, 101, 242, 0.3);
+    }
+    .discord-section .hint-text {
+      color: #777;
+      font-size: 12px;
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    #gameSections {
+      display: none;
+    }
 
     @media (max-width: 600px) {
       .role-grid { grid-template-columns: repeat(6, 1fr); gap: 8px; }
@@ -149,6 +365,8 @@
       .match-counter .info { justify-content: center; }
       .match-counter .status { text-align: center; }
       .role-description-box { font-size: 13px; }
+      .privacy-options { flex-direction: column; }
+      .room-display .room-code { font-size: 32px; letter-spacing: 6px; }
     }
     @media (max-width: 400px) {
       .role-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
@@ -157,6 +375,7 @@
       .counter-circle { width: 70px; height: 70px; }
       .counter-item input { width: 45px; font-size: 14px; padding: 3px 6px; }
       .counter-group { gap: 20px; }
+      .room-display .room-code { font-size: 26px; letter-spacing: 4px; }
     }
   </style>
 </head>
@@ -164,68 +383,108 @@
   <div class="container">
     <h2 id="hostTitle">🐺 لو ڨارو - الراوي</h2>
 
-    <div class="room-code-display">
-      <span id="roomCodeLabel"></span> <span id="roomCodeValue">---</span>
+    <!-- ===== قسم إنشاء الغرفة ===== -->
+    <div class="create-section" id="createSection">
+      <span class="label">🔑 اختر نوع الغرفة</span>
+      <div class="privacy-options">
+        <div class="option selected" data-value="public" id="publicOption">
+          <span class="icon">🌍</span>
+          عامة
+          <span class="desc">تظهر للجميع في قائمة الغرف</span>
+        </div>
+        <div class="option" data-value="private" id="privateOption">
+          <span class="icon">🔒</span>
+          خاصة
+          <span class="desc">لا تظهر، فقط من يعرف الرقم يدخل</span>
+        </div>
+      </div>
+      <button class="btn-create" id="createRoomBtn">🚀 إنشاء غرفة</button>
     </div>
 
-    <div class="section">
-      <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية</span>
-      <div id="rolesGridContainer">
-        <div id="rolesLoading" style="color:#777; text-align:center;"></div>
-        <div id="rolesGrid" class="role-grid hidden"></div>
+    <!-- ===== عرض الغرفة بعد الإنشاء ===== -->
+    <div class="room-display" id="roomDisplay">
+      <span class="room-label">🔑 رمز الغرفة</span>
+      <div class="room-code" id="roomCodeDisplay">----</div>
+      <div class="room-status" id="roomStatus">⏳ في انتظار اللاعبين...</div>
+      <div>
+        <span class="privacy-badge public" id="privacyBadge">🌍 عامة</span>
       </div>
-      <div id="roleDescriptionBox" class="role-description-box">
-        <span class="desc-title" id="descTitle">📖 الوصف:</span>
-        <span class="desc-text" id="descText"></span>
-      </div>
-      <p id="clickHint" style="color:#777; font-size:12px; margin-top:10px; text-align:center;"></p>
+      <button class="copy-btn" id="copyRoomCodeBtn">📋 نسخ الرقم</button>
     </div>
 
-    <div class="section">
-      <span class="section-title" id="roomSettingsTitle">⚙️ إعدادات الغرفة</span>
-      <div class="counter-group">
-        <div class="counter-item">
-          <div class="counter-circle">
-            <img src="https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" alt="ذئب" />
+    <!-- ===== باقي الأقسام ===== -->
+    <div id="gameSections">
+
+      <!-- ===== قسم Discord ===== -->
+      <div class="discord-section">
+        <span class="discord-label">🎙️ رابط غرفة Discord</span>
+        <div class="discord-row">
+          <input type="text" id="discordLinkInput" placeholder="https://discord.gg/..." />
+          <button class="btn-discord" id="saveDiscordBtn">💾 حفظ</button>
+        </div>
+        <div class="hint-text">📌 انسخ رابط غرفة الصوت من Discord والصقه هنا ليظهر للاعبين</div>
+      </div>
+
+      <div class="section">
+        <span class="section-title" id="extraRolesTitle">🃏 اختر الأدوار الإضافية</span>
+        <div id="rolesGridContainer">
+          <div id="rolesLoading" style="color:#777; text-align:center;"></div>
+          <div id="rolesGrid" class="role-grid hidden"></div>
+        </div>
+        <div id="roleDescriptionBox" class="role-description-box">
+          <span class="desc-title" id="descTitle">📖 الوصف:</span>
+          <span class="desc-text" id="descText"></span>
+        </div>
+        <p id="clickHint" style="color:#777; font-size:12px; margin-top:10px; text-align:center;"></p>
+      </div>
+
+      <div class="section">
+        <span class="section-title" id="roomSettingsTitle">⚙️ إعدادات الغرفة</span>
+        <div class="counter-group">
+          <div class="counter-item">
+            <div class="counter-circle">
+              <img id="wolfCounterImg" src="https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" alt="ذئب" />
+            </div>
+            <input type="number" id="wolvesCount" value="2" min="1" max="10" />
           </div>
-          <input type="number" id="wolvesCount" value="2" min="1" max="10" />
-        </div>
-        <div class="counter-item">
-          <div class="counter-circle">
-            <img src="https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" alt="قروي" />
+          <div class="counter-item">
+            <div class="counter-circle">
+              <img id="villagerCounterImg" src="https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" alt="قروي" />
+            </div>
+            <input type="number" id="villagersCount" value="3" min="1" max="20" />
           </div>
-          <input type="number" id="villagersCount" value="3" min="1" max="20" />
         </div>
       </div>
-    </div>
 
-    <!-- ===== عداد التطابق ===== -->
-    <div class="section">
-      <span class="section-title" id="readyStatusTitle">📊 حالة التجهيز</span>
-      <div class="match-counter" id="matchCounter">
-        <div class="info">
-          <span id="playersLabel"></span> <span class="count" id="playerCount">0</span>
-          <span id="rolesLabel"></span> <span class="count" id="roleCount">0</span>
+      <div class="section">
+        <span class="section-title" id="readyStatusTitle">📊 حالة التجهيز</span>
+        <div class="match-counter" id="matchCounter">
+          <div class="info">
+            <span id="playersLabel"></span> <span class="count" id="playerCount">0</span>
+            <span id="rolesLabel"></span> <span class="count" id="roleCount">0</span>
+          </div>
+          <div class="status not-ready" id="matchStatus">⛔ غير متطابق</div>
         </div>
-        <div class="status not-ready" id="matchStatus">⛔ غير متطابق</div>
       </div>
-    </div>
 
-    <div class="section">
-      <span class="section-title" id="playersTitle">👥 اللاعبون في الغرفة</span>
-      <div id="playersList" class="player-list">
-        <p id="noPlayersMsg" style="color:#777; text-align:center;"></p>
+      <div class="section">
+        <span class="section-title" id="playersTitle">👥 اللاعبون في الغرفة</span>
+        <div id="playersList" class="player-list">
+          <p id="noPlayersMsg" style="color:#777; text-align:center;"></p>
+        </div>
+        <div class="flex" style="margin-top:10px;">
+          <button class="btn btn-secondary" id="backBtn">🔙 رجوع</button>
+          <button class="btn btn-primary" id="refreshBtn">🔄 تحديث</button>
+        </div>
       </div>
-      <div class="flex" style="margin-top:10px;">
-        <button class="btn btn-secondary" id="backBtn">🔙 رجوع</button>
+
+      <!-- ===== أزرار الإجراءات الرئيسية أسفل الشاشة بترتيب سليم ===== -->
+      <div class="start-btn-wrapper">
+        <button class="btn btn-success" id="startGameBtn">🚀 بدء اللعبة</button>
         <button class="btn btn-danger" id="exitBtn">🚪 خروج</button>
-        <button class="btn btn-primary" id="refreshBtn">🔄 تحديث</button>
       </div>
-    </div>
 
-    <div class="start-btn-wrapper">
-      <button class="btn btn-success" id="startGameBtn">🚀 بدء اللعبة</button>
-    </div>
+    </div><!-- end gameSections -->
   </div>
 
   <script type="module">
@@ -235,7 +494,7 @@
       createOrGetRoom, deleteRoom, checkRoomExpiry,
       listenToPlayers, getPlayers, addPlayer,
       distributeRoles,
-      db, ref, update, remove, get, onValue
+      db, ref, update, remove, get, onValue, push, set
     } from "./logic.js";
 
     // ===== ترجمة =====
@@ -249,13 +508,14 @@
       document.getElementById('extraRolesTitle').textContent = '🃏 ' + t('chooseExtraRoles');
       document.getElementById('roomSettingsTitle').textContent = '⚙️ ' + t('roomSettings');
       document.getElementById('playersTitle').textContent = '👥 ' + t('playersInRoom');
-      document.getElementById('roomCodeLabel').textContent = t('roomCodeLabel');
       document.getElementById('clickHint').textContent = t('clickToSelectRole');
       document.getElementById('readyStatusTitle').textContent = '📊 ' + t('readyStatus');
       document.getElementById('playersLabel').innerHTML = t('playersLabel');
       document.getElementById('rolesLabel').innerHTML = t('rolesLabel');
       document.getElementById('noPlayersMsg').textContent = t('noPlayersYet');
       document.getElementById('rolesLoading').textContent = t('loading');
+      document.getElementById('saveDiscordBtn').textContent = '💾 ' + t('save');
+      document.getElementById('createRoomBtn').textContent = '🚀 ' + t('createRoom');
 
       const lang = getCurrentLang();
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
@@ -263,23 +523,131 @@
     }
     applyTranslations();
 
-    // ===== متغيرات =====
-    const roomCode = getRoomCode();
-    if (!roomCode) {
-      alert('لا يوجد كود غرفة، سيتم إنشاء واحدة جديدة');
-      await createOrGetRoom();
-      location.reload();
+    // ===== عناصر واجهة المستخدم =====
+    const createSection = document.getElementById('createSection');
+    const roomDisplay = document.getElementById('roomDisplay');
+    const roomCodeDisplay = document.getElementById('roomCodeDisplay');
+    const roomStatus = document.getElementById('roomStatus');
+    const privacyBadge = document.getElementById('privacyBadge');
+    const gameSections = document.getElementById('gameSections');
+    const createRoomBtn = document.getElementById('createRoomBtn');
+    const copyBtn = document.getElementById('copyRoomCodeBtn');
+    const publicOption = document.getElementById('publicOption');
+    const privateOption = document.getElementById('privateOption');
+    const discordLinkInput = document.getElementById('discordLinkInput');
+    const saveDiscordBtn = document.getElementById('saveDiscordBtn');
+    const wolfCounterImg = document.getElementById('wolfCounterImg');
+    const villagerCounterImg = document.getElementById('villagerCounterImg');
+
+    let selectedPrivacy = 'public';
+    let currentRoomCode = '';
+
+    // ===== اختيار الخصوصية =====
+    function selectPrivacy(value) {
+      publicOption.classList.remove('selected');
+      privateOption.classList.remove('selected');
+      if (value === 'public') {
+        publicOption.classList.add('selected');
+        selectedPrivacy = 'public';
+      } else {
+        privateOption.classList.add('selected');
+        selectedPrivacy = 'private';
+      }
     }
 
-    const valid = await checkRoomExpiry(roomCode);
-    if (!valid) {
-      alert(t('roomExpired'));
-      window.location.href = 'index.html';
+    publicOption.addEventListener('click', () => selectPrivacy('public'));
+    privateOption.addEventListener('click', () => selectPrivacy('private'));
+
+    // ===== إنشاء الغرفة =====
+    createRoomBtn.addEventListener('click', async () => {
+      createRoomBtn.disabled = true;
+      createRoomBtn.textContent = '⏳ جاري الإنشاء...';
+
+      try {
+        const code = Math.floor(1000 + Math.random() * 9000).toString();
+        currentRoomCode = code;
+
+        await set(ref(db, `rooms/${code}`), {
+          started: false,
+          createdAt: Date.now(),
+          isPublic: selectedPrivacy === 'public',
+          discordLink: '',
+          hasNarrator: true
+        });
+
+        setRoomCode(code);
+
+        roomCodeDisplay.textContent = code;
+        roomStatus.textContent = '⏳ في انتظار اللاعبين...';
+
+        if (selectedPrivacy === 'public') {
+          privacyBadge.textContent = '🌍 عامة';
+          privacyBadge.className = 'privacy-badge public';
+        } else {
+          privacyBadge.textContent = '🔒 خاصة';
+          privacyBadge.className = 'privacy-badge private';
+        }
+
+        createSection.style.display = 'none';
+        roomDisplay.style.display = 'block';
+        gameSections.style.display = 'block';
+
+        await loadDiscordLink();
+        await loadRoles();
+        updateMatchCounter();
+
+      } catch (err) {
+        console.error(err);
+        alert('❌ خطأ في إنشاء الغرفة: ' + err.message);
+      }
+
+      createRoomBtn.disabled = false;
+      createRoomBtn.textContent = '🚀 إنشاء غرفة';
+    });
+
+    // ===== نسخ الرقم =====
+    copyBtn.addEventListener('click', () => {
+      const code = roomCodeDisplay.textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        copyBtn.textContent = '✅ تم النسخ';
+        setTimeout(() => { copyBtn.textContent = '📋 نسخ الرقم'; }, 2000);
+      }).catch(() => {
+        const input = document.createElement('input');
+        input.value = code;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        copyBtn.textContent = '✅ تم النسخ';
+        setTimeout(() => { copyBtn.textContent = '📋 نسخ الرقم'; }, 2000);
+      });
+    });
+
+    // ===== تحميل رابط Discord =====
+    async function loadDiscordLink() {
+      const roomCode = getRoomCode();
+      if (!roomCode) return;
+      try {
+        const snap = await get(ref(db, `rooms/${roomCode}/discordLink`));
+        if (snap.exists()) {
+          discordLinkInput.value = snap.val();
+        }
+      } catch (e) { console.error(e); }
     }
 
-    document.getElementById('roomCodeValue').textContent = roomCode;
+    saveDiscordBtn.addEventListener('click', async () => {
+      const roomCode = getRoomCode();
+      if (!roomCode) return;
+      const link = discordLinkInput.value.trim();
+      try {
+        await update(ref(db, `rooms/${roomCode}`), { discordLink: link });
+        alert('✅ تم حفظ الرابط!');
+      } catch (e) {
+        alert('❌ خطأ: ' + e.message);
+      }
+    });
 
-    // ===== مراجع العناصر =====
+    // ===== عناصر اللعبة الأصليّة =====
     const rolesGrid = document.getElementById('rolesGrid');
     const rolesLoading = document.getElementById('rolesLoading');
     const playersList = document.getElementById('playersList');
@@ -293,7 +661,6 @@
     const roleCountSpan = document.getElementById('roleCount');
     const matchStatus = document.getElementById('matchStatus');
 
-    // ===== عناصر عرض الوصف =====
     const descBox = document.getElementById('roleDescriptionBox');
     const descTitle = document.getElementById('descTitle');
     const descText = document.getElementById('descText');
@@ -301,7 +668,6 @@
     let selectedRoles = {};
     let currentPlayers = [];
 
-    // ===== دالة عرض الوصف =====
     function showRoleDescription(role) {
       if (!role) {
         descBox.style.display = 'none';
@@ -328,7 +694,6 @@
       }
     }
 
-    // ===== تحديث عداد التطابق =====
     function updateMatchCounter() {
       const wolves = parseInt(wolvesInput.value) || 0;
       const villagers = parseInt(villagersInput.value) || 0;
@@ -348,16 +713,38 @@
       }
     }
 
-    // ===== تحميل الأدوار =====
     async function loadRoles() {
       try {
         const snap = await get(ref(db, 'global_roles'));
         const data = snap.val() || {};
         const allRoles = Object.values(data);
-        const excludedRoles = ["ذئب", "قروي"];
+
+        // 🔍 تحديث صور العدادات السفلية ديناميكياً من قواعد البيانات
+        const wolfRole = allRoles.find(r => {
+          const n = typeof r.name === 'object' ? (r.name.ar || r.name.fr || r.name.en || '') : String(r.name || '');
+          return n.trim().includes("ذئب") || r.isWol === true;
+        });
+        const villagerRole = allRoles.find(r => {
+          const n = typeof r.name === 'object' ? (r.name.ar || r.name.fr || r.name.en || '') : String(r.name || '');
+          return n.trim().includes("قروي");
+        });
+
+        if (wolfRole && wolfRole.imageUrl) {
+          wolfCounterImg.src = wolfRole.imageUrl;
+        }
+        if (villagerRole && villagerRole.imageUrl) {
+          villagerCounterImg.src = villagerRole.imageUrl;
+        }
+
+        // 🛑 استثناء القروي والذئب العادي من الشبكة العلوية للأدوار الإضافية
         const filteredRoles = allRoles.filter(role => {
-          const nameAr = typeof role.name === 'object' ? role.name.ar : role.name;
-          return !excludedRoles.includes(nameAr);
+          const nameStr = typeof role.name === 'object' ? (role.name.ar || role.name.fr || role.name.en || '') : String(role.name || '');
+          const cleanName = nameStr.trim().toLowerCase();
+
+          const isBasicWolf = cleanName.includes("ذئب") || role.isWol === true;
+          const isBasicVillager = cleanName.includes("قروي");
+
+          return !isBasicWolf && !isBasicVillager;
         });
 
         if (filteredRoles.length === 0) {
@@ -420,7 +807,6 @@
       });
     }
 
-    // ===== عرض اللاعبين =====
     function renderPlayers(playersData) {
       if (!playersData || Object.keys(playersData).length === 0) {
         playersList.innerHTML = `<p style="color:#777; text-align:center;">${t('noPlayersYet')}</p>`;
@@ -442,16 +828,29 @@
       updateMatchCounter();
     }
 
+    // ===== بدء الاستماع =====
+    const roomCode = getRoomCode();
+    if (roomCode) {
+      createSection.style.display = 'none';
+      roomDisplay.style.display = 'block';
+      gameSections.style.display = 'block';
+      roomCodeDisplay.textContent = roomCode;
+      loadDiscordLink();
+      loadRoles();
+      updateMatchCounter();
+    }
+
     listenToPlayers(roomCode, (data) => {
       renderPlayers(data);
     });
 
-    // ===== مستمعي التغيير =====
     wolvesInput.addEventListener('input', updateMatchCounter);
     villagersInput.addEventListener('input', updateMatchCounter);
 
     // ===== بدء اللعبة =====
     startBtn.addEventListener('click', async () => {
+      const roomCode = getRoomCode();
+      if (!roomCode) return;
       const wolves = parseInt(wolvesInput.value) || 0;
       const villagers = parseInt(villagersInput.value) || 0;
       const selected = Object.values(selectedRoles);
@@ -480,12 +879,20 @@
       }
     });
 
-    // ===== خروج =====
+    // ===== خروج (إغلاق الغرفة بالكامل) =====
     exitBtn.addEventListener('click', async () => {
-      if (confirm(t('confirmExit'))) {
+      const roomCode = getRoomCode();
+      if (!roomCode) return;
+      
+      if (!confirm(t('confirmExit'))) return;
+      
+      try {
         await deleteRoom(roomCode);
         clearRoomCode();
         window.location.href = 'index.html';
+      } catch (err) {
+        console.error(err);
+        alert('⚠️ ' + t('errorOccurred'));
       }
     });
 
@@ -497,9 +904,13 @@
     // ===== تحديث =====
     refreshBtn.addEventListener('click', loadRoles);
 
-    // ===== تحميل الأدوار =====
-    await loadRoles();
-    updateMatchCounter();
+    // 🔄 شرط التحديث التلقائي الدوري كل 3 ثوانٍ
+    setInterval(async () => {
+      const currentCode = getRoomCode();
+      if (currentCode) {
+        await loadRoles();
+      }
+    }, 3000);
 
     console.log('🚪 كود الغرفة:', roomCode);
   </script>
