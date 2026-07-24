@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -117,31 +117,10 @@
   <div class="modal" id="aboutModal">
     <div class="modal-content">
       <div class="modal-title" style="color:crimson;">📖 ما هي لعبة Loup Garou؟</div>
-      <div class="about-content">
-        <p><span class="highlight">Loup Garou</span> هي نسخة رقمية ذكية من لعبة الورق الشهيرة <span class="highlight">"القرويون والذئاب"</span>.</p>
-        <p>بدلاً من توزيع البطاقات الورقية التقليدية، يقوم هذا التطبيق بتوزيع الأدوار <span class="highlight">عشوائياً</span> على جميع اللاعبين، مما يضمن <span class="highlight">الخصوصية التامة</span> لكل لاعب.</p>
-        <p><span class="highlight">الراوي</span> هو اللاعب الوحيد الذي يمتلك الصلاحية المطلقة في إدارة اللعبة، حيث يمكنه <span class="highlight">قتل</span> أو <span class="highlight">استذئاب</span> أي لاعب.</p>
-        <p>الهدف من هذه اللعبة هو توفير تجربة سلسة وعادلة لجميع اللاعبين، مع الحفاظ على السرية التامة ومنع أي محاولة للغش.</p>
-        <hr />
-        <h4>📖 كيف تلعب؟ (دليل المبتدئين)</h4>
-        <div class="how-to-play">
-          <p><strong>🔹 الراوي (المضيف):</strong><br />
-          • اضغط على زر <strong>"أنا الراوي"</strong>.<br />
-          • اختر نوع الغرفة (عامة / خاصة).<br />
-          • اضغط <strong>"إنشاء غرفة"</strong> وستظهر لك غرفة برقم فريد من 4 أرقام.<br />
-          • قم بإعداد اللعبة: اختر الأدوار الإضافية، وحدد عدد الذئاب والقرويين.<br />
-          • أعطِ رقم الغرفة للاعبين الآخرين (أو انشر الرابط).<br />
-          • بعد انضمام جميع اللاعبين، اضغط <strong>"بدء اللعبة"</strong> وستنطلق المغامرة!</p>
-          <p><strong>🔸 اللاعبون:</strong><br />
-          • اضغط على زر <strong>"أنا اللاعب"</strong>.<br />
-          • اكتب <strong>رقم الغرفة</strong> الذي أعطاك إياه الراوي.<br />
-          • اكتب <strong>اسمك</strong> (حتى يعرفك الراوي).<br />
-          • اضغط <strong>"انضم"</strong> وانتظر حتى يبدأ الراوي اللعبة.<br />
-          • بعد البدء، ستظهر لك بطاقة دورك – لا تُظهرها لأحد! 🤫</p>
-          <div class="tip">💡 نصيحة: الراوي هو المسؤول الوحيد عن إدارة الجولة، واللاعبون يتبعون توجيهاته.</div>
-        </div>
+      <div class="about-content" id="aboutModalContent">
+        <p>⏳ جاري التحميل...</p>
       </div>
-      <button class="modal-close-btn" id="closeAboutBtn">إغلاق</button>
+      <button class="modal-close-btn" id="closeAboutBtn" style="margin-top: 15px;">إغلاق</button>
     </div>
   </div>
 
@@ -247,6 +226,28 @@
       } catch (e) {
         console.error('خطأ في تحميل الإشعار:', e);
         container.style.display = 'none';
+      }
+    }
+
+    // ===== تحميل محتوى "عن اللعبة" الديناميكي =====
+    async function loadAboutContent() {
+      const aboutModalContent = document.getElementById('aboutModalContent');
+      try {
+        const snap = await get(ref(db, 'about_game/content'));
+        if (snap.exists() && snap.val().trim() !== '') {
+          const text = snap.val();
+          const paragraphs = text.split('\n').filter(p => p.trim() !== '');
+          aboutModalContent.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+        } else {
+          aboutModalContent.innerHTML = `
+            <p><span class="highlight">Loup Garou</span> هي نسخة رقمية ذكية من لعبة الورق الشهيرة <span class="highlight">"القرويون والذئاب"</span>.</p>
+            <p>بدلاً من توزيع البطاقات الورقية التقليدية، يقوم هذا التطبيق بتوزيع الأدوار <span class="highlight">عشوائياً</span> على جميع اللاعبين، مما يضمن <span class="highlight">الخصوصية التامة</span> لكل لاعب.</p>
+            <p><span class="highlight">الراوي</span> هو اللاعب الوحيد الذي يمتلك الصلاحية المطلقة في إدارة اللعبة، حيث يمكنه <span class="highlight">قتل</span> أو <span class="highlight">استذئاب</span> أي لاعب.</p>
+            <p>الهدف من هذه اللعبة هو توفير تجربة سلسة وعادلة لجميع اللاعبين، مع الحفاظ على السرية التامة ومنع أي محاولة للغش.</p>
+          `;
+        }
+      } catch (e) {
+        console.error('خطأ في تحميل محتوى عن اللعبة:', e);
       }
     }
 
@@ -374,6 +375,7 @@
     // ===== عن اللعبة =====
     document.getElementById("aboutBtn").addEventListener("click", () => {
       document.getElementById("aboutModal").style.display = "flex";
+      loadAboutContent();
     });
     document.getElementById("closeAboutBtn").addEventListener("click", () => {
       document.getElementById("aboutModal").style.display = "none";
@@ -437,6 +439,7 @@
     // ===== تحميل البيانات الأولية =====
     loadNotice();
     loadSocialIcons();
+    loadAboutContent();
 
     // ===== تحميل الغرف المفتوحة تلقائياً عند تحميل الصفحة (إذا لم يكن هناك غرفة حالية) =====
     if (!getRoomCode()) {
@@ -451,11 +454,16 @@
       loadNotice();
     });
 
+    onValue(ref(db, 'about_game/content'), () => {
+      loadAboutContent();
+    });
+
     // 🔄 شرط التحديث التلقائي الدوري كل 3 ثوانٍ
     setInterval(async () => {
       await updateCounter();
       await loadNotice();
       await loadSocialIcons();
+      await loadAboutContent();
       if (document.getElementById('roomsModal').style.display === 'flex' || !getRoomCode()) {
         loadOpenRooms();
       }
