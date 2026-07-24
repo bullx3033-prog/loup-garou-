@@ -87,8 +87,12 @@
       display: none;
     }
     .role-description-box .desc-title { color: #d4a017; font-weight: bold; font-size: 16px; display: block; margin-bottom: 5px; }
-    .role-description-box .desc-text { color: #ccc; }
-    .role-description-box .empty-desc { color: #777; font-style: italic; }
+    
+    /* 🛠️ تعديل لدعم نزول الأسطر المتعددة بشكل صحيح */
+    .role-description-box .desc-text { 
+      color: #ccc; 
+      white-space: pre-line !important; 
+    }
 
     .counter-group { display: flex; gap: 40px; flex-wrap: wrap; margin: 10px 0; justify-content: center; }
     .counter-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -810,7 +814,6 @@
       });
       playersList.innerHTML = html;
 
-      // تفعيل أزرار الطرد
       playersList.querySelectorAll('.kick-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
           const playerId = btn.getAttribute('data-id');
@@ -874,7 +877,7 @@
       }
 
       if (wolves < 1) {
-        alert('يجب أن يكون عدد الذئب 1 على الأقل');
+        alert('يجب أن يكون عدد الذئاب 1 على الأقل');
         return;
       }
       if (villagers < 1) {
