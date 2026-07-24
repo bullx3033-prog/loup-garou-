@@ -47,42 +47,46 @@
       max-width: 500px;
       display: none;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       pointer-events: none;
     }
     #deathNotificationsContainer .death-notification {
-      background: rgba(26, 10, 10, 0.9);
+      background: rgba(26, 10, 10, 0.95);
       border: 2px solid #ff1a1a;
       border-radius: 10px;
-      padding: 10px 16px;
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       pointer-events: auto;
       animation: slideDownDeath 0.4s ease;
-      box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
     }
     #deathNotificationsContainer .death-notification .death-text {
       color: #ff6b6b;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: bold;
       font-family: 'Cinzel', serif;
       flex: 1;
+      text-align: right;
     }
     #deathNotificationsContainer .death-notification .death-close {
-      background: rgba(107, 26, 26, 0.8);
+      background: #8b0000;
       color: #fff;
       border: none;
       border-radius: 6px;
-      padding: 2px 12px;
+      padding: 6px 12px;
       font-family: 'Cinzel', serif;
       font-size: 12px;
       cursor: pointer;
       transition: 0.3s;
+      flex-shrink: 0;
+      margin-left: 8px;
+      font-weight: bold;
     }
     #deathNotificationsContainer .death-notification .death-close:hover {
-      background: #8b0000;
-      box-shadow: 0 0 15px #8b0000;
+      background: #ff0000;
+      box-shadow: 0 0 15px #ff0000;
     }
     @keyframes slideDownDeath {
       from { opacity: 0; transform: translateY(-20px); }
@@ -135,7 +139,7 @@
       font-family: 'Cinzel', serif;
     }
     .dead-player-card .dead-role {
-      color: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.4);
       font-size: 10px;
       font-family: 'Cinzel', serif;
     }
@@ -233,65 +237,66 @@
       justify-content: center;
     }
     .action-buttons-row .btn {
-      flex: 0 1 auto;
-      min-width: 50px;
-      width: 54px;
-      height: 48px;
-      padding: 0;
-      font-size: 20px;
+      flex: 1;
+      padding: 10px;
+      font-size: 14px;
       text-align: center;
       border-radius: 10px;
       border: none;
       font-family: 'Cinzel', serif;
+      font-weight: bold;
       cursor: pointer;
       transition: 0.3s;
       display: flex;
       align-items: center;
       justify-content: center;
-      line-height: 1;
+      gap: 6px;
       background: rgba(255, 255, 255, 0.02);
       color: #fff;
       border: 1px solid rgba(255, 255, 255, 0.06);
     }
     .action-buttons-row .btn:hover {
-      transform: scale(1.08);
+      transform: scale(1.02);
       background: rgba(255, 255, 255, 0.05);
     }
-    .action-buttons-row .btn-hide { border-color: rgba(255, 255, 255, 0.06); }
-    .action-buttons-row .btn-hide:hover { border-color: rgba(255, 255, 255, 0.1); }
+    .action-buttons-row .btn-hide {
+      background: rgba(212, 160, 23, 0.08);
+      color: #d4a017;
+      border-color: rgba(212, 160, 23, 0.2);
+    }
     .action-buttons-row .btn-suicide {
+      background: rgba(255, 0, 0, 0.05);
       border-color: rgba(255, 0, 0, 0.15);
       color: #ff6b6b;
-    }
-    .action-buttons-row .btn-suicide:hover {
-      background: rgba(255, 0, 0, 0.05);
-      border-color: rgba(255, 0, 0, 0.2);
+      flex: 0 0 auto;
+      width: 48px;
     }
     .action-buttons-row .btn-message {
+      background: rgba(212, 160, 23, 0.05);
       border-color: rgba(212, 160, 23, 0.15);
       color: #d4a017;
-    }
-    .action-buttons-row .btn-message:hover {
-      background: rgba(212, 160, 23, 0.05);
-      border-color: rgba(212, 160, 23, 0.2);
+      flex: 0 0 auto;
+      width: 48px;
     }
 
     .btn-show-card {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       font-size: 16px;
-      background: rgba(255, 255, 255, 0.02);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(212, 160, 23, 0.15);
+      color: #d4a017;
+      border: 1px solid rgba(212, 160, 23, 0.3);
       border-radius: 12px;
       cursor: pointer;
       transition: 0.3s;
       font-family: 'Cinzel', serif;
+      font-weight: bold;
+      text-align: center;
     }
     .btn-show-card:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(212, 160, 23, 0.1);
-      box-shadow: 0 0 30px rgba(212, 160, 23, 0.02);
+      background: rgba(212, 160, 23, 0.25);
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.1);
+      transform: scale(1.02);
     }
 
     .role-image-wrapper {
@@ -975,7 +980,7 @@
     let roomListener = null;
     let shownDeaths = new Set();
     let shownNarratorNotifs = new Set();
-    let isCardManuallyHidden = false; // تتبع ما إذا أغلق اللاعب البطاقة بنفسه
+    let cardRenderedOnce = false;
 
     const hasRoomCode = roomCode ? true : false;
 
@@ -1054,6 +1059,7 @@
       });
     }
 
+    // 🛑 دالة منع تكرار إشعارات الموت وعرضها بمرتبة صحيحة مع زر مسح واضح
     function renderDeathNotificationsAndCards(data) {
       if (!data) {
         deathContainer.style.display = 'none';
@@ -1066,21 +1072,23 @@
         deadPlayersContainer.style.display = 'none';
         return;
       }
-      const newEntries = entries.filter(([key]) => !shownDeaths.has(key));
-      if (newEntries.length > 0) {
-        deathContainer.style.display = 'flex';
-        newEntries.forEach(([key, death]) => {
-          addDeathNotification(key, death.playerName);
-          shownDeaths.add(key);
+
+      deathContainer.style.display = 'flex';
+      deathContainer.innerHTML = '';
+      
+      entries.forEach(([key, death]) => {
+        const notif = document.createElement('div');
+        notif.className = 'death-notification';
+        notif.innerHTML = `
+          <span class="death-text">💀 ${death.playerName} قد مات!</span>
+          <button class="death-close" data-key="${key}">مسح</button>
+        `;
+        notif.querySelector('.death-close').addEventListener('click', async () => {
+          await remove(ref(db, `rooms/${roomCode}/deathNotifications/${key}`));
         });
-      } else if (entries.length > 0) {
-        deathContainer.style.display = 'flex';
-        deathContainer.innerHTML = '';
-        entries.forEach(([key, death]) => {
-          addDeathNotification(key, death.playerName);
-          shownDeaths.add(key);
-        });
-      }
+        deathContainer.appendChild(notif);
+      });
+
       deadPlayersContainer.style.display = 'block';
       deadPlayersGrid.innerHTML = '';
       const sortedEntries = entries.sort((a, b) => (b[1].timestamp || 0) - (a[1].timestamp || 0));
@@ -1096,27 +1104,6 @@
         `;
         deadPlayersGrid.appendChild(card);
       });
-    }
-
-    function addDeathNotification(key, playerName) {
-      const notif = document.createElement('div');
-      notif.className = 'death-notification';
-      notif.dataset.key = key;
-      notif.innerHTML = `
-        <span class="death-text">💀 ${playerName} قد مات!</span>
-        <button class="death-close" data-key="${key}">✕ مسح</button>
-      `;
-      const closeBtn = notif.querySelector('.death-close');
-      closeBtn.addEventListener('click', async () => {
-        await remove(ref(db, `rooms/${roomCode}/deathNotifications/${key}`));
-        notif.remove();
-        shownDeaths.delete(key);
-        const remaining = deathContainer.querySelectorAll('.death-notification:not([style*="display: none"])');
-        if (remaining.length === 0) deathContainer.style.display = 'none';
-        const snap = await get(ref(db, `rooms/${roomCode}/deathNotifications`));
-        renderDeathNotificationsAndCards(snap.val());
-      });
-      deathContainer.appendChild(notif);
     }
 
     function listenToDeathNotifications(roomCode) {
@@ -1141,33 +1128,20 @@
         narratorNotifContainer.innerHTML = '';
         return;
       }
+      narratorNotifContainer.innerHTML = '';
       entries.forEach(([key, msg]) => {
-        if (!shownNarratorNotifs.has(key)) {
-          addNarratorNotification(key, msg.message);
-          shownNarratorNotifs.add(key);
-        }
+        const notif = document.createElement('div');
+        notif.className = 'narrator-notif';
+        notif.innerHTML = `
+          <span class="notif-icon">🎙️</span>
+          <span class="notif-text">${msg.message}</span>
+          <button class="notif-close" data-key="${key}">مسح</button>
+        `;
+        notif.querySelector('.notif-close').addEventListener('click', async () => {
+          await remove(ref(db, `rooms/${roomCode}/messages/${key}`));
+        });
+        narratorNotifContainer.appendChild(notif);
       });
-    }
-
-    function addNarratorNotification(key, message) {
-      const notif = document.createElement('div');
-      notif.className = 'narrator-notif';
-      notif.dataset.key = key;
-      notif.innerHTML = `
-        <span class="notif-icon">🎙️</span>
-        <span class="notif-text">${message}</span>
-        <button class="notif-close" data-key="${key}">✕ مسح</button>
-      `;
-      const closeBtn = notif.querySelector('.notif-close');
-      closeBtn.addEventListener('click', async () => {
-        await remove(ref(db, `rooms/${roomCode}/messages/${key}`));
-        notif.remove();
-        shownNarratorNotifs.delete(key);
-        if (narratorNotifContainer.children.length === 0) {
-          narratorNotifContainer.innerHTML = '';
-        }
-      });
-      narratorNotifContainer.appendChild(notif);
     }
 
     function listenToNarratorNotifications(roomCode, playerId) {
@@ -1185,10 +1159,10 @@
       onValue(discordRef, (snapshot) => {
         const link = snapshot.val();
         if (link) {
-          discordLinkInput.value = link;
+          discordPlayerLink.value = link;
           discordSection.classList.remove("hidden");
         } else {
-          discordLinkInput.value = 'لا يوجد رابط بعد';
+          discordPlayerLink.value = 'لا يوجد رابط بعد';
           discordSection.classList.add("hidden");
         }
       });
@@ -1374,50 +1348,85 @@
       });
     }
 
-    async function renderRoleContent(player) {
+    async function renderCardUI(player, isSpecialContent = 'normal') {
+      cardRenderedOnce = true;
       const roleDisplay = player.role || 'غير معروف';
       const description = await fetchRoleDescription(player.role);
       roleBox.innerHTML = '';
       roleBox.classList.remove('hidden');
-      const nameDiv = document.createElement('div');
-      nameDiv.className = 'role-name';
-      nameDiv.textContent = `🎭 دورك: ${roleDisplay}`;
-      roleBox.appendChild(nameDiv);
-      const wrapper = document.createElement('div');
-      wrapper.className = 'role-image-wrapper';
-      const img = document.createElement('img');
-      img.className = 'role-img';
-      img.src = player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
-      img.alt = roleDisplay;
-      img.onerror = function() { this.src = 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'; };
-      wrapper.appendChild(img);
-      roleBox.appendChild(wrapper);
+
+      if (isSpecialContent === 'infected') {
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'role-name role-name-infected';
+        nameDiv.textContent = `🎭 دورك: ${roleDisplay}`;
+        roleBox.appendChild(nameDiv);
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'role-image-wrapper';
+        const img = document.createElement('img');
+        img.className = 'role-img';
+        img.src = player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
+        img.alt = roleDisplay;
+        wrapper.appendChild(img);
+
+        const overlay = document.createElement('img');
+        overlay.className = 'blood-overlay';
+        overlay.src = 'https://i.postimg.cc/y8Dhy5VS/IMG-20260708-204243.png';
+        wrapper.appendChild(overlay);
+        roleBox.appendChild(wrapper);
+
+        const noticeDiv = document.createElement('div');
+        noticeDiv.className = 'infected-notice';
+        noticeDiv.textContent = '⚠️ أنت مستذئب!';
+        roleBox.appendChild(noticeDiv);
+      } else if (isSpecialContent === 'wolf') {
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'role-name role-name-wolf-converted';
+        nameDiv.textContent = `🐺 أنت ${roleDisplay}`;
+        roleBox.appendChild(nameDiv);
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'role-image-wrapper';
+        const img = document.createElement('img');
+        img.className = 'role-img';
+        img.src = player.roleImage || 'https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg';
+        img.alt = 'ذئب';
+        wrapper.appendChild(img);
+        roleBox.appendChild(wrapper);
+      } else {
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'role-name';
+        nameDiv.textContent = `🎭 دورك: ${roleDisplay}`;
+        roleBox.appendChild(nameDiv);
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'role-image-wrapper';
+        const img = document.createElement('img');
+        img.className = 'role-img';
+        img.src = player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
+        img.alt = roleDisplay;
+        wrapper.appendChild(img);
+        roleBox.appendChild(wrapper);
+      }
+
       if (description) {
         const descDiv = document.createElement('div');
         descDiv.className = 'role-description';
         descDiv.innerHTML = `<strong>📖 وصف الدور:</strong> ${description}`;
         roleBox.appendChild(descDiv);
       }
+
       const btnRow = document.createElement('div');
       btnRow.className = 'action-buttons-row';
+
       const hideBtn = document.createElement('button');
       hideBtn.className = 'btn btn-hide';
-      hideBtn.textContent = '🔒';
-      hideBtn.title = 'إخفاء البطاقة';
+      hideBtn.innerHTML = '🔒 إخفاء البطاقة';
       hideBtn.addEventListener('click', function() {
-        isCardManuallyHidden = true; // تسجيل أن اللاعب أغلق البطاقة بنفسه
-        roleBox.innerHTML = '';
-        const showBtn = document.createElement('button');
-        showBtn.className = 'btn-show-card';
-        showBtn.textContent = '🃏 إظهار البطاقة';
-        showBtn.addEventListener('click', function() {
-          isCardManuallyHidden = false; // إعادة فتح البطاقة
-          renderRoleContent(player);
-        });
-        roleBox.appendChild(showBtn);
-        setTimeout(() => initWolfChat(roomCode, playerId), 100);
+        renderShowCardButton(player, isSpecialContent);
       });
       btnRow.appendChild(hideBtn);
+
       const suicideBtn = document.createElement('button');
       suicideBtn.className = 'btn btn-suicide';
       suicideBtn.textContent = '💀';
@@ -1427,6 +1436,7 @@
         try {
           await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
           roleBox.innerHTML = '';
+          cardRenderedOnce = false;
           const skull = document.createElement('div');
           skull.id = 'skull';
           skull.textContent = '💀';
@@ -1453,6 +1463,7 @@
         }
       });
       btnRow.appendChild(suicideBtn);
+
       const messageBtn = document.createElement('button');
       messageBtn.className = 'btn btn-message';
       messageBtn.textContent = '📩';
@@ -1463,221 +1474,38 @@
         messageStatus.textContent = '';
       });
       btnRow.appendChild(messageBtn);
+
       roleBox.appendChild(btnRow);
       await initWolfChat(roomCode, playerId);
       listenToNarratorNotifications(roomCode, playerId);
       listenToGameState(roomCode);
+    }
+
+    function renderShowCardButton(player, isSpecialContent) {
+      roleBox.innerHTML = '';
+      roleBox.classList.remove('hidden');
+      const showBtn = document.createElement('button');
+      showBtn.className = 'btn-show-card';
+      showBtn.textContent = '🃏 إظهار البطاقة';
+      showBtn.addEventListener('click', function() {
+        if (isSpecialContent === 'infected') renderInfectedContent(player);
+        else if (isSpecialContent === 'wolf') renderWolfContent(player);
+        else renderRoleContent(player);
+      });
+      roleBox.appendChild(showBtn);
+      setTimeout(() => initWolfChat(roomCode, playerId), 100);
+    }
+
+    async function renderRoleContent(player) {
+      await renderCardUI(player, 'normal');
     }
 
     async function renderInfectedContent(player) {
-      const description = await fetchRoleDescription(player.role);
-      roleBox.innerHTML = '';
-      roleBox.classList.remove('hidden');
-
-      const roleDisplay = player.role || 'غير معروف';
-      const nameDiv = document.createElement('div');
-      nameDiv.className = 'role-name role-name-infected';
-      nameDiv.textContent = `🎭 دورك: ${roleDisplay}`;
-      roleBox.appendChild(nameDiv);
-
-      const wrapper = document.createElement('div');
-      wrapper.className = 'role-image-wrapper';
-      
-      const img = document.createElement('img');
-      img.className = 'role-img';
-      img.src = player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
-      img.alt = roleDisplay;
-      img.onerror = function() { this.src = 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'; };
-      wrapper.appendChild(img);
-
-      const overlay = document.createElement('img');
-      overlay.className = 'blood-overlay';
-      overlay.src = 'https://i.postimg.cc/y8Dhy5VS/IMG-20260708-204243.png';
-      overlay.alt = 'تأثير الاستذئاب';
-      wrapper.appendChild(overlay);
-
-      roleBox.appendChild(wrapper);
-
-      const noticeDiv = document.createElement('div');
-      noticeDiv.className = 'infected-notice';
-      noticeDiv.textContent = '⚠️ أنت مستذئب!';
-      roleBox.appendChild(noticeDiv);
-
-      if (description) {
-        const descDiv = document.createElement('div');
-        descDiv.className = 'role-description';
-        descDiv.innerHTML = `<strong>📖 وصف الدور:</strong> ${description}`;
-        roleBox.appendChild(descDiv);
-      }
-
-      const btnRow = document.createElement('div');
-      btnRow.className = 'action-buttons-row';
-
-      const hideBtn = document.createElement('button');
-      hideBtn.className = 'btn btn-hide';
-      hideBtn.textContent = '🔒';
-      hideBtn.title = 'إخفاء البطاقة';
-      hideBtn.addEventListener('click', function() {
-        isCardManuallyHidden = true; // تسجيل إغلاق البطاقة يدوياً
-        roleBox.innerHTML = '';
-        const showBtn = document.createElement('button');
-        showBtn.className = 'btn-show-card';
-        showBtn.textContent = '🃏 إظهار البطاقة';
-        showBtn.addEventListener('click', function() {
-          isCardManuallyHidden = false; // إعادة فتح البطاقة
-          renderInfectedContent(player);
-        });
-        roleBox.appendChild(showBtn);
-        setTimeout(() => initWolfChat(roomCode, playerId), 100);
-      });
-      btnRow.appendChild(hideBtn);
-
-      const suicideBtn = document.createElement('button');
-      suicideBtn.className = 'btn btn-suicide';
-      suicideBtn.textContent = '💀';
-      suicideBtn.title = 'الموت';
-      suicideBtn.addEventListener('click', async function() {
-        if (!confirm('⚠️ هل أنت متأكد من رغبتك في الموت؟')) return;
-        try {
-          await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
-          roleBox.innerHTML = '';
-          const skull = document.createElement('div');
-          skull.id = 'skull';
-          skull.textContent = '💀';
-          roleBox.appendChild(skull);
-          const deathText = document.createElement('p');
-          deathText.id = 'death-text';
-          deathText.textContent = 'لقد مت بسبب الاستذئاب، يمكنك مغادرة الغرفة.';
-          roleBox.appendChild(deathText);
-          const exitBtn = document.createElement('button');
-          exitBtn.className = 'btn btn-danger';
-          exitBtn.textContent = '🚪 مغادرة';
-          exitBtn.style.marginTop = '10px';
-          exitBtn.addEventListener('click', async function() {
-            if (roomCode && playerId) {
-              await remove(ref(db, `rooms/${roomCode}/players/${playerId}`));
-            }
-            localStorage.removeItem("playerId");
-            clearRoomCode();
-            window.location.href = "index.html";
-          });
-          roleBox.appendChild(exitBtn);
-        } catch (err) {
-          alert("❌ حدث خطأ: " + err.message);
-        }
-      });
-      btnRow.appendChild(suicideBtn);
-
-      const messageBtn = document.createElement('button');
-      messageBtn.className = 'btn btn-message';
-      messageBtn.textContent = '📩';
-      messageBtn.title = 'إرسال للراوي';
-      messageBtn.addEventListener('click', function() {
-        messageModal.style.display = 'flex';
-        messageText.value = '';
-        messageStatus.textContent = '';
-      });
-      btnRow.appendChild(messageBtn);
-
-      roleBox.appendChild(btnRow);
-      await initWolfChat(roomCode, playerId);
-      listenToNarratorNotifications(roomCode, playerId);
-      listenToGameState(roomCode);
+      await renderCardUI(player, 'infected');
     }
 
     async function renderWolfContent(player) {
-      const roleDisplay = player.role || 'ذئب';
-      const description = await fetchRoleDescription(player.role);
-      roleBox.innerHTML = '';
-      roleBox.classList.remove('hidden');
-      const nameDiv = document.createElement('div');
-      nameDiv.className = 'role-name role-name-wolf-converted';
-      nameDiv.textContent = `🐺 أنت ${roleDisplay}`;
-      roleBox.appendChild(nameDiv);
-      const wrapper = document.createElement('div');
-      wrapper.className = 'role-image-wrapper';
-      const img = document.createElement('img');
-      img.className = 'role-img';
-      img.src = player.roleImage || 'https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg';
-      img.alt = 'ذئب';
-      img.onerror = function() { this.src = 'https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg'; };
-      wrapper.appendChild(img);
-      roleBox.appendChild(wrapper);
-      if (description) {
-        const descDiv = document.createElement('div');
-        descDiv.className = 'role-description';
-        descDiv.innerHTML = `<strong>📖 وصف الدور:</strong> ${description}`;
-        roleBox.appendChild(descDiv);
-      }
-      const btnRow = document.createElement('div');
-      btnRow.className = 'action-buttons-row';
-      const hideBtn = document.createElement('button');
-      hideBtn.className = 'btn btn-hide';
-      hideBtn.textContent = '🔒';
-      hideBtn.title = 'إخفاء البطاقة';
-      hideBtn.addEventListener('click', function() {
-        isCardManuallyHidden = true; // تسجيل إغلاق البطاقة يدوياً
-        roleBox.innerHTML = '';
-        const showBtn = document.createElement('button');
-        showBtn.className = 'btn-show-card';
-        showBtn.textContent = '🃏 إظهار البطاقة';
-        showBtn.addEventListener('click', function() {
-          isCardManuallyHidden = false; // إعادة فتح البطاقة
-          renderWolfContent(player);
-        });
-        roleBox.appendChild(showBtn);
-        setTimeout(() => initWolfChat(roomCode, playerId), 100);
-      });
-      btnRow.appendChild(hideBtn);
-      const suicideBtn = document.createElement('button');
-      suicideBtn.className = 'btn btn-suicide';
-      suicideBtn.textContent = '💀';
-      suicideBtn.title = 'الموت';
-      suicideBtn.addEventListener('click', async function() {
-        if (!confirm('⚠️ هل أنت متأكد من رغبتك في الموت؟')) return;
-        try {
-          await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
-          roleBox.innerHTML = '';
-          const skull = document.createElement('div');
-          skull.id = 'skull';
-          skull.textContent = '💀';
-          roleBox.appendChild(skull);
-          const deathText = document.createElement('p');
-          deathText.id = 'death-text';
-          deathText.textContent = 'لقد مت، يمكنك مغادرة الغرفة.';
-          roleBox.appendChild(deathText);
-          const exitBtn = document.createElement('button');
-          exitBtn.className = 'btn btn-danger';
-          exitBtn.textContent = '🚪 مغادرة';
-          exitBtn.style.marginTop = '10px';
-          exitBtn.addEventListener('click', async function() {
-            if (roomCode && playerId) {
-              await remove(ref(db, `rooms/${roomCode}/players/${playerId}`));
-            }
-            localStorage.removeItem("playerId");
-            clearRoomCode();
-            window.location.href = "index.html";
-          });
-          roleBox.appendChild(exitBtn);
-        } catch (err) {
-          alert("❌ حدث خطأ: " + err.message);
-        }
-      });
-      btnRow.appendChild(suicideBtn);
-      const messageBtn = document.createElement('button');
-      messageBtn.className = 'btn btn-message';
-      messageBtn.textContent = '📩';
-      messageBtn.title = 'إرسال للراوي';
-      messageBtn.addEventListener('click', function() {
-        messageModal.style.display = 'flex';
-        messageText.value = '';
-        messageStatus.textContent = '';
-      });
-      btnRow.appendChild(messageBtn);
-      roleBox.appendChild(btnRow);
-      await initWolfChat(roomCode, playerId);
-      listenToNarratorNotifications(roomCode, playerId);
-      listenToGameState(roomCode);
+      await renderCardUI(player, 'wolf');
     }
 
     async function checkPlayerStatus() {
@@ -1709,7 +1537,7 @@
           roleBox.appendChild(skull);
           const deathText = document.createElement('p');
           deathText.id = 'death-text';
-          deathText.textContent = player.isInfected ? 'لقد مت بسبب الاستذئاب، يمكنك مغادرة الغرفة.' : 'لقد مت، يمكنك مغادرة الغرفة.';
+          deathText.textContent = 'لقد مت، يمكنك مغادرة الغرفة.';
           roleBox.appendChild(deathText);
           const exitBtn = document.createElement('button');
           exitBtn.className = 'btn btn-danger';
@@ -1727,36 +1555,29 @@
           return;
         }
 
-        // 🛑 شرط ذكي: إذا كان اللاعب قد أغلق البطاقة بنفسه، فلا تقم بإعادة فتحها تلقائياً عند التحديث
-        if (isCardManuallyHidden) {
+        // إذا كانت البطاقة معروضة بالفعل أو تم إخفاؤها، نتجنب إعادة الرسم التلقائي
+        if (cardRenderedOnce || roleBox.querySelector('.btn-show-card')) {
           return;
         }
 
         if (player.isInfected && !player.isDead) {
-          // إذا كانت البطاقة مرسومة ومفتوحة مسبقاً، لا تعيد رسمها لمنع الوميض
-          if (!roleBox.querySelector('.role-img') && roleBox.classList.contains('hidden')) {
-            statusDiv.classList.add("hidden");
-            roleBox.classList.remove("hidden");
-            renderInfectedContent(player);
-          }
+          statusDiv.classList.add("hidden");
+          roleBox.classList.remove("hidden");
+          renderInfectedContent(player);
           return;
         }
 
         if (player.isWolf && !player.isDead) {
-          if (!roleBox.querySelector('.role-img') && roleBox.classList.contains('hidden')) {
-            statusDiv.classList.add("hidden");
-            roleBox.classList.remove("hidden");
-            renderWolfContent(player);
-          }
+          statusDiv.classList.add("hidden");
+          roleBox.classList.remove("hidden");
+          renderWolfContent(player);
           return;
         }
 
         if (player.role) {
-          if (!roleBox.querySelector('.role-img') && roleBox.classList.contains('hidden')) {
-            statusDiv.classList.add("hidden");
-            roleBox.classList.remove("hidden");
-            renderRoleContent(player);
-          }
+          statusDiv.classList.add("hidden");
+          roleBox.classList.remove("hidden");
+          renderRoleContent(player);
           return;
         }
 
@@ -1869,7 +1690,7 @@
     };
 
     joinDiscordBtn.addEventListener("click", () => {
-      const link = discordLinkInput.value;
+      const link = discordPlayerLink.value;
       if (link && link.startsWith("https://")) {
         window.open(link, "_blank");
       } else {
