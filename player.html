@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لو ڨارو - لاعب</title>
+  <title>Loup Garou</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
+    /* ===== أنماط خاصة باللاعب ===== */
     .suggest-fab {
       position: fixed;
       top: 20px;
@@ -14,8 +15,8 @@
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: #2c2c2c;
-      border: 2px solid crimson;
+      background: rgba(255, 255, 255, 0.03);
+      border: 2px solid rgba(255, 0, 0, 0.15);
       color: #fff;
       font-size: 22px;
       cursor: pointer;
@@ -23,18 +24,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.15);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.05);
       font-family: 'Cinzel', serif;
       touch-action: manipulation;
       user-select: none;
+      left: 20px;
     }
-    .suggest-fab:hover { background: #3a3a3a; transform: scale(1.1); box-shadow: 0 0 30px rgba(255, 0, 0, 0.3); }
+    .suggest-fab:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.1);
+    }
     .suggest-fab:active { transform: scale(0.95); }
-    .suggest-fab { left: 20px; }
-    [dir="ltr"] .suggest-fab { left: auto; right: 20px; }
-    .btn-suggest-old { display: none !important; }
 
-    /* ===== إشعارات الوفاة ===== */
     #deathNotificationsContainer {
       position: fixed;
       top: 75px;
@@ -49,7 +51,7 @@
       pointer-events: none;
     }
     #deathNotificationsContainer .death-notification {
-      background: #1a0a0a;
+      background: rgba(26, 10, 10, 0.9);
       border: 2px solid #ff1a1a;
       border-radius: 10px;
       padding: 10px 16px;
@@ -58,7 +60,7 @@
       align-items: center;
       pointer-events: auto;
       animation: slideDownDeath 0.4s ease;
-      box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
     }
     #deathNotificationsContainer .death-notification .death-text {
       color: #ff6b6b;
@@ -68,7 +70,7 @@
       flex: 1;
     }
     #deathNotificationsContainer .death-notification .death-close {
-      background: #6b1a1a;
+      background: rgba(107, 26, 26, 0.8);
       color: #fff;
       border: none;
       border-radius: 6px;
@@ -87,12 +89,11 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ===== بطاقات الموتى (دوائر صغيرة) ===== */
     #deadPlayersContainer {
       display: none;
       margin-top: 15px;
-      background: #0d0805;
-      border: 2px solid #d4a017;
+      background: rgba(13, 8, 5, 0.6);
+      border: 2px solid rgba(212, 160, 23, 0.2);
       border-radius: 12px;
       padding: 12px;
     }
@@ -123,8 +124,8 @@
       border-radius: 50%;
       border: 3px solid #ff1a1a;
       object-fit: cover;
-      background: #1a1a1a;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.02);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
     }
     .dead-player-card .dead-name {
       color: #ff6b6b;
@@ -134,15 +135,14 @@
       font-family: 'Cinzel', serif;
     }
     .dead-player-card .dead-role {
-      color: #aaa;
+      color: rgba(255, 255, 255, 0.3);
       font-size: 10px;
       font-family: 'Cinzel', serif;
     }
 
-    /* ===== إشعار حالة الوقت (النهار/الليل) ===== */
     #timeStatusBar {
-      background: #0d0805;
-      border: 2px solid #d4a017;
+      background: rgba(13, 8, 5, 0.6);
+      border: 2px solid rgba(212, 160, 23, 0.2);
       border-radius: 10px;
       padding: 8px 16px;
       margin-bottom: 15px;
@@ -156,18 +156,17 @@
     #timeStatusBar.day {
       color: #d4a017;
       border-color: #d4a017;
-      background: #2a1a0a;
-      box-shadow: 0 0 20px rgba(212, 160, 23, 0.15);
+      background: rgba(42, 26, 10, 0.4);
+      box-shadow: 0 0 20px rgba(212, 160, 23, 0.05);
     }
     #timeStatusBar.night {
       color: #4a4aff;
       border-color: #4a4aff;
-      background: #0a0a2a;
-      box-shadow: 0 0 20px rgba(74, 74, 255, 0.15);
+      background: rgba(10, 10, 42, 0.4);
+      box-shadow: 0 0 20px rgba(74, 74, 255, 0.05);
     }
     #timeStatusBar .time-icon { margin-left: 8px; }
 
-    /* ===== رسائل الراوي (إشعارات في الأعلى) ===== */
     #narratorNotifications {
       position: fixed;
       top: 130px;
@@ -182,7 +181,7 @@
       pointer-events: none;
     }
     #narratorNotifications .narrator-notif {
-      background: #2a1a0a;
+      background: rgba(42, 26, 10, 0.9);
       border: 2px solid #d4a017;
       border-radius: 10px;
       padding: 10px 16px;
@@ -191,7 +190,7 @@
       align-items: center;
       pointer-events: auto;
       animation: slideDownNotif 0.4s ease;
-      box-shadow: 0 0 30px rgba(212, 160, 23, 0.2);
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.1);
     }
     #narratorNotifications .narrator-notif .notif-text {
       color: #f0e0c0;
@@ -207,7 +206,7 @@
       margin-left: 8px;
     }
     #narratorNotifications .narrator-notif .notif-close {
-      background: #6b1a1a;
+      background: rgba(107, 26, 26, 0.8);
       color: #fff;
       border: none;
       border-radius: 6px;
@@ -226,7 +225,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ===== الأزرار ===== */
     .action-buttons-row {
       display: flex;
       gap: 8px;
@@ -251,36 +249,119 @@
       align-items: center;
       justify-content: center;
       line-height: 1;
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
-    .action-buttons-row .btn:hover { transform: scale(1.08); box-shadow: 0 0 20px rgba(255, 255, 255, 0.15); }
-    .action-buttons-row .btn-hide { background: #2c2c2c; color: #fff; border: 1px solid #555; }
-    .action-buttons-row .btn-hide:hover { background: #3a3a3a; border-color: #777; }
-    .action-buttons-row .btn-suicide { background: #6b1a1a; color: #fff; border: 1px solid #8b0000; }
-    .action-buttons-row .btn-suicide:hover { background: #8b0000; box-shadow: 0 0 20px #8b0000; }
-    .action-buttons-row .btn-message { background: #b8860b; color: #fff; border: 1px solid #d4a017; }
-    .action-buttons-row .btn-message:hover { background: #d4a017; box-shadow: 0 0 20px #d4a017; }
-    .btn-show-card {
-      width: 100%; padding: 10px; font-size: 16px; background: #2c2c2c; color: #fff;
-      border: 1px solid #555; border-radius: 10px; cursor: pointer; transition: 0.3s; font-family: 'Cinzel', serif;
+    .action-buttons-row .btn:hover {
+      transform: scale(1.08);
+      background: rgba(255, 255, 255, 0.05);
     }
-    .btn-show-card:hover { background: #3a3a3a; box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); }
+    .action-buttons-row .btn-hide { border-color: rgba(255, 255, 255, 0.06); }
+    .action-buttons-row .btn-hide:hover { border-color: rgba(255, 255, 255, 0.1); }
+    .action-buttons-row .btn-suicide {
+      border-color: rgba(255, 0, 0, 0.15);
+      color: #ff6b6b;
+    }
+    .action-buttons-row .btn-suicide:hover {
+      background: rgba(255, 0, 0, 0.05);
+      border-color: rgba(255, 0, 0, 0.2);
+    }
+    .action-buttons-row .btn-message {
+      border-color: rgba(212, 160, 23, 0.15);
+      color: #d4a017;
+    }
+    .action-buttons-row .btn-message:hover {
+      background: rgba(212, 160, 23, 0.05);
+      border-color: rgba(212, 160, 23, 0.2);
+    }
 
-    .role-image-wrapper { position: relative; width: 100%; max-width: 300px; margin: 10px auto; }
-    .role-image-wrapper img.role-img { width: 100%; border-radius: 12px; border: 2px solid crimson; }
-    .role-image-wrapper img.blood-overlay {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none;
+    .btn-show-card {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-family: 'Cinzel', serif;
     }
+    .btn-show-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(212, 160, 23, 0.1);
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.02);
+    }
+
+    .role-image-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 300px;
+      margin: 10px auto;
+    }
+    .role-image-wrapper img.role-img {
+      width: 100%;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 0, 0, 0.1);
+      display: block;
+    }
+    .role-image-wrapper img.blood-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      border-radius: 12px;
+    }
+
     .role-description {
-      background: #1a1a1a; border: 1px solid #555; border-radius: 10px; padding: 10px 12px; margin-top: 10px;
-      color: #ccc; font-size: 13px; line-height: 1.5; text-align: center; font-family: 'Cinzel', serif; letter-spacing: 0.3px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 10px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.3px;
     }
     .role-description strong { color: #d4a017; }
 
-    /* ===== غرفة الذئاب ===== */
+    .role-name {
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+      color: #d4a017;
+    }
+    .role-name.role-name-infected {
+      color: #2ecc71 !important;
+      text-shadow: 0 0 20px rgba(46, 204, 113, 0.15);
+    }
+    .role-name.role-name-wolf-converted {
+      color: #66bb6a !important;
+      text-shadow: 0 0 20px rgba(102, 187, 106, 0.15);
+    }
+
+    .infected-notice {
+      color: #2ecc71;
+      font-weight: bold;
+      font-size: 18px;
+      text-align: center;
+      margin-top: 8px;
+      font-family: 'Cinzel', serif;
+      text-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+    }
+
     #wolfChatContainer {
       margin-top: 15px;
-      background: #0d0805;
-      border: 2px solid #ff1a1a;
+      background: rgba(13, 8, 5, 0.6);
+      border: 2px solid rgba(255, 0, 0, 0.15);
       border-radius: 12px;
       padding: 12px;
       display: none;
@@ -291,13 +372,19 @@
       align-items: center;
       margin-bottom: 10px;
     }
-    #wolfChatContainer .wolf-title span { color: #ff1a1a; font-size: 16px; font-weight: bold; }
-    #wolfChatContainer .wolf-title small { color: #777; font-size: 11px; }
+    #wolfChatContainer .wolf-title span {
+      color: #ff1a1a;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    #wolfChatContainer .wolf-title small {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 11px;
+    }
 
-    /* ===== القسم العلوي: إرسال اسم الضحية (صغير) ===== */
     .wolf-vote-section {
-      background: #1a0a0a;
-      border: 1px solid #ff1a1a;
+      background: rgba(26, 10, 10, 0.5);
+      border: 1px solid rgba(255, 0, 0, 0.1);
       border-radius: 8px;
       padding: 8px 12px;
       margin-bottom: 10px;
@@ -317,8 +404,8 @@
       flex: 1;
       padding: 6px 10px;
       border-radius: 6px;
-      border: 1px solid #555;
-      background: #111;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.02);
       color: #fff;
       font-family: 'Cinzel', serif;
       font-size: 13px;
@@ -327,13 +414,14 @@
     .wolf-vote-row input:focus {
       border-color: #ff1a1a;
       outline: none;
+      background: rgba(255, 255, 255, 0.04);
     }
     .wolf-vote-row input::placeholder {
-      color: #555;
+      color: rgba(255, 255, 255, 0.2);
       font-size: 12px;
     }
     .wolf-vote-btn-small {
-      background: #8b0000;
+      background: rgba(139, 0, 0, 0.6);
       color: #fff;
       border: none;
       border-radius: 6px;
@@ -347,14 +435,13 @@
       white-space: nowrap;
     }
     .wolf-vote-btn-small:hover {
-      background: #aa0000;
-      box-shadow: 0 0 15px #8b0000;
+      background: rgba(170, 0, 0, 0.6);
+      box-shadow: 0 0 15px rgba(139, 0, 0, 0.2);
     }
 
-    /* ===== القسم السفلي: دردشة الذئاب (كبير) ===== */
     .wolf-chat-section {
-      background: #0d0805;
-      border: 1px solid #ff1a1a;
+      background: rgba(13, 8, 5, 0.6);
+      border: 1px solid rgba(255, 0, 0, 0.1);
       border-radius: 8px;
       padding: 10px;
     }
@@ -368,28 +455,32 @@
     #wolfMessagesList {
       max-height: 180px;
       overflow-y: auto;
-      background: #1a1a1a;
+      background: rgba(255, 255, 255, 0.02);
       border-radius: 6px;
       padding: 8px;
       margin-bottom: 8px;
       scrollbar-width: thin;
     }
     #wolfMessagesList::-webkit-scrollbar { width: 4px; }
-    #wolfMessagesList::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 10px; }
-    #wolfMessagesList::-webkit-scrollbar-thumb { background: #ff1a1a; border-radius: 10px; }
+    #wolfMessagesList::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
+    #wolfMessagesList::-webkit-scrollbar-thumb { background: rgba(255, 0, 0, 0.15); border-radius: 10px; }
     #wolfMessagesList .wolf-msg {
       padding: 4px 0;
-      border-bottom: 1px solid #333;
-      color: #ccc;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.5);
       font-size: 13px;
     }
-    #wolfMessagesList .wolf-msg .wolf-name { color: #ff6b6b; font-weight: bold; }
+    #wolfMessagesList .wolf-msg .wolf-name {
+      color: #ff6b6b;
+      font-weight: bold;
+    }
     #wolfMessagesList .wolf-msg .wolf-time {
-      color: #555;
+      color: rgba(255, 255, 255, 0.15);
       font-size: 10px;
       float: left;
       direction: ltr;
     }
+
     .wolf-input-row {
       display: flex;
       gap: 8px;
@@ -398,16 +489,23 @@
       flex: 1;
       padding: 8px 12px;
       border-radius: 6px;
-      border: 1px solid #555;
-      background: #111;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.02);
       color: #fff;
       font-family: 'Cinzel', serif;
       font-size: 13px;
     }
-    .wolf-input-row input:focus { border-color: #ff1a1a; outline: none; }
-    .wolf-input-row input::placeholder { color: #555; font-size: 12px; }
+    .wolf-input-row input:focus {
+      border-color: #ff1a1a;
+      outline: none;
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .wolf-input-row input::placeholder {
+      color: rgba(255, 255, 255, 0.15);
+      font-size: 12px;
+    }
     .wolf-input-row button {
-      background: #ff1a1a;
+      background: rgba(255, 0, 0, 0.15);
       color: #fff;
       border: none;
       border-radius: 6px;
@@ -417,51 +515,279 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    .wolf-input-row button:hover { background: #cc0000; box-shadow: 0 0 15px #ff1a1a; }
-
-    /* ===== باقي الأنماط ===== */
-    .discord-player-section {
-      background: #1a1a1a; border: 1px solid #5865F2; border-radius: 12px; padding: 15px; margin-top: 15px;
+    .wolf-input-row button:hover {
+      background: rgba(255, 0, 0, 0.2);
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.05);
     }
-    .discord-player-section .title { color: #5865F2; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+
+    .discord-player-section {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(88, 101, 242, 0.15);
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+    .discord-player-section .title {
+      color: #5865F2;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     .discord-player-section .link-box {
-      display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: #0d0d0d;
-      padding: 10px; border-radius: 8px; margin-top: 8px; border: 1px solid #333;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: rgba(13, 13, 13, 0.4);
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
     .discord-player-section .link-box input {
-      flex: 1; background: transparent; border: none; color: #ccc; font-family: 'Cinzel', serif;
-      font-size: 13px; padding: 5px; min-width: 120px; direction: ltr;
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      padding: 5px;
+      min-width: 120px;
+      direction: ltr;
     }
     .discord-player-section .link-box input:focus { outline: none; }
     .discord-player-section .btn-discord-join {
-      background: #5865F2; color: #fff; border: none; padding: 8px 16px; border-radius: 8px;
-      font-family: 'Cinzel', serif; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 14px;
+      background: #5865F2;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 14px;
     }
-    .discord-player-section .btn-discord-join:hover { background: #4752C4; box-shadow: 0 0 15px #5865F2; }
-    .btn-secondary { background: #2c2c2c; color: #fff; border: 1px solid #555; }
-    .btn-secondary:hover { background: #3a3a3a; border-color: #777; }
-    .join-form-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-    .join-form-buttons .btn { flex: 1; min-width: 100px; }
+    .discord-player-section .btn-discord-join:hover {
+      background: #4752C4;
+      box-shadow: 0 0 15px rgba(88, 101, 242, 0.15);
+    }
+
+    .join-form-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .join-form-buttons .btn {
+      flex: 1;
+      min-width: 100px;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+    .btn-primary {
+      background: rgba(212, 160, 23, 0.08);
+      color: #d4a017;
+      border: 1px solid rgba(212, 160, 23, 0.1);
+    }
+    .btn-primary:hover {
+      background: rgba(212, 160, 23, 0.12);
+      box-shadow: 0 8px 30px rgba(212, 160, 23, 0.05);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.6);
+    }
+    .btn-danger {
+      background: rgba(255, 0, 0, 0.05);
+      color: #ff6b6b;
+      border: 1px solid rgba(255, 0, 0, 0.1);
+    }
+    .btn-danger:hover {
+      background: rgba(255, 0, 0, 0.08);
+    }
+    .btn-success {
+      background: rgba(46, 204, 113, 0.08);
+      color: #66bb6a;
+      border: 1px solid rgba(46, 204, 113, 0.1);
+    }
+    .btn-success:hover {
+      background: rgba(46, 204, 113, 0.12);
+      box-shadow: 0 8px 30px rgba(46, 204, 113, 0.05);
+    }
+
+    .input-group {
+      margin-bottom: 12px;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+    .input-group input:focus {
+      outline: none;
+      border-color: rgba(212, 160, 23, 0.15);
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.02);
+    }
+    .input-group input::placeholder {
+      color: rgba(255, 255, 255, 0.15);
+    }
+
+    .room-code-field-hidden {
+      display: none !important;
+    }
+
+    #status {
+      text-align: center;
+      margin: 20px 0;
+    }
+    #status .waiting-text {
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 16px;
+    }
+    #status .leave-btn {
+      margin-top: 15px;
+      padding: 12px 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 0, 0, 0.1);
+      background: rgba(255, 0, 0, 0.05);
+      color: #ff6b6b;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+    #status .leave-btn:hover {
+      background: rgba(255, 0, 0, 0.08);
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.05);
+    }
+
+    .hidden { display: none !important; }
+
     .modal-message .modal-content { max-width: 400px; }
     .modal-message textarea {
-      width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #555;
-      background: #1a1a1a; color: #fff; font-family: 'Cinzel', serif; font-size: 14px;
-      resize: vertical; min-height: 80px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 80px;
+      transition: 0.3s;
     }
-    .modal-message textarea:focus { border-color: #d4a017; outline: none; box-shadow: 0 0 15px rgba(212, 160, 23, 0.2); }
-    .role-name-infected {
-      color: #2ecc71 !important;
-      text-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
+    .modal-message textarea:focus {
+      outline: none;
+      border-color: rgba(212, 160, 23, 0.15);
+      background: rgba(255, 255, 255, 0.04);
     }
-    .role-name-wolf-converted {
-      color: #66bb6a !important;
-      text-shadow: 0 0 20px rgba(102, 187, 106, 0.3);
+    .modal-message textarea::placeholder {
+      color: rgba(255, 255, 255, 0.15);
+    }
+
+    .error-msg {
+      color: #ff6b6b;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 8px;
+      display: none;
+      font-family: 'Cinzel', serif;
+      padding: 8px 12px;
+      background: rgba(255, 0, 0, 0.05);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 0, 0, 0.05);
+    }
+    .error-msg.show { display: block; }
+
+    #kickedNotification {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(26, 10, 10, 0.95);
+      border: 2px solid #ff1a1a;
+      border-radius: 16px;
+      padding: 30px 25px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      z-index: 2000;
+      box-shadow: 0 0 60px rgba(255, 0, 0, 0.15);
+      animation: kickPulse 0.5s ease;
+    }
+    @keyframes kickPulse {
+      0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+      50% { transform: translate(-50%, -50%) scale(1.05); }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+    #kickedNotification .kick-icon { font-size: 60px; display: block; margin-bottom: 10px; }
+    #kickedNotification .kick-title {
+      color: #ff6b6b;
+      font-size: 22px;
+      font-weight: bold;
+      font-family: 'Cinzel', serif;
+    }
+    #kickedNotification .kick-text {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 16px;
+      margin: 12px 0;
+      font-family: 'Cinzel', serif;
+    }
+    #kickedNotification .kick-btn {
+      background: rgba(139, 0, 0, 0.6);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 30px;
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #kickedNotification .kick-btn:hover {
+      background: rgba(170, 0, 0, 0.6);
+      box-shadow: 0 0 25px rgba(139, 0, 0, 0.15);
+    }
+
+    #skull {
+      font-size: 80px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    #death-text {
+      color: rgba(255, 255, 255, 0.5);
+      text-align: center;
+      font-size: 16px;
+      font-family: 'Cinzel', serif;
     }
 
     @media (max-width: 400px) {
       .action-buttons-row .btn { width: 46px; height: 42px; font-size: 17px; }
       .suggest-fab { width: 40px; height: 40px; font-size: 18px; top: 12px; left: 12px; }
-      [dir="ltr"] .suggest-fab { left: auto; right: 12px; }
       #wolfMessagesList { max-height: 120px; }
       .wolf-vote-row { flex-wrap: wrap; }
       .wolf-vote-btn-small { width: 100%; }
@@ -469,6 +795,8 @@
       #deathNotificationsContainer { top: 65px; }
       .dead-player-card { width: 60px; }
       .dead-player-card .dead-avatar { width: 50px; height: 50px; }
+      #kickedNotification { padding: 20px; }
+      #kickedNotification .kick-title { font-size: 18px; }
     }
   </style>
 </head>
@@ -476,144 +804,133 @@
 
   <button class="suggest-fab" id="suggestFabBtn" title="💬 اقتراحات للمطور">💬</button>
 
-  <!-- ===== إشعارات الوفاة ===== -->
   <div id="deathNotificationsContainer"></div>
-
-  <!-- ===== إشعارات رسائل الراوي ===== -->
   <div id="narratorNotifications"></div>
 
-  <div class="container">
-    <h2 id="playerTitle">🐺 لو ڨارو</h2>
-
-    <!-- ===== شريط حالة الوقت (النهار/الليل) ===== -->
-    <div id="timeStatusBar" style="display:none;">
-      <span class="time-icon">☀️</span>
-      <span id="timeStatusText">النهار</span>
-    </div>
-
-    <div id="joinForm">
-      <input type="text" id="playerName" placeholder="اسمك" />
-      <input type="text" id="roomCodeInput" placeholder="رمز الغرفة" />
-      <div class="join-form-buttons">
-        <button class="btn btn-primary" id="joinBtn">انضم</button>
-        <button class="btn btn-secondary" id="backBtn">🔙 رجوع</button>
-      </div>
-    </div>
-
-    <div id="status" class="hidden" style="color: #ccc; margin: 20px 0; text-align:center;">
-      <span id="waitingText">في انتظار بدء اللعبة...</span>
-      <button class="btn btn-danger" id="leaveBtn" style="margin-top:15px;">مغادرة</button>
-    </div>
-
-    <div id="discordPlayerSection" class="discord-player-section hidden">
-      <div class="title" id="discordTitle">🎙️ غرفة الصوت في Discord</div>
-      <div class="link-box">
-        <input type="text" id="discordPlayerLink" placeholder="لا يوجد رابط بعد..." readonly />
-        <button class="btn-discord-join" id="joinDiscordBtn">🎙️ انضم</button>
-      </div>
-      <p style="color:#777; font-size:12px; margin-top:5px;" id="discordHint">💡 انضم إلى الغرفة الصوتية للتواصل مع اللاعبين أثناء اللعبة.</p>
-    </div>
-
-    <div id="roleBox" class="hidden"></div>
-
-    <!-- ===== بطاقات الموتى ===== -->
-    <div id="deadPlayersContainer">
-      <div class="dead-title">💀 اللاعبون الذين ماتوا</div>
-      <div id="deadPlayersGrid" class="dead-players-grid"></div>
-    </div>
-
-    <!-- ===== غرفة الذئاب ===== -->
-    <div id="wolfChatContainer">
-      <div class="wolf-title">
-        <span>🐺 غرفة الذئاب</span>
-        <small>🔒 خاصة بالذئاب فقط</small>
-      </div>
-
-      <div class="wolf-vote-section">
-        <div class="wolf-vote-label">🎯 إرسال اسم الضحية للراوي</div>
-        <div class="wolf-vote-row">
-          <input type="text" id="wolfVictimInput" placeholder="اكتب اسم الضحية..." />
-          <button class="wolf-vote-btn-small" id="wolfVoteBtn">📤 إرسال</button>
-        </div>
-      </div>
-
-      <div class="wolf-chat-section">
-        <div class="wolf-chat-label">💬 دردشة الذئاب</div>
-        <div id="wolfMessagesList"></div>
-        <div class="wolf-input-row">
-          <input type="text" id="wolfMessageInput" placeholder="✏️ اكتب رسالة للذئاب..." />
-          <button id="sendWolfMessageBtn">📤</button>
-        </div>
-      </div>
-    </div>
-
+  <div id="kickedNotification">
+    <span class="kick-icon">🚫</span>
+    <div class="kick-title">تم طردك من الغرفة</div>
+    <div class="kick-text">لقد غادر الراوي الغرفة، تم إغلاقها.</div>
+    <button class="kick-btn" id="kickedOkBtn">حسناً</button>
   </div>
 
-  <button class="btn-suggest btn-suggest-old" id="suggestBtn">💬 اقتراحات للمطور</button>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+
+  <div class="main-container">
+    <div class="app-card">
+
+      <div class="app-header">
+        <div class="app-icon">🐺</div>
+        <div class="app-title">Loup Garou</div>
+        <div class="app-subtitle">🎭 لاعب – انضم إلى المغامرة</div>
+      </div>
+
+      <div id="timeStatusBar" style="display:none;">
+        <span class="time-icon">☀️</span>
+        <span id="timeStatusText">النهار</span>
+      </div>
+
+      <div id="errorMsg" class="error-msg"></div>
+
+      <div id="joinForm">
+        <div class="input-group">
+          <input type="text" id="playerName" placeholder="اسمك" />
+        </div>
+        <div class="input-group" id="roomCodeGroup">
+          <input type="text" id="roomCodeInput" placeholder="رمز الغرفة" />
+        </div>
+        <div class="join-form-buttons">
+          <button class="btn btn-primary" id="joinBtn">انضم</button>
+          <button class="btn btn-secondary" id="backBtn">🔙 رجوع</button>
+        </div>
+      </div>
+
+      <div id="status" class="hidden">
+        <div class="waiting-text" id="waitingText">⏳ في انتظار بدء اللعبة...</div>
+        <button class="leave-btn" id="leaveBtn">🚪 مغادرة</button>
+      </div>
+
+      <div id="discordPlayerSection" class="discord-player-section hidden">
+        <div class="title" id="discordTitle">🎙️ غرفة الصوت في ديسكورد</div>
+        <div class="link-box">
+          <input type="text" id="discordPlayerLink" placeholder="لا يوجد رابط بعد..." readonly />
+          <button class="btn-discord-join" id="joinDiscordBtn">🎙️ انضم</button>
+        </div>
+        <p style="color:rgba(255,255,255,0.15); font-size:12px; margin-top:5px;" id="discordHint">💡 انضم إلى الغرفة الصوتية للتواصل مع اللاعبين أثناء اللعبة.</p>
+      </div>
+
+      <div id="roleBox" class="hidden"></div>
+
+      <div id="deadPlayersContainer">
+        <div class="dead-title">💀 اللاعبون الذين ماتوا</div>
+        <div id="deadPlayersGrid" class="dead-players-grid"></div>
+      </div>
+
+      <div id="wolfChatContainer">
+        <div class="wolf-title">
+          <span>🐺 غرفة الذئاب</span>
+          <small>🔒 خاصة بالذئاب فقط</small>
+        </div>
+        <div class="wolf-vote-section">
+          <div class="wolf-vote-label">🎯 إرسال اسم الضحية للراوي</div>
+          <div class="wolf-vote-row">
+            <input type="text" id="wolfVictimInput" placeholder="اكتب اسم الضحية..." />
+            <button class="wolf-vote-btn-small" id="wolfVoteBtn">📤 إرسال</button>
+          </div>
+        </div>
+        <div class="wolf-chat-section">
+          <div class="wolf-chat-label">💬 دردشة الذئاب</div>
+          <div id="wolfMessagesList"></div>
+          <div class="wolf-input-row">
+            <input type="text" id="wolfMessageInput" placeholder="✏️ اكتب رسالة للذئاب..." />
+            <button id="sendWolfMessageBtn">📤</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   <div class="modal modal-message" id="messageModal">
     <div class="modal-content">
       <h3 style="color:#d4a017;">📩 إرسال رسالة إلى الراوي</h3>
-      <p style="color:#aaa; font-size:13px; margin-bottom:10px;">اكتب رسالتك، سيتمكن الراوي من رؤيتها في صفحة التحكم.</p>
+      <p style="color:rgba(255,255,255,0.3); font-size:13px; margin-bottom:10px;">اكتب رسالتك، سيتمكن الراوي من رؤيتها في صفحة التحكم.</p>
       <textarea id="messageText" placeholder="اكتب رسالتك هنا..."></textarea>
-      <div class="flex" style="margin-top:10px;">
-        <button class="btn btn-success" id="sendMessageBtn">📤 إرسال</button>
-        <button class="btn" id="closeMessageModal">إلغاء</button>
+      <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+        <button class="btn btn-success" id="sendMessageBtn" style="flex:1;">📤 إرسال</button>
+        <button class="btn btn-secondary" id="closeMessageModal" style="flex:1;">إلغاء</button>
       </div>
-      <p id="messageStatus" style="color:#7a4e2d; font-size:13px; margin-top:8px; text-align:center;"></p>
+      <p id="messageStatus" style="color:rgba(255,255,255,0.2); font-size:13px; margin-top:8px; text-align:center;"></p>
     </div>
   </div>
 
   <div class="modal" id="suggestModal">
     <div class="modal-content">
-      <h3 id="suggestTitle">📢 شارك فكرتك</h3>
-      <p id="suggestDesc">ساعدنا في تطوير اللعبة بأفكارك الجديدة!</p>
-      <input type="text" id="suggestName" placeholder="اسمك (اختياري)" />
-      <textarea id="suggestMessage" placeholder="اكتب اقتراحك هنا..."></textarea>
-      <button class="btn btn-primary" id="sendSuggest">🚀 إرسال</button>
-      <button class="btn" id="closeSuggest" style="margin-top:8px;">إلغاء</button>
+      <h3 id="suggestTitle" style="color:#d4a017;">📢 شارك فكرتك</h3>
+      <p id="suggestDesc" style="color:rgba(255,255,255,0.3);">ساعدنا في تطوير اللعبة بأفكارك الجديدة!</p>
+      <input type="text" id="suggestName" placeholder="اسمك (اختياري)" style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); color:#fff; font-family:'Cinzel',serif; margin:4px 0;" />
+      <textarea id="suggestMessage" placeholder="اكتب اقتراحك هنا..." style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); color:#fff; font-family:'Cinzel',serif; min-height:80px; resize:vertical; margin:4px 0;"></textarea>
+      <button class="btn btn-primary" id="sendSuggest" style="width:100%; padding:12px; margin-top:6px;">🚀 إرسال</button>
+      <button class="btn btn-secondary" id="closeSuggest" style="width:100%; padding:12px; margin-top:6px;">إلغاء</button>
     </div>
   </div>
 
   <script type="module">
-    import { t, setLanguage, getCurrentLang, translateDynamicRole } from './translations.js';
     import {
-      getRoomCode, setRoomCode, clearRoomCode, addPlayer, getPlayer,
+      getRoomCode, setRoomCode, clearRoomCode, addPlayer, getPlayer, getPlayers,
       listenToPlayers, deleteRoom, sendSuggestion, db, ref, update,
       remove, onValue, get, push, isPlayerWolf, sendWolfMessage,
       listenToWolfMessages
     } from "./logic.js";
 
-    function applyTranslations() {
-      document.title = t('appName') + ' - ' + t('playerTitle');
-      document.getElementById('playerTitle').textContent = `🐺 ${t('appName')}`;
-      document.getElementById('playerName').placeholder = t('yourNamePlaceholder');
-      document.getElementById('roomCodeInput').placeholder = t('roomCodePlaceholder');
-      document.getElementById('joinBtn').textContent = t('join');
-      document.getElementById('backBtn').textContent = '🔙 ' + t('back');
-      document.getElementById('waitingText').textContent = t('waitingForGame');
-      document.getElementById('leaveBtn').textContent = t('leave');
-      document.getElementById('discordTitle').textContent = '🎙️ ' + t('discordSettings');
-      document.getElementById('discordHint').textContent = '💡 ' + t('discordHint');
-      document.getElementById('joinDiscordBtn').textContent = '🎙️ ' + t('join');
-      document.getElementById('suggestFabBtn').title = '💬 ' + t('suggestions');
-      document.getElementById('suggestTitle').textContent = t('shareIdea');
-      document.getElementById('suggestDesc').textContent = t('shareDesc');
-      document.getElementById('suggestName').placeholder = t('yourName');
-      document.getElementById('suggestMessage').placeholder = t('yourSuggestion');
-      document.getElementById('sendSuggest').textContent = t('send');
-      document.getElementById('closeSuggest').textContent = t('cancel');
-      document.getElementById('sendMessageBtn').textContent = '📤 ' + t('send');
-      document.getElementById('closeMessageModal').textContent = t('cancel');
-      const lang = getCurrentLang();
-      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-      document.documentElement.lang = lang;
-    }
-    applyTranslations();
-
     // ===== عناصر الصفحة =====
     const nameInput = document.getElementById("playerName");
     const codeInput = document.getElementById("roomCodeInput");
+    const roomCodeGroup = document.getElementById("roomCodeGroup");
     const joinBtn = document.getElementById("joinBtn");
     const backBtn = document.getElementById("backBtn");
     const joinForm = document.getElementById("joinForm");
@@ -621,6 +938,7 @@
     const roleBox = document.getElementById("roleBox");
     const leaveBtn = document.getElementById("leaveBtn");
     const waitingText = document.getElementById("waitingText");
+    const errorMsg = document.getElementById("errorMsg");
     const messageModal = document.getElementById("messageModal");
     const messageText = document.getElementById("messageText");
     const sendMessageBtn = document.getElementById("sendMessageBtn");
@@ -643,19 +961,28 @@
     const deathContainer = document.getElementById('deathNotificationsContainer');
     const deadPlayersContainer = document.getElementById('deadPlayersContainer');
     const deadPlayersGrid = document.getElementById('deadPlayersGrid');
+    const kickedNotification = document.getElementById('kickedNotification');
+    const kickedOkBtn = document.getElementById('kickedOkBtn');
 
     let playerId = localStorage.getItem("playerId");
-    let roomCode = getRoomCode();
+    let roomCode = localStorage.getItem('roomCode') || getRoomCode();
     let isWolf = false;
     let wolfMessagesListener = null;
     let gameStateListener = null;
     let playersListener = null;
     let narratorNotifListener = null;
     let deathListener = null;
+    let roomListener = null;
     let shownDeaths = new Set();
     let shownNarratorNotifs = new Set();
 
-    // ===== دالة تنسيق الوقت (بأرقام غربية) =====
+    const hasRoomCode = roomCode ? true : false;
+
+    if (hasRoomCode) {
+      roomCodeGroup.classList.add('room-code-field-hidden');
+      codeInput.value = roomCode;
+    }
+
     function formatTime(timestamp) {
       if (!timestamp) return '--:--';
       const date = new Date(timestamp);
@@ -664,7 +991,43 @@
       return hours + ':' + minutes;
     }
 
-    // ===== تحديث شريط حالة الوقت =====
+    function showError(message) {
+      errorMsg.textContent = message;
+      errorMsg.classList.add('show');
+      setTimeout(() => {
+        errorMsg.classList.remove('show');
+      }, 5000);
+    }
+
+    function showKickedNotification() {
+      kickedNotification.style.display = 'block';
+      if (playersListener) playersListener();
+      if (gameStateListener) gameStateListener();
+      if (wolfMessagesListener) wolfMessagesListener();
+      if (narratorNotifListener) narratorNotifListener();
+      if (deathListener) deathListener();
+      if (roomListener) roomListener();
+    }
+
+    kickedOkBtn.addEventListener('click', () => {
+      kickedNotification.style.display = 'none';
+      localStorage.clear();
+      clearRoomCode();
+      window.location.href = 'index.html';
+    });
+
+    function listenToRoomDeletion(roomCode) {
+      if (!roomCode) return;
+      const roomRef = ref(db, `rooms/${roomCode}`);
+      if (roomListener) roomListener();
+      roomListener = onValue(roomRef, (snapshot) => {
+        const data = snapshot.val();
+        if (!data) {
+          showKickedNotification();
+        }
+      });
+    }
+
     function updateTimeStatus(isNight) {
       timeStatusBar.style.display = 'block';
       if (isNight) {
@@ -681,7 +1044,8 @@
     function listenToGameState(roomCode) {
       if (!roomCode) return;
       const stateRef = ref(db, `rooms/${roomCode}/gameState`);
-      onValue(stateRef, (snapshot) => {
+      if (gameStateListener) gameStateListener();
+      gameStateListener = onValue(stateRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
           updateTimeStatus(data.isNight === true);
@@ -689,23 +1053,18 @@
       });
     }
 
-    // ===== إشعارات الوفاة + بطاقات الموتى =====
     function renderDeathNotificationsAndCards(data) {
-      // === إشعارات الوفاة ===
       if (!data) {
         deathContainer.style.display = 'none';
         deadPlayersContainer.style.display = 'none';
         return;
       }
-
       const entries = Object.entries(data);
       if (entries.length === 0) {
         deathContainer.style.display = 'none';
         deadPlayersContainer.style.display = 'none';
         return;
       }
-
-      // --- إشعارات الوفاة (في الأعلى) ---
       const newEntries = entries.filter(([key]) => !shownDeaths.has(key));
       if (newEntries.length > 0) {
         deathContainer.style.display = 'flex';
@@ -721,18 +1080,13 @@
           shownDeaths.add(key);
         });
       }
-
-      // --- بطاقات الموتى (دوائر صغيرة) ---
       deadPlayersContainer.style.display = 'block';
       deadPlayersGrid.innerHTML = '';
-      
-      // ترتيب عكسي (الأحدث أولاً)
       const sortedEntries = entries.sort((a, b) => (b[1].timestamp || 0) - (a[1].timestamp || 0));
-      
       sortedEntries.forEach(([key, death]) => {
         const card = document.createElement('div');
         card.className = 'dead-player-card';
-        const roleDisplay = translateDynamicRole(death.role) || 'غير معروف';
+        const roleDisplay = death.role || 'غير معروف';
         const imageUrl = death.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
         card.innerHTML = `
           <img src="${imageUrl}" class="dead-avatar" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
@@ -758,7 +1112,6 @@
         shownDeaths.delete(key);
         const remaining = deathContainer.querySelectorAll('.death-notification:not([style*="display: none"])');
         if (remaining.length === 0) deathContainer.style.display = 'none';
-        // إعادة تحميل البطاقات
         const snap = await get(ref(db, `rooms/${roomCode}/deathNotifications`));
         renderDeathNotificationsAndCards(snap.val());
       });
@@ -775,7 +1128,6 @@
       });
     }
 
-    // ===== إشعارات رسائل الراوي =====
     function renderNarratorNotifications(data) {
       if (!data) {
         narratorNotifContainer.innerHTML = '';
@@ -784,16 +1136,12 @@
       const entries = Object.entries(data)
         .filter(([key, msg]) => msg.fromNarrator === true && msg.playerId === playerId)
         .sort((a, b) => (b[1].timestamp || 0) - (a[1].timestamp || 0));
-
       if (entries.length === 0) {
         narratorNotifContainer.innerHTML = '';
         return;
       }
-
-      let hasNew = false;
       entries.forEach(([key, msg]) => {
         if (!shownNarratorNotifs.has(key)) {
-          hasNew = true;
           addNarratorNotification(key, msg.message);
           shownNarratorNotifs.add(key);
         }
@@ -839,7 +1187,7 @@
           discordLinkInput.value = link;
           discordSection.classList.remove("hidden");
         } else {
-          discordLinkInput.value = t('noLinkYet');
+          discordLinkInput.value = 'لا يوجد رابط بعد';
           discordSection.classList.add("hidden");
         }
       });
@@ -854,7 +1202,6 @@
         if (!targetName) return '';
         const snap = await get(ref(db, 'global_roles'));
         const roles = snap.val() || {};
-        const lang = getCurrentLang();
         for (const key in roles) {
           const role = roles[key];
           const nameObj = role.name;
@@ -869,7 +1216,7 @@
           if (match) {
             const desc = role.description;
             if (typeof desc === 'object') {
-              return desc[lang] || desc.ar || desc.fr || desc.en || '';
+              return desc.ar || desc.fr || desc.en || '';
             } else {
               return desc || '';
             }
@@ -916,18 +1263,17 @@
       }
     }
 
-    // ===== غرفة الذئاب =====
     function renderWolfMessages(data) {
       wolfMessagesList.innerHTML = '';
       if (!data) {
-        wolfMessagesList.innerHTML = '<div style="color:#777; font-size:12px; text-align:center;">لا توجد رسائل بعد</div>';
+        wolfMessagesList.innerHTML = '<div style="color:rgba(255,255,255,0.15); font-size:12px; text-align:center;">لا توجد رسائل بعد</div>';
         return;
       }
       const entries = Object.entries(data)
         .filter(([key, msg]) => !msg.systemMessage)
         .sort((a, b) => (a[1].timestamp || 0) - (b[1].timestamp || 0));
       if (entries.length === 0) {
-        wolfMessagesList.innerHTML = '<div style="color:#777; font-size:12px; text-align:center;">لا توجد رسائل بعد</div>';
+        wolfMessagesList.innerHTML = '<div style="color:rgba(255,255,255,0.15); font-size:12px; text-align:center;">لا توجد رسائل بعد</div>';
         return;
       }
       entries.forEach(([key, msg]) => {
@@ -946,8 +1292,10 @@
 
     async function initWolfChat(roomCode, playerId) {
       if (!roomCode || !playerId) return;
-      isWolf = await isPlayerWolf(roomCode, playerId);
-      if (isWolf) {
+      const player = await getPlayer(roomCode, playerId);
+      const isWolfStatus = await isPlayerWolf(roomCode, playerId);
+      const isInfected = player?.isInfected === true;
+      if (isWolfStatus || isInfected) {
         wolfChatContainer.style.display = 'block';
         if (wolfMessagesListener) wolfMessagesListener();
         wolfMessagesListener = listenToWolfMessages(roomCode, (data) => {
@@ -968,7 +1316,6 @@
       }
     }
 
-    // ===== إرسال رسالة للذئاب =====
     if (sendWolfMessageBtn) {
       sendWolfMessageBtn.addEventListener('click', async () => {
         const message = wolfMessageInput.value.trim();
@@ -987,7 +1334,6 @@
       });
     }
 
-    // ===== إرسال اسم الضحية =====
     if (wolfVoteBtn) {
       wolfVoteBtn.addEventListener('click', async () => {
         const victim = wolfVictimInput.value.trim();
@@ -1027,20 +1373,15 @@
       });
     }
 
-    // ===== دوال عرض البطاقة =====
     async function renderRoleContent(player) {
-      const roleDisplay = translateDynamicRole(player.role);
-      const roleText = t('yourRole') + ' ' + roleDisplay;
+      const roleDisplay = player.role || 'غير معروف';
       const description = await fetchRoleDescription(player.role);
-      
       roleBox.innerHTML = '';
       roleBox.classList.remove('hidden');
-      
       const nameDiv = document.createElement('div');
       nameDiv.className = 'role-name';
-      nameDiv.textContent = roleText;
+      nameDiv.textContent = `🎭 دورك: ${roleDisplay}`;
       roleBox.appendChild(nameDiv);
-      
       const wrapper = document.createElement('div');
       wrapper.className = 'role-image-wrapper';
       const img = document.createElement('img');
@@ -1050,26 +1391,23 @@
       img.onerror = function() { this.src = 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'; };
       wrapper.appendChild(img);
       roleBox.appendChild(wrapper);
-      
       if (description) {
         const descDiv = document.createElement('div');
         descDiv.className = 'role-description';
-        descDiv.innerHTML = `<strong>📖 ${t('roleDescription')}:</strong> ${description}`;
+        descDiv.innerHTML = `<strong>📖 وصف الدور:</strong> ${description}`;
         roleBox.appendChild(descDiv);
       }
-      
       const btnRow = document.createElement('div');
       btnRow.className = 'action-buttons-row';
-      
       const hideBtn = document.createElement('button');
       hideBtn.className = 'btn btn-hide';
       hideBtn.textContent = '🔒';
-      hideBtn.title = t('hideCard');
+      hideBtn.title = 'إخفاء البطاقة';
       hideBtn.addEventListener('click', function() {
         roleBox.innerHTML = '';
         const showBtn = document.createElement('button');
         showBtn.className = 'btn-show-card';
-        showBtn.textContent = '🃏 ' + t('showCard');
+        showBtn.textContent = '🃏 إظهار البطاقة';
         showBtn.addEventListener('click', function() {
           renderRoleContent(player);
         });
@@ -1077,13 +1415,12 @@
         setTimeout(() => initWolfChat(roomCode, playerId), 100);
       });
       btnRow.appendChild(hideBtn);
-      
       const suicideBtn = document.createElement('button');
       suicideBtn.className = 'btn btn-suicide';
       suicideBtn.textContent = '💀';
-      suicideBtn.title = t('suicide');
+      suicideBtn.title = 'الموت';
       suicideBtn.addEventListener('click', async function() {
-        if (!confirm(t('confirmSuicide'))) return;
+        if (!confirm('⚠️ هل أنت متأكد من رغبتك في الموت؟')) return;
         try {
           await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
           roleBox.innerHTML = '';
@@ -1093,87 +1430,98 @@
           roleBox.appendChild(skull);
           const deathText = document.createElement('p');
           deathText.id = 'death-text';
-          deathText.textContent = t('deathMessage');
+          deathText.textContent = 'لقد مت، يمكنك مغادرة الغرفة.';
           roleBox.appendChild(deathText);
           const exitBtn = document.createElement('button');
           exitBtn.className = 'btn btn-danger';
-          exitBtn.textContent = '🚪 ' + t('exitGame');
+          exitBtn.textContent = '🚪 مغادرة';
           exitBtn.style.marginTop = '10px';
           exitBtn.addEventListener('click', async function() {
-            await deleteRoom(roomCode);
-            localStorage.clear();
+            if (roomCode && playerId) {
+              await remove(ref(db, `rooms/${roomCode}/players/${playerId}`));
+            }
+            localStorage.removeItem("playerId");
+            clearRoomCode();
             window.location.href = "index.html";
           });
           roleBox.appendChild(exitBtn);
         } catch (err) {
-          alert("❌ " + t('errorOccurred') + ": " + err.message);
+          alert("❌ حدث خطأ: " + err.message);
         }
       });
       btnRow.appendChild(suicideBtn);
-      
       const messageBtn = document.createElement('button');
       messageBtn.className = 'btn btn-message';
       messageBtn.textContent = '📩';
-      messageBtn.title = t('sendToNarrator') || 'إرسال للراوي';
+      messageBtn.title = 'إرسال للراوي';
       messageBtn.addEventListener('click', function() {
         messageModal.style.display = 'flex';
         messageText.value = '';
         messageStatus.textContent = '';
       });
       btnRow.appendChild(messageBtn);
-      
       roleBox.appendChild(btnRow);
-      
       await initWolfChat(roomCode, playerId);
       listenToNarratorNotifications(roomCode, playerId);
       listenToGameState(roomCode);
     }
 
+    // ===== عرض بطاقة المستذئب مع تركيب الصورة وتنبيه "أنت مستذئب" =====
     async function renderInfectedContent(player) {
       const description = await fetchRoleDescription(player.role);
-      
       roleBox.innerHTML = '';
       roleBox.classList.remove('hidden');
-      
+
+      const roleDisplay = player.role || 'غير معروف';
       const nameDiv = document.createElement('div');
       nameDiv.className = 'role-name role-name-infected';
-      nameDiv.textContent = '⚠️ لقد تم استذئابك!';
+      nameDiv.textContent = `🎭 دورك: ${roleDisplay}`;
       roleBox.appendChild(nameDiv);
-      
+
+      // 🖼️ تركيب طبقة الاستذئاب فوق صورة الدور الأصلية
       const wrapper = document.createElement('div');
       wrapper.className = 'role-image-wrapper';
+      
       const img = document.createElement('img');
       img.className = 'role-img';
       img.src = player.roleImage || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
-      img.alt = 'دور المستذئب';
+      img.alt = roleDisplay;
       img.onerror = function() { this.src = 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'; };
       wrapper.appendChild(img);
+
       const overlay = document.createElement('img');
       overlay.className = 'blood-overlay';
       overlay.src = 'https://i.postimg.cc/y8Dhy5VS/IMG-20260708-204243.png';
-      overlay.alt = 'دم';
+      overlay.alt = 'تأثير الاستذئاب';
       wrapper.appendChild(overlay);
+
       roleBox.appendChild(wrapper);
-      
+
+      // ⚠️ تنبيه "أنت مستذئب" أسفل صورة الدور
+      const noticeDiv = document.createElement('div');
+      noticeDiv.className = 'infected-notice';
+      noticeDiv.textContent = '⚠️ أنت مستذئب!';
+      roleBox.appendChild(noticeDiv);
+
       if (description) {
         const descDiv = document.createElement('div');
         descDiv.className = 'role-description';
-        descDiv.innerHTML = `<strong>📖 ${t('roleDescription')}:</strong> ${description}`;
+        descDiv.innerHTML = `<strong>📖 وصف الدور:</strong> ${description}`;
         roleBox.appendChild(descDiv);
       }
-      
+
       const btnRow = document.createElement('div');
       btnRow.className = 'action-buttons-row';
-      
+
       const hideBtn = document.createElement('button');
       hideBtn.className = 'btn btn-hide';
       hideBtn.textContent = '🔒';
-      hideBtn.title = t('hideCard');
+      hideBtn.title = 'إخفاء البطاقة';
       hideBtn.addEventListener('click', function() {
         roleBox.innerHTML = '';
         const showBtn = document.createElement('button');
         showBtn.className = 'btn-show-card';
-        showBtn.textContent = '🃏 ' + t('showCard');
+        showBtn.textContent = '🃏 إظهار البطاقة';
         showBtn.addEventListener('click', function() {
           renderInfectedContent(player);
         });
@@ -1181,13 +1529,13 @@
         setTimeout(() => initWolfChat(roomCode, playerId), 100);
       });
       btnRow.appendChild(hideBtn);
-      
+
       const suicideBtn = document.createElement('button');
       suicideBtn.className = 'btn btn-suicide';
       suicideBtn.textContent = '💀';
-      suicideBtn.title = t('suicide');
+      suicideBtn.title = 'الموت';
       suicideBtn.addEventListener('click', async function() {
-        if (!confirm(t('confirmSuicide'))) return;
+        if (!confirm('⚠️ هل أنت متأكد من رغبتك في الموت؟')) return;
         try {
           await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
           roleBox.innerHTML = '';
@@ -1197,54 +1545,53 @@
           roleBox.appendChild(skull);
           const deathText = document.createElement('p');
           deathText.id = 'death-text';
-          deathText.textContent = t('infectedDeathMessage');
+          deathText.textContent = 'لقد مت بسبب الاستذئاب، يمكنك مغادرة الغرفة.';
           roleBox.appendChild(deathText);
           const exitBtn = document.createElement('button');
           exitBtn.className = 'btn btn-danger';
-          exitBtn.textContent = '🚪 ' + t('exitGame');
+          exitBtn.textContent = '🚪 مغادرة';
           exitBtn.style.marginTop = '10px';
           exitBtn.addEventListener('click', async function() {
-            await deleteRoom(roomCode);
-            localStorage.clear();
+            if (roomCode && playerId) {
+              await remove(ref(db, `rooms/${roomCode}/players/${playerId}`));
+            }
+            localStorage.removeItem("playerId");
+            clearRoomCode();
             window.location.href = "index.html";
           });
           roleBox.appendChild(exitBtn);
         } catch (err) {
-          alert("❌ " + t('errorOccurred') + ": " + err.message);
+          alert("❌ حدث خطأ: " + err.message);
         }
       });
       btnRow.appendChild(suicideBtn);
-      
+
       const messageBtn = document.createElement('button');
       messageBtn.className = 'btn btn-message';
       messageBtn.textContent = '📩';
-      messageBtn.title = t('sendToNarrator') || 'إرسال للراوي';
+      messageBtn.title = 'إرسال للراوي';
       messageBtn.addEventListener('click', function() {
         messageModal.style.display = 'flex';
         messageText.value = '';
         messageStatus.textContent = '';
       });
       btnRow.appendChild(messageBtn);
-      
+
       roleBox.appendChild(btnRow);
-      
       await initWolfChat(roomCode, playerId);
       listenToNarratorNotifications(roomCode, playerId);
       listenToGameState(roomCode);
     }
 
     async function renderWolfContent(player) {
-      const roleDisplay = translateDynamicRole(player.role);
+      const roleDisplay = player.role || 'ذئب';
       const description = await fetchRoleDescription(player.role);
-      
       roleBox.innerHTML = '';
       roleBox.classList.remove('hidden');
-      
       const nameDiv = document.createElement('div');
       nameDiv.className = 'role-name role-name-wolf-converted';
-      nameDiv.textContent = '🐺 أنت ' + roleDisplay;
+      nameDiv.textContent = `🐺 أنت ${roleDisplay}`;
       roleBox.appendChild(nameDiv);
-      
       const wrapper = document.createElement('div');
       wrapper.className = 'role-image-wrapper';
       const img = document.createElement('img');
@@ -1254,26 +1601,23 @@
       img.onerror = function() { this.src = 'https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg'; };
       wrapper.appendChild(img);
       roleBox.appendChild(wrapper);
-      
       if (description) {
         const descDiv = document.createElement('div');
         descDiv.className = 'role-description';
-        descDiv.innerHTML = `<strong>📖 ${t('roleDescription')}:</strong> ${description}`;
+        descDiv.innerHTML = `<strong>📖 وصف الدور:</strong> ${description}`;
         roleBox.appendChild(descDiv);
       }
-      
       const btnRow = document.createElement('div');
       btnRow.className = 'action-buttons-row';
-      
       const hideBtn = document.createElement('button');
       hideBtn.className = 'btn btn-hide';
       hideBtn.textContent = '🔒';
-      hideBtn.title = t('hideCard');
+      hideBtn.title = 'إخفاء البطاقة';
       hideBtn.addEventListener('click', function() {
         roleBox.innerHTML = '';
         const showBtn = document.createElement('button');
         showBtn.className = 'btn-show-card';
-        showBtn.textContent = '🃏 ' + t('showCard');
+        showBtn.textContent = '🃏 إظهار البطاقة';
         showBtn.addEventListener('click', function() {
           renderWolfContent(player);
         });
@@ -1281,13 +1625,12 @@
         setTimeout(() => initWolfChat(roomCode, playerId), 100);
       });
       btnRow.appendChild(hideBtn);
-      
       const suicideBtn = document.createElement('button');
       suicideBtn.className = 'btn btn-suicide';
       suicideBtn.textContent = '💀';
-      suicideBtn.title = t('suicide');
+      suicideBtn.title = 'الموت';
       suicideBtn.addEventListener('click', async function() {
-        if (!confirm(t('confirmSuicide'))) return;
+        if (!confirm('⚠️ هل أنت متأكد من رغبتك في الموت؟')) return;
         try {
           await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
           roleBox.innerHTML = '';
@@ -1297,37 +1640,37 @@
           roleBox.appendChild(skull);
           const deathText = document.createElement('p');
           deathText.id = 'death-text';
-          deathText.textContent = t('deathMessage');
+          deathText.textContent = 'لقد مت، يمكنك مغادرة الغرفة.';
           roleBox.appendChild(deathText);
           const exitBtn = document.createElement('button');
           exitBtn.className = 'btn btn-danger';
-          exitBtn.textContent = '🚪 ' + t('exitGame');
+          exitBtn.textContent = '🚪 مغادرة';
           exitBtn.style.marginTop = '10px';
           exitBtn.addEventListener('click', async function() {
-            await deleteRoom(roomCode);
-            localStorage.clear();
+            if (roomCode && playerId) {
+              await remove(ref(db, `rooms/${roomCode}/players/${playerId}`));
+            }
+            localStorage.removeItem("playerId");
+            clearRoomCode();
             window.location.href = "index.html";
           });
           roleBox.appendChild(exitBtn);
         } catch (err) {
-          alert("❌ " + t('errorOccurred') + ": " + err.message);
+          alert("❌ حدث خطأ: " + err.message);
         }
       });
       btnRow.appendChild(suicideBtn);
-      
       const messageBtn = document.createElement('button');
       messageBtn.className = 'btn btn-message';
       messageBtn.textContent = '📩';
-      messageBtn.title = t('sendToNarrator') || 'إرسال للراوي';
+      messageBtn.title = 'إرسال للراوي';
       messageBtn.addEventListener('click', function() {
         messageModal.style.display = 'flex';
         messageText.value = '';
         messageStatus.textContent = '';
       });
       btnRow.appendChild(messageBtn);
-      
       roleBox.appendChild(btnRow);
-      
       await initWolfChat(roomCode, playerId);
       listenToNarratorNotifications(roomCode, playerId);
       listenToGameState(roomCode);
@@ -1338,14 +1681,19 @@
       try {
         const player = await getPlayer(roomCode, playerId);
         if (!player) {
-          localStorage.clear();
+          localStorage.removeItem("playerId");
+          clearRoomCode();
           window.location.href = "index.html";
+          return;
+        }
+        if (player.kicked === true) {
+          showKickedNotification();
           return;
         }
         updateDiscordLink(roomCode);
         listenToDeathNotifications(roomCode);
         listenToGameState(roomCode);
-
+        listenToRoomDeletion(roomCode);
         if (player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
@@ -1356,101 +1704,152 @@
           roleBox.appendChild(skull);
           const deathText = document.createElement('p');
           deathText.id = 'death-text';
-          deathText.textContent = player.isInfected ? t('infectedDeathMessage') : t('deathMessage');
+          deathText.textContent = player.isInfected ? 'لقد مت بسبب الاستذئاب، يمكنك مغادرة الغرفة.' : 'لقد مت، يمكنك مغادرة الغرفة.';
           roleBox.appendChild(deathText);
           const exitBtn = document.createElement('button');
           exitBtn.className = 'btn btn-danger';
-          exitBtn.textContent = '🚪 ' + t('exitGame');
+          exitBtn.textContent = '🚪 مغادرة';
           exitBtn.style.marginTop = '10px';
           exitBtn.addEventListener('click', async function() {
-            await deleteRoom(roomCode);
-            localStorage.clear();
+            if (roomCode && playerId) {
+              await remove(ref(db, `rooms/${roomCode}/players/${playerId}`));
+            }
+            localStorage.removeItem("playerId");
+            clearRoomCode();
             window.location.href = "index.html";
           });
           roleBox.appendChild(exitBtn);
           return;
         }
-
         if (player.isInfected && !player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
           roleBox.innerHTML = '';
           const showBtn = document.createElement('button');
           showBtn.className = 'btn-show-card';
-          showBtn.textContent = '🃏 ' + t('showCard');
+          showBtn.textContent = '🃏 إظهار البطاقة';
           showBtn.addEventListener('click', function() {
             renderInfectedContent(player);
           });
           roleBox.appendChild(showBtn);
           return;
         }
-
         if (player.isWolf && !player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
           roleBox.innerHTML = '';
           const showBtn = document.createElement('button');
           showBtn.className = 'btn-show-card';
-          showBtn.textContent = '🃏 ' + t('showCard');
+          showBtn.textContent = '🃏 إظهار البطاقة';
           showBtn.addEventListener('click', function() {
             renderWolfContent(player);
           });
           roleBox.appendChild(showBtn);
           return;
         }
-
         if (player.role) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
           roleBox.innerHTML = '';
           const showBtn = document.createElement('button');
           showBtn.className = 'btn-show-card';
-          showBtn.textContent = '🃏 ' + t('showCard');
+          showBtn.textContent = '🃏 إظهار البطاقة';
           showBtn.addEventListener('click', function() {
             renderRoleContent(player);
           });
           roleBox.appendChild(showBtn);
           return;
         }
-
         statusDiv.classList.remove("hidden");
-        waitingText.textContent = t('waitingForGame') + ` (${t('roomCode')} ${roomCode})`;
+        waitingText.textContent = `⏳ في انتظار بدء اللعبة... (رمز الغرفة: ${roomCode})`;
         if (playersListener) playersListener();
         playersListener = listenToPlayers(roomCode, async (data) => {
           if (!data) return;
           const current = data[playerId];
-          if (current && (current.role || current.isDead || current.isInfected || current.isWolf)) {
+          if (current && (current.role || current.isDead || current.isInfected || current.isWolf || current.kicked === true)) {
             checkPlayerStatus();
           }
         });
       } catch (err) {
         console.error('خطأ في checkPlayerStatus:', err);
+        showError('حدث خطأ أثناء التحقق من حالة اللاعب');
       }
     }
 
-    // ===== أحداث الانضمام =====
+    // ===== زر الانضمام =====
     joinBtn.addEventListener("click", async () => {
       const name = nameInput.value.trim();
-      const enteredRoom = codeInput.value.trim();
-      if (!name || !enteredRoom) {
-        alert(t('fillAllFields'));
+      let enteredRoom = localStorage.getItem('roomCode') || codeInput.value.trim();
+      
+      if (!name) {
+        showError('⚠️ الرجاء إدخال اسمك!');
+        nameInput.focus();
         return;
       }
-      roomCode = enteredRoom;
+      if (!enteredRoom) {
+        showError('⚠️ الرجاء إدخال رمز الغرفة!');
+        codeInput.focus();
+        return;
+      }
+      if (!/^\d+$/.test(enteredRoom)) {
+        showError('⚠️ رمز الغرفة يجب أن يكون أرقاماً فقط!');
+        codeInput.focus();
+        return;
+      }
+
       try {
+        const roomSnap = await get(ref(db, `rooms/${enteredRoom}`));
+        if (!roomSnap.exists()) {
+          showError('❌ الغرفة غير موجودة! تأكد من الرقم.');
+          return;
+        }
+        
+        const roomData = roomSnap.val();
+        
+        if (roomData.hasNarrator !== true) {
+          showError('❌ لا يوجد راوي في هذه الغرفة، تم إغلاقها.');
+          return;
+        }
+
+        if (roomData.started === true) {
+          showError('❌ اللعبة قد بدأت بالفعل، لا يمكن الانضمام!');
+          return;
+        }
+
+        const players = await getPlayers(enteredRoom);
+        const existingPlayer = Object.values(players).find(p => p.name === name);
+        if (existingPlayer) {
+          showError('⚠️ هذا الاسم مستخدم بالفعل! اختر اسماً آخر.');
+          return;
+        }
+
+        roomCode = enteredRoom;
         playerId = await addPlayer(roomCode, name);
+        if (!playerId) {
+          showError('❌ فشل في إضافة اللاعب، حاول مرة أخرى.');
+          return;
+        }
+
         localStorage.setItem("playerId", playerId);
         setRoomCode(roomCode);
+
         joinForm.classList.add("hidden");
         statusDiv.classList.remove("hidden");
+        errorMsg.classList.remove('show');
+
         updateDiscordLink(roomCode);
-        checkPlayerStatus();
+        listenToDeathNotifications(roomCode);
+        listenToRoomDeletion(roomCode);
+        await checkPlayerStatus();
+
       } catch (err) {
-        alert("❌ " + t('errorOccurred') + ": " + err.message);
+        console.error('خطأ في الانضمام:', err);
+        showError('❌ حدث خطأ: ' + err.message);
       }
     });
 
     backBtn.addEventListener("click", () => {
+      clearRoomCode();
       window.location.href = "index.html";
     });
 
@@ -1460,11 +1859,11 @@
           if (roomCode && playerId) {
             await remove(ref(db, `rooms/${roomCode}/players/${playerId}`));
           }
-          await deleteRoom(roomCode);
         } catch (err) {
           console.error(err);
         }
-        localStorage.clear();
+        localStorage.removeItem("playerId");
+        clearRoomCode();
         window.location.href = "index.html";
       }
     };
@@ -1474,7 +1873,7 @@
       if (link && link.startsWith("https://")) {
         window.open(link, "_blank");
       } else {
-        alert(t('noDiscordLink'));
+        alert('⚠️ لا يوجد رابط صالح لديسكورد.');
       }
     });
 
@@ -1503,19 +1902,20 @@
       const name = document.getElementById("suggestName").value.trim();
       const message = document.getElementById("suggestMessage").value.trim();
       if (!message) {
-        alert(t('writeMessage'));
+        alert('⚠️ الرجاء كتابة رسالة!');
         return;
       }
       try {
-        await sendSuggestion(name, message, roomCode || t('unknown'));
-        alert("✅ " + t('suggestionSent'));
+        await sendSuggestion(name, message, roomCode || 'غير معروف');
+        alert("✅ تم إرسال اقتراحك بنجاح! شكراً لك.");
         document.getElementById("suggestMessage").value = "";
         suggestModal.style.display = "none";
       } catch (err) {
-        alert("❌ " + t('errorOccurred') + ": " + err.message);
+        alert("❌ حدث خطأ: " + err.message);
       }
     });
 
+    // ===== التحقق من الجلسة =====
     if (playerId && roomCode) {
       try {
         const player = await getPlayer(roomCode, playerId);
@@ -1523,16 +1923,26 @@
           joinForm.classList.add("hidden");
           statusDiv.classList.remove("hidden");
           updateDiscordLink(roomCode);
+          listenToRoomDeletion(roomCode);
           checkPlayerStatus();
         } else {
-          localStorage.clear();
+          localStorage.removeItem("playerId");
+          clearRoomCode();
           window.location.href = "index.html";
         }
       } catch (err) {
         console.error('خطأ في التحقق من الجلسة:', err);
       }
     }
-    console.log('🚀 تم تحميل صفحة اللاعب');
+
+    // 🔄 شرط التحديث التلقائي الدوري كل 3 ثوانٍ
+    setInterval(async () => {
+      if (playerId && roomCode) {
+        await checkPlayerStatus();
+      }
+    }, 3000);
+
+    console.log('🚀 تم تحميل صفحة اللاعب المحدثة بالكامل');
   </script>
 </body>
 </html>
