@@ -8,6 +8,39 @@
   <link rel="stylesheet" href="style.css" />
   <style>
     /* ===== أنماط خاصة بالراوي ===== */
+    .app-header-custom {
+      text-align: center;
+      margin-bottom: 25px;
+      padding: 10px 0;
+    }
+    .app-header-custom .app-icon-box {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 10px;
+      border-radius: 50%;
+      border: 2px solid rgba(212, 160, 23, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(13, 8, 5, 0.8);
+      box-shadow: 0 0 20px rgba(212, 160, 23, 0.1);
+      font-size: 24px;
+    }
+    .app-header-custom .app-title-gold {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      color: #d4a017;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-shadow: 0 0 15px rgba(212, 160, 23, 0.3);
+    }
+    .app-header-custom .app-subtitle-gold {
+      color: #aaa;
+      font-size: 13px;
+      font-family: 'Cinzel', serif;
+      margin-top: 5px;
+    }
+
     .section { background: #1a1a1a; border: 1px solid crimson; border-radius: 12px; padding: 15px; margin-top: 20px; }
     .section-title { color: crimson; font-size: 18px; margin-bottom: 10px; display: block; text-shadow: 0 0 8px red; }
     .room-code-display {
@@ -391,7 +424,12 @@
 </head>
 <body>
   <div class="container">
-    <h2>🐺 لو ڨارو - الراوي</h2>
+    <!-- العنوان الذهبي الموحد -->
+    <div class="app-header-custom">
+      <div class="app-icon-box">🐺</div>
+      <div class="app-title-gold">LOUP GAROU</div>
+      <div class="app-subtitle-gold">🎭 راوي - إدارة المغامرة</div>
+    </div>
 
     <!-- ===== قسم إنشاء الغرفة ===== -->
     <div class="create-section" id="createSection">
@@ -649,7 +687,7 @@
 
     let selectedRoles = {};
     let currentPlayers = [];
-    let rolesLoadedOnce = false; // 🛑 لمنع إعادة تحميل الأدوار ومسح اختيار الراوي
+    let rolesLoadedOnce = false;
 
     function showRoleDescription(role) {
       if (!role) {
@@ -696,7 +734,7 @@
     }
 
     async function loadRoles() {
-      if (rolesLoadedOnce) return; // 🛑 إذا تم تحميل الأدوار مسبقاً، لا تقم بإعادة تحميلها لتفادي مسح اختيار الراوي
+      if (rolesLoadedOnce) return;
       try {
         const snap = await get(ref(db, 'global_roles'));
         const data = snap.val() || {};
