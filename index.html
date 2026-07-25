@@ -6,6 +6,66 @@
   <title>Loup Garou</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ===== خلفية الذئب وإطار شفاف وأزرار متناسقة ===== */
+    body {
+      background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), 
+                  url('https://i.postimg.cc/66v0Pmg7/d6ff13caa56d1d2b132ba74c789b11a9.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .app-card {
+      background: rgba(13, 8, 5, 0.15) !important;
+      backdrop-filter: blur(1px);
+      border: 1px solid rgba(212, 160, 23, 0.25);
+    }
+
+    /* ألوان الأزرار الثانوية الشفافة */
+    #aboutBtn {
+      background: rgba(212, 160, 23, 0.12) !important;
+      border-color: rgba(212, 160, 23, 0.3) !important;
+      color: #f0e0c0 !important;
+    }
+    #qrBtn {
+      background: rgba(52, 152, 219, 0.12) !important;
+      border-color: rgba(52, 152, 219, 0.3) !important;
+      color: #85c1e9 !important;
+    }
+    #suggestBtn {
+      background: rgba(155, 89, 182, 0.12) !important;
+      border-color: rgba(155, 89, 182, 0.3) !important;
+      color: #bb8fce !important;
+    }
+    #installBtn {
+      background: rgba(46, 204, 113, 0.12) !important;
+      border-color: rgba(46, 204, 113, 0.3) !important;
+      color: #a3e4d7 !important;
+    }
+
+    /* ===== تنسيق مودال عن اللعبة (العناوين ذهبية والشروحات بيضاء) ===== */
+    .modal-content {
+      background: rgba(13, 8, 5, 0.92) !important;
+      border: 1px solid #d4a017 !important;
+      box-shadow: 0 0 30px rgba(212, 160, 23, 0.2);
+      color: #e0e0e0;
+      font-family: 'Cinzel', serif;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .about-content h3 {
+      color: #d4a017 !important; /* العناوين فقط باللون الذهبي */
+      font-size: 15px;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid rgba(212, 160, 23, 0.3);
+      padding-bottom: 4px;
+    }
+    .about-content p {
+      color: #cfcfcf !important; /* النصوص العادية بلون رمادي فاتح مريح للقراءة */
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+  </style>
 </head>
 <body>
 
@@ -116,7 +176,7 @@
 
   <div class="modal" id="aboutModal">
     <div class="modal-content">
-      <div class="modal-title" style="color:crimson;">📖 ما هي لعبة Loup Garou؟</div>
+      <div class="modal-title" style="color:#d4a017; font-size:18px; text-align:center; margin-bottom:12px;">📖 ما هي لعبة Loup Garou؟</div>
       <div class="about-content" id="aboutModalContent">
         <p>⏳ جاري التحميل...</p>
       </div>
@@ -141,7 +201,6 @@
   </div>
 
   <script type="module">
-    // ===== استيراد الدوال =====
     import {
       sendSuggestion,
       incrementDownloadCount,
@@ -158,7 +217,6 @@
       listenToOpenRooms
     } from "./logic.js";
 
-    // ===== أيقونات التواصل =====
     const socialIconsConfig = {
       facebook: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' },
       instagram: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#E4405F"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>' },
@@ -170,7 +228,6 @@
       snapchat: { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#FFFC00"><path d="M12.027 22.046c-1.147 0-2.232-.27-3.256-.792a12.992 12.992 0 01-2.227-1.422 9.822 9.822 0 01-1.322-1.322c-.354-.44-.585-.816-.693-1.127-.089-.254-.093-.485-.014-.694.09-.237.28-.441.554-.601.242-.142.551-.252.915-.332a6.76 6.76 0 011.729-.216c.162 0 .324.007.485.021.149.014.298.033.447.057.536.089 1.07.155 1.604.197.921.073 1.83.046 2.726-.077.229-.031.458-.069.687-.113.223-.041.445-.09.664-.146.199-.05.394-.109.583-.175.13-.045.252-.097.368-.155.088-.045.166-.1.234-.167.071-.067.117-.151.137-.251.03-.153-.03-.312-.15-.39-.215-.14-.553-.228-.994-.272-.977-.097-1.879-.262-2.633-.483-1.024-.3-1.69-.72-1.927-1.095-.264-.425-.124-.812.06-1.067.241-.334.74-.635 1.635-.987.296-.117.606-.236.928-.356.749-.277 1.563-.578 2.33-.952.709-.344 1.344-.77 1.886-1.271.482-.445.847-.97 1.079-1.556.254-.635.308-1.32.152-1.934-.15-.581-.498-1.033-.914-1.287-.31-.19-.666-.277-1.009-.299-.194-.012-.387-.005-.578.017-.196.023-.39.065-.58.123-.326.102-.646.226-.956.368-.18.082-.358.172-.533.269-.259.143-.502.305-.724.486-.179.146-.331.314-.455.5-.102.153-.173.307-.21.458-.029.119-.01.232.059.34.072.109.195.2.358.292.111.063.245.125.4.185.354.137.648.258.832.37.232.142.325.282.343.388.015.086.006.158-.028.219-.063.113-.207.184-.471.241-.188.041-.432.055-.718.046a6.068 6.068 0 01-.862-.102c-.355-.064-.749-.189-1.166-.368a6.452 6.452 0 01-1.214-.701c-.092-.068-.176-.14-.253-.217-.084-.08-.15-.168-.201-.265-.048-.091-.073-.189-.074-.293a.483.483 0 01.033-.179c.036-.113.103-.24.2-.383.145-.215.343-.432.588-.647.247-.214.537-.413.863-.594.273-.153.555-.29.839-.412.284-.122.573-.229.862-.322.282-.09.561-.169.833-.234.266-.064.525-.112.772-.143.24-.032.47-.047.687-.047.637 0 1.169.086 1.586.25.365.145.626.336.763.516.104.136.152.26.143.371-.008.111-.061.206-.157.286-.055.045-.122.076-.2.092a.62.62 0 01-.235-.001.496.496 0 01-.157-.068.807.807 0 01-.099-.076 1.62 1.62 0 00-.141-.094c-.065-.039-.171-.084-.315-.131-.395-.13-.908-.195-1.523-.195-.848 0-1.604.079-2.24.207-.607.122-1.115.302-1.454.513-.307.192-.493.387-.562.59-.043.134-.01.244.098.334.138.114.378.229.706.353.276.104.584.222.914.35.387.149.771.333 1.135.55.398.238.733.495.975.758.258.279.431.596.493.931.075.41-.004.814-.238 1.154-.265.384-.776.669-1.609.908-.68.195-1.414.346-2.136.451-.417.061-.83.108-1.234.139-.4.033-.788.05-1.161.05z"/></svg>' }
     };
 
-    // ===== تحميل روابط التواصل =====
     async function loadSocialIcons() {
       const section = document.getElementById('socialSection');
       const iconsDiv = document.getElementById('socialIcons');
@@ -197,7 +254,6 @@
       }
     }
 
-    // ===== تحميل الإشعار =====
     async function loadNotice() {
       const container = document.getElementById('noticeContainer');
       const textDiv = document.getElementById('noticeText');
@@ -229,21 +285,35 @@
       }
     }
 
-    // ===== تحميل محتوى "عن اللعبة" الديناميكي =====
+    // ===== تنسيق محتوى "عن اللعبة" الديناميكي (العناوين <h3> والشروحات <p>) =====
     async function loadAboutContent() {
       const aboutModalContent = document.getElementById('aboutModalContent');
       try {
         const snap = await get(ref(db, 'about_game/content'));
         if (snap.exists() && snap.val().trim() !== '') {
-          const text = snap.val();
-          const paragraphs = text.split('\n').filter(p => p.trim() !== '');
-          aboutModalContent.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+          let text = snap.val();
+          text = text.replace(/\*\*/g, '').replace(/###/g, '');
+          const lines = text.split('\n').filter(l => l.trim() !== '');
+          
+          let html = '';
+          lines.forEach(line => {
+            if (line.includes('ما هي لعبة') || line.includes('الراوي') || line.includes('اللاعبون') || line.includes('الغرف')) {
+              html += `<h3>${line}</h3>`;
+            } else {
+              html += `<p>${line}</p>`;
+            }
+          });
+          aboutModalContent.innerHTML = html;
         } else {
           aboutModalContent.innerHTML = `
-            <p><span class="highlight">Loup Garou</span> هي نسخة رقمية ذكية من لعبة الورق الشهيرة <span class="highlight">"القرويون والذئاب"</span>.</p>
-            <p>بدلاً من توزيع البطاقات الورقية التقليدية، يقوم هذا التطبيق بتوزيع الأدوار <span class="highlight">عشوائياً</span> على جميع اللاعبين، مما يضمن <span class="highlight">الخصوصية التامة</span> لكل لاعب.</p>
-            <p><span class="highlight">الراوي</span> هو اللاعب الوحيد الذي يمتلك الصلاحية المطلقة في إدارة اللعبة، حيث يمكنه <span class="highlight">قتل</span> أو <span class="highlight">استذئاب</span> أي لاعب.</p>
-            <p>الهدف من هذه اللعبة هو توفير تجربة سلسة وعادلة لجميع اللاعبين، مع الحفاظ على السرية التامة ومنع أي محاولة للغش.</p>
+            <h3>📖 ما هي لعبة Loup Garou وكيف تلعب؟</h3>
+            <p>اللعبة هي النسخة الرقمية المتطورة للعبة "القرويون والذئاب" الشهيرة، وهي مبنية على التفاعل الاجتماعي، الخداع، الاستنتاج، والبقاء. تنقسم التجربة إلى طرفين رئيسيين:</p>
+            <h3>1. الراوي (HOST)</h3>
+            <p>هو قائد الجولة ومحركها الأساسي. يقوم بإنشاء الغرفة، تحديد أعداد الذئاب والقرويين، واختيار الأدوار الخاصة (مثل المستبصر، الصياد، الساحرة، وغيرها).</p>
+            <p>يمتلك لوحة تحكم كاملة تتيح له مراقبة اللاعبين، إرسال رسائل خاصة لهم، إدارة التبديل بين الليل والنهار، وتنفيذ القرارات المصيرية.</p>
+            <h3>2. اللاعبون (PLAYERS)</h3>
+            <p>ينضمون إلى الغرفة باستخدام رمز سري من 4 أرقام، ويحصل كل منهم على دور سرى وبطاقة خاصة لا يظهرها لأحد.</p>
+            <p>يتنقل اللاعبون بين مرحلتين: الليل (تنام القرية، وتستيقظ غرفة الذئاب للتواصل والتصويت على الضحية في الخفاء) والنهار (يستيقظ الجميع لمناقشة المستجدات، كشف المشتبه بهم، واتخاذ قرارات جماعية).</p>
           `;
         }
       } catch (e) {
@@ -251,7 +321,6 @@
       }
     }
 
-    // ===== عرض الغرف المفتوحة (استماع لحظي حي) =====
     let unsubscribeRooms = null;
 
     function loadOpenRooms() {
@@ -290,7 +359,6 @@
       });
     }
 
-    // ===== التحقق من وجود غرفة حالية =====
     const currentRoomCode = getRoomCode();
     const exitRoomBtn = document.getElementById('exitRoomBtn');
 
@@ -316,7 +384,6 @@
       }
     });
 
-    // ===== أحداث الأزرار =====
     document.getElementById('hostBtn').addEventListener('click', () => {
       window.location.href = 'host.html';
     });
@@ -342,7 +409,6 @@
       }
     });
 
-    // ===== اقتراحات =====
     document.getElementById("suggestBtn").addEventListener("click", () => {
       document.getElementById("suggestModal").style.display = "flex";
     });
@@ -372,7 +438,6 @@
       }
     });
 
-    // ===== عن اللعبة =====
     document.getElementById("aboutBtn").addEventListener("click", () => {
       document.getElementById("aboutModal").style.display = "flex";
       loadAboutContent();
@@ -386,7 +451,6 @@
       }
     });
 
-    // ===== QR =====
     document.getElementById("qrBtn").addEventListener("click", () => {
       document.getElementById("qrModal").style.display = "flex";
     });
@@ -418,7 +482,6 @@
       }
     });
 
-    // ===== عداد التحميل =====
     async function updateCounter() {
       const count = await getDownloadCount();
       document.getElementById("downloadCounter").textContent = 'عدد مرات التحميل: ' + count;
@@ -436,16 +499,15 @@
       window.open(apkUrl, "_blank");
     });
 
-    // ===== تحميل البيانات الأولية =====
     loadNotice();
     loadSocialIcons();
     loadAboutContent();
 
-    // ===== تحميل الغرف المفتوحة تلقائياً عند تحميل الصفحة (إذا لم يكن هناك غرفة حالية) =====
     if (!getRoomCode()) {
       loadOpenRooms();
     }
 
+    // ===== استخدام الاستماع الفوري في الخلفية بدون ارتعاش =====
     onValue(ref(db, 'social_links'), () => {
       loadSocialIcons();
     });
@@ -458,19 +520,9 @@
       loadAboutContent();
     });
 
-    // 🔄 شرط التحديث التلقائي الدوري كل 3 ثوانٍ
-    setInterval(async () => {
-      await updateCounter();
-      await loadNotice();
-      await loadSocialIcons();
-      await loadAboutContent();
-      if (document.getElementById('roomsModal').style.display === 'flex' || !getRoomCode()) {
-        loadOpenRooms();
-      }
-    }, 3000);
+    // تم حذف دورة الـ setInterval بالكامل من هنا لضمان سلاسة التطبيق واستقراره.
 
     console.log('🚀 تم تحميل الصفحة الرئيسية بنجاح');
-    console.log('🔑 roomCode:', getRoomCode());
   </script>
 </body>
 </html>
