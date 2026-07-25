@@ -273,7 +273,7 @@
     }
     .action-buttons-row .btn-message {
       background: rgba(212, 160, 23, 0.05);
-      border-color: rgba(212, 160, 23, 0.15);
+      border-color: rgba(255, 0, 0, 0.15);
       color: #d4a017;
       flex: 0 0 auto;
       width: 48px;
@@ -878,7 +878,7 @@
 
       <div id="wolfChatContainer">
         <div class="wolf-title">
-          <span>🐺 غرفة الذئاب</span>
+          <span>🐺 غرفة الذئب</span>
           <small>🔒 خاصة بالذئاب فقط</small>
         </div>
         <div class="wolf-vote-section">
@@ -1047,7 +1047,6 @@
       }
     }
 
-    // 🛑 الاستماع لحالة الوقت لتحديث شات الذئاب ومظهر النهار/الليل فوراً
     function listenToGameState(roomCode, playerId) {
       if (!roomCode) return;
       const stateRef = ref(db, `rooms/${roomCode}/gameState`);
@@ -1073,7 +1072,6 @@
       });
     }
 
-    // 🛑 إشعار الموت العام لكافة اللاعبين الأحياء عند حلول النهار مع كشف تفاصيل الميت بالكامل
     function renderDeathNotificationsAndCards(data) {
       if (!data) {
         deathContainer.style.display = 'none';
@@ -1395,9 +1393,13 @@
         noticeDiv.textContent = '⚠️ أنت مستذئب!';
         roleBox.appendChild(noticeDiv);
       } else if (isSpecialContent === 'wolf') {
+        // 🛑 التحقق: هل هو ذئب أصلي أم دور تحول لاحقاً؟
+        const roleNameStr = typeof player.role === 'object' ? (player.role.ar || player.role.fr || '') : String(player.role || '');
+        const isOriginalWolf = roleNameStr.trim().includes('ذئب') || player.isWol === true;
+
         const nameDiv = document.createElement('div');
-        nameDiv.className = 'role-name role-name-wolf-converted';
-        nameDiv.textContent = `🐺 أنت ${roleDisplay}`;
+        nameDiv.className = isOriginalWolf ? 'role-name' : 'role-name role-name-wolf-converted';
+        nameDiv.textContent = isOriginalWolf ? `🎭 دورك: ${roleDisplay}` : `🐺 أنت ${roleDisplay}`;
         roleBox.appendChild(nameDiv);
 
         const wrapper = document.createElement('div');
@@ -1405,14 +1407,17 @@
         const img = document.createElement('img');
         img.className = 'role-img';
         img.src = player.roleImage || 'https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg';
-        img.alt = 'ذئب';
+        img.alt = roleDisplay;
         wrapper.appendChild(img);
         roleBox.appendChild(wrapper);
 
-        const noticeDiv = document.createElement('div');
-        noticeDiv.className = 'wolf-converted-notice';
-        noticeDiv.textContent = '🐺 أصبحت تلعب مع الذئاب!';
-        roleBox.appendChild(noticeDiv);
+        // 🛑 إظهار عبارة "أصبحت تلعب مع الذئاب" فقط إذا لم يكن ذئباً أصلياً (مثل من تحولوا أو الأدوار القابلة للتحول)
+        if (!isOriginalWolf) {
+          const noticeDiv = document.createElement('div');
+          noticeDiv.className = 'wolf-converted-notice';
+          noticeDiv.textContent = '🐺 أصبحت تلعب مع الذئاب!';
+          roleBox.appendChild(noticeDiv);
+        }
       } else {
         const nameDiv = document.createElement('div');
         nameDiv.className = 'role-name';
@@ -1546,7 +1551,6 @@
         listenToGameState(roomCode, playerId);
         listenToRoomDeletion(roomCode);
 
-        // 🛑 التحقق من حالة الموت: إذا مات اللاعب ليلاً، يظل في حالته ولا يظهر له إشعار الموت وشاشة الجمجمة إلا بعد حلول النهار (عندما يتم تسجيله في deathNotifications)
         const deathsSnap = await get(ref(db, `rooms/${roomCode}/deathNotifications`));
         const deathsData = deathsSnap.val() || {};
         const isDeclaredDead = Object.values(deathsData).some(d => d.playerName === player.name);
@@ -1620,7 +1624,6 @@
       }
     }
 
-    // ===== زر الانضمام =====
     joinBtn.addEventListener("click", async () => {
       const name = nameInput.value.trim();
       let enteredRoom = localStorage.getItem('roomCode') || codeInput.value.trim();
@@ -1759,7 +1762,6 @@
       }
     });
 
-    // ===== التحقق من الجلسة =====
     if (playerId && roomCode) {
       try {
         const player = await getPlayer(roomCode, playerId);
@@ -1779,7 +1781,6 @@
       }
     }
 
-    // 🔄 شرط التحديث التلقائي الدوري كل 3 ثوانٍ
     setInterval(async () => {
       if (playerId && roomCode) {
         await checkPlayerStatus();
