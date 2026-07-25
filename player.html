@@ -1393,7 +1393,6 @@
         noticeDiv.textContent = '⚠️ أنت مستذئب!';
         roleBox.appendChild(noticeDiv);
       } else if (isSpecialContent === 'wolf') {
-        // 🛑 التحقق: هل هو ذئب أصلي أم دور تحول لاحقاً؟
         const roleNameStr = typeof player.role === 'object' ? (player.role.ar || player.role.fr || '') : String(player.role || '');
         const isOriginalWolf = roleNameStr.trim().includes('ذئب') || player.isWol === true;
 
@@ -1411,7 +1410,6 @@
         wrapper.appendChild(img);
         roleBox.appendChild(wrapper);
 
-        // 🛑 إظهار عبارة "أصبحت تلعب مع الذئاب" فقط إذا لم يكن ذئباً أصلياً (مثل من تحولوا أو الأدوار القابلة للتحول)
         if (!isOriginalWolf) {
           const noticeDiv = document.createElement('div');
           noticeDiv.className = 'wolf-converted-notice';
@@ -1781,11 +1779,7 @@
       }
     }
 
-    setInterval(async () => {
-      if (playerId && roomCode) {
-        await checkPlayerStatus();
-      }
-    }, 3000);
+    // تم حذف دورة الـ setInterval بالكامل من هنا لضمان سلاسة التطبيق واستقراره الفوري عبر الاستماع اللحظي.
 
     console.log('🚀 تم تحميل صفحة اللاعب المحدثة بالكامل');
   </script>
