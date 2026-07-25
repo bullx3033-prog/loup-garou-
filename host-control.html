@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -907,14 +907,12 @@
         });
         updatePendingDeathsUI();
         
-        fetchPlayers();
         alert(`✅ تم قتل ${playerName} (سيتم الإعلان عنه عند حلول النهار)`);
       } catch (err) {
         alert('❌ خطأ: ' + err.message);
       }
     };
 
-    // 🛑 دالة الاستذئاب (بدون convertToWolf المسببة للمشكلة)
     window.infectPlayer = async (id) => {
       const player = await getPlayer(roomCode, id);
       const playerName = player?.name || 'لاعب مجهول';
@@ -925,8 +923,6 @@
       
       try {
         await infectPlayer(roomCode, id);
-        
-        fetchPlayers();
         alert(`✅ تم استذئاب ${playerName} بنجاح!`);
       } catch (err) {
         alert('❌ خطأ: ' + err.message);
@@ -940,7 +936,6 @@
       
       try {
         await convertToWolf(roomCode, id);
-        fetchPlayers();
         alert(`✅ تم تحويل ${playerName || 'اللاعب'} إلى ذئب وأضيف إلى دردشة الذئاب!`);
       } catch (err) {
         alert('❌ حدث خطأ: ' + err.message);
@@ -1166,13 +1161,6 @@
       });
     }
 
-    async function fetchPlayers() {
-      console.log('🔄 جلب اللاعبين للغرفة:', roomCode);
-      const data = await getPlayers(roomCode);
-      console.log('👥 اللاعبين:', data);
-      renderPlayers(data);
-    }
-
     // ===== دوال التحكم بالليل والنهار =====
     async function updateGameState(nightMode) {
       isNight = nightMode;
@@ -1219,7 +1207,11 @@
       messagesList.scrollBy({ top: 80, behavior: 'smooth' });
     });
 
-    refreshBtn.addEventListener("click", fetchPlayers);
+    // زر التحديث اليدوي (احتياطي فقط)
+    refreshBtn.addEventListener("click", async () => {
+      const data = await getPlayers(roomCode);
+      renderPlayers(data);
+    });
 
     closeMessageModal.addEventListener('click', () => {
       messageModal.style.display = 'none';
@@ -1279,7 +1271,7 @@
       window.location.href = "index.html";
     });
 
-    // ===== بدء الاستماع =====
+    // ===== بدء الاستماع اللحظي الفوري بدون وميض =====
     listenToPlayers(roomCode, (data) => {
       renderPlayers(data);
     });
@@ -1287,14 +1279,7 @@
     listenToMessages(roomCode);
     listenToGameState(roomCode);
 
-    await fetchPlayers();
-
-    // 🔄 شرط التحديث التلقائي الدوري كل 3 ثوانٍ
-    setInterval(async () => {
-      if (roomCode) {
-        await fetchPlayers();
-      }
-    }, 3000);
+    // تم حذف دورة الـ setInterval بالكامل من هنا لضمان سلاسة التطبيق واستقراره.
 
     console.log('🚀 تم تحميل صفحة تحكم الراوي (host-control.html) بنجاح للغرفة:', roomCode);
   </script>
