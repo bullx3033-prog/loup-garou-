@@ -1,4 +1,4 @@
-// ===== تكوين Firebase ===== 
+// ===== تكوين Firebase =====
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import {
   getDatabase, ref, set, push, update, remove, get, onValue, serverTimestamp, runTransaction, child
@@ -24,7 +24,7 @@ function getRoomCode() { return localStorage.getItem("roomCode"); }
 function setRoomCode(code) { localStorage.setItem("roomCode", code); }
 function clearRoomCode() { localStorage.removeItem("roomCode"); }
 
-// ===== دالة مسح الغرف المنتهية (24 ساعة) =====
+// ===== دالة مسح الغرف التي في الانتظار ومر عليها ساعة كاملة (سواء فيها لاعبين أم لا) =====
 async function deleteAllStaleRooms() {
   const roomsRef = ref(db, 'rooms');
   const snapshot = await get(roomsRef);
@@ -32,18 +32,21 @@ async function deleteAllStaleRooms() {
   
   const rooms = snapshot.val();
   const now = Date.now();
-  const twentyFourHours = 24 * 60 * 60 * 1000;
+  const oneHour = 60 * 60 * 1000; // ساعة واحدة بالمللي ثانية
   let count = 0;
 
   for (const [code, data] of Object.entries(rooms)) {
     const createdAt = data.createdAt || 0;
-    if (now - createdAt > twentyFourHours) {
+    const started = data.started === true;
+
+    // الشرط الصارم: إذا لم تبدأ اللعبة (started === false) ومرت أكثر من ساعة على إنشائها
+    if (!started && (now - createdAt > oneHour)) {
       await remove(ref(db, `rooms/${code}`));
       count++;
-      console.log(`🗑️ تم حذف الغرفة المعلقة: ${code}`);
+      console.log(`🗑️ تم غلق وحذف الغرفة المعلقة (مرت ساعة ولم تبدأ): ${code}`);
     }
   }
-  if (count > 0) console.log(`✅ تم حذف ${count} غرفة منتهية الصلاحية`);
+  if (count > 0) console.log(`✅ تم غلق وحذف ${count} غرفة معلقة منتهية الصلاحية`);
   return count;
 }
 
@@ -71,7 +74,10 @@ async function createOrGetRoom() {
     if (snap.exists()) {
       const data = snap.val();
       const now = Date.now();
-      if (data.createdAt && (now - data.createdAt > 24 * 60 * 60 * 1000)) {
+      const oneHour = 60 * 60 * 1000;
+      
+      // التحقق من مرور ساعة ولم تبدأ
+      if (!data.started && data.createdAt && (now - data.createdAt > oneHour)) {
         await deleteRoom(roomCode);
         roomCode = await createNewRoom(true);
       }
@@ -117,7 +123,9 @@ async function checkRoomExpiry(roomCode) {
   
   const data = snap.val();
   const now = Date.now();
-  if (data.createdAt && (now - data.createdAt > 24 * 60 * 60 * 1000)) {
+  const oneHour = 60 * 60 * 1000;
+
+  if (!data.started && data.createdAt && (now - data.createdAt > oneHour)) {
     await deleteRoom(roomCode);
     return await createNewRoom(true);
   }
