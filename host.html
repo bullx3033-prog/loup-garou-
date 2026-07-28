@@ -616,6 +616,9 @@
         await loadRoles();
         updateMatchCounter();
 
+        // تفعيل الاستماع الفوري لقاعدة البيانات للظهور اللحظي للاعبين
+        initRealtimeListeners(code);
+
       } catch (err) {
         console.error(err);
         alert('❌ خطأ في إنشاء الغرفة: ' + err.message);
@@ -853,10 +856,11 @@
       playersList.querySelectorAll('.kick-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
           const playerId = btn.getAttribute('data-id');
+          const activeRoomCode = getRoomCode();
           if (confirm('⚠️ هل أنت متأكد من طرد هذا اللاعب؟')) {
             try {
-              await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { kicked: true });
-              await remove(ref(db, `rooms/${roomCode}/players/${playerId}`));
+              await update(ref(db, `rooms/${activeRoomCode}/players/${playerId}`), { kicked: true });
+              await remove(ref(db, `rooms/${activeRoomCode}/players/${playerId}`));
             } catch (err) {
               alert('❌ حدث خطأ أثناء الطرد: ' + err.message);
             }
@@ -867,15 +871,23 @@
       updateMatchCounter();
     }
 
-    // ===== بدء الاستماع اللحظي الفوري =====
-    const roomCode = getRoomCode();
-    if (roomCode) {
+    // ===== تفعيل الاستماع الفوري لقاعدة البيانات =====
+    function initRealtimeListeners(code) {
+      if (!code) return;
+      listenToPlayers(code, (data) => {
+        renderPlayers(data);
+      });
+    }
+
+    // ===== التحقق التلقائي عند فتح الصفحة من وجود غرفة سابقة =====
+    const existingRoomCode = getRoomCode();
+    if (existingRoomCode) {
       createSection.style.display = 'none';
       roomDisplay.style.display = 'block';
       gameSections.style.display = 'block';
-      roomCodeDisplay.textContent = roomCode;
+      roomCodeDisplay.textContent = existingRoomCode;
       
-      get(ref(db, `rooms/${roomCode}/isPublic`)).then((snap) => {
+      get(ref(db, `rooms/${existingRoomCode}/isPublic`)).then((snap) => {
         const isPublic = snap.val() !== false;
         if (isPublic) {
           privacyBadge.textContent = '🌍 عامة';
@@ -889,11 +901,10 @@
       loadDiscordLink();
       loadRoles();
       updateMatchCounter();
+      
+      // تشغيل الاستماع الفوري تلقائياً
+      initRealtimeListeners(existingRoomCode);
     }
-
-    listenToPlayers(roomCode, (data) => {
-      renderPlayers(data);
-    });
 
     wolvesInput.addEventListener('input', updateMatchCounter);
     villagersInput.addEventListener('input', updateMatchCounter);
@@ -952,13 +963,22 @@
       window.location.href = 'index.html';
     });
 
-    // ===== تحديث اليدوي =====
-    refreshBtn.addEventListener('click', () => {
-      rolesLoadedOnce = false;
-      loadRoles();
+    // ===== إصلاح زر التحديث اليدوي ليعمل بكفاءة =====
+    refreshBtn.addEventListener('click', async () => {
+      const roomCode = getRoomCode();
+      if (!roomCode) return;
+      refreshBtn.textContent = '⏳ جاري التحديث...';
+      try {
+        const playersData = await getPlayers(roomCode);
+        renderPlayers(playersData);
+        refreshBtn.textContent = '✅ تم التحديث';
+      } catch (e) {
+        refreshBtn.textContent = '❌ خطأ';
+      }
+      setTimeout(() => { refreshBtn.textContent = '🔄 تحديث'; }, 1500);
     });
 
-    console.log('🚪 كود الغرفة:', roomCode);
+    console.log('🚪 كود الغرفة الحالي:', existingRoomCode);
   </script>
 </body>
 </html>
