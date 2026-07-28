@@ -735,20 +735,24 @@
       }
     }
 
-    // ===== تحميل وعرض الأدوار (محدث لكي يعرض الأدوار المضافة من الأدمن فوراً دون حظر التكرار) =====
+    // ===== تحميل وعرض الأدوار (إظهار الكل ما عدا الذئب والقروي الأساسيين للعدادات السفلية) =====
     async function loadRoles() {
       try {
         const snap = await get(ref(db, 'global_roles'));
         const data = snap.val() || {};
         const allRoles = Object.values(data);
 
+        // البحث الدقيق عن الذئب والقروي الأساسيين بناءً على الاسم والصورة الافتراضية للعدادات السفلية فقط
         const wolfRole = allRoles.find(r => {
           const n = typeof r.name === 'object' ? (r.name.ar || r.name.fr || r.name.en || '') : String(r.name || '');
-          return n.trim().includes("ذئب") || r.isWol === true;
+          const clean = n.trim().toLowerCase();
+          return (clean === "ذئب" || clean === "loup" || clean === "wolf") && !r.isConvertible;
         });
+        
         const villagerRole = allRoles.find(r => {
           const n = typeof r.name === 'object' ? (r.name.ar || r.name.fr || r.name.en || '') : String(r.name || '');
-          return n.trim().includes("قروي");
+          const clean = n.trim().toLowerCase();
+          return clean === "قروي" || clean === "villageois" || clean === "villager";
         });
 
         if (wolfRole && wolfRole.imageUrl) {
@@ -758,14 +762,15 @@
           villagerCounterImg.src = villagerRole.imageUrl;
         }
 
+        // استثناء الذئب والقروي الأساسيين فقط لكي يظهرا في الأسفل، وعرض باقي الأدوار الـ 27+ في الشبكة العلوية دون استثناء
         const filteredRoles = allRoles.filter(role => {
           const nameStr = typeof role.name === 'object' ? (role.name.ar || role.name.fr || role.name.en || '') : String(role.name || '');
           const cleanName = nameStr.trim().toLowerCase();
 
-          const isBasicWolf = cleanName.includes("ذئب") || role.isWol === true;
-          const isBasicVillager = cleanName.includes("قروي");
+          const isExactWolf = (cleanName === "ذئب" || cleanName === "loup" || cleanName === "wolf") && !role.isConvertible;
+          const isExactVillager = cleanName === "قروي" || cleanName === "villageois" || cleanName === "villager";
 
-          return !isBasicWolf && !isBasicVillager;
+          return !isExactWolf && !isExactVillager;
         });
 
         if (filteredRoles.length === 0) {
@@ -969,7 +974,6 @@
       try {
         const playersData = await getPlayers(roomCode);
         renderPlayers(playersData);
-        // تحديث الأدوار أيضاً عند الضغط على تحديث لضمان ظهور أي دور جديد أضافه الأدمن
         loadRoles();
         refreshBtn.textContent = '✅ تم التحديث';
       } catch (e) {
