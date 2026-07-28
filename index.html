@@ -214,7 +214,8 @@
       getRoomCode,
       clearRoomCode,
       deleteRoom,
-      listenToOpenRooms
+      listenToOpenRooms,
+      deleteAllStaleRooms
     } from "./logic.js";
 
     const socialIconsConfig = {
@@ -323,10 +324,17 @@
 
     let unsubscribeRooms = null;
 
-    function loadOpenRooms() {
+    async function loadOpenRooms() {
       const roomsList = document.getElementById('roomsList');
       roomsList.innerHTML = '<div class="no-rooms">⏳ جاري التحميل...</div>';
       
+      // تنظيف الغرف القديمة التي مر عليها أكثر من ساعة فور فتح قائمة الغرف
+      try {
+        await deleteAllStaleRooms();
+      } catch (err) {
+        console.error('خطأ في تنظيف الغرف القديمة:', err);
+      }
+
       if (unsubscribeRooms) {
         unsubscribeRooms();
       }
@@ -493,7 +501,8 @@
       try {
         await incrementDownloadCount();
         await updateCounter();
-      } catch (e) {
+      }
+      catch (e) {
         console.error(e);
       }
       window.open(apkUrl, "_blank");
@@ -502,6 +511,9 @@
     loadNotice();
     loadSocialIcons();
     loadAboutContent();
+
+    // تشغيل تنظيف الغرف القديمة أول ما تفتح الصفحة الرئيسية تلقائياً
+    deleteAllStaleRooms().catch(err => console.error('خطأ في التنظيف التلقائي:', err));
 
     if (!getRoomCode()) {
       loadOpenRooms();
@@ -519,8 +531,6 @@
     onValue(ref(db, 'about_game/content'), () => {
       loadAboutContent();
     });
-
-    // تم حذف دورة الـ setInterval بالكامل من هنا لضمان سلاسة التطبيق واستقراره.
 
     console.log('🚀 تم تحميل الصفحة الرئيسية بنجاح');
   </script>
