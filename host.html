@@ -690,7 +690,6 @@
 
     let selectedRoles = {};
     let currentPlayers = [];
-    let rolesLoadedOnce = false;
 
     function showRoleDescription(role) {
       if (!role) {
@@ -736,8 +735,8 @@
       }
     }
 
+    // ===== تحميل وعرض الأدوار (محدث لكي يعرض الأدوار المضافة من الأدمن فوراً دون حظر التكرار) =====
     async function loadRoles() {
-      if (rolesLoadedOnce) return;
       try {
         const snap = await get(ref(db, 'global_roles'));
         const data = snap.val() || {};
@@ -778,7 +777,6 @@
         renderRolesGrid(filteredRoles);
         rolesLoading.classList.add('hidden');
         rolesGrid.classList.remove('hidden');
-        rolesLoadedOnce = true;
       } catch (e) {
         console.error(e);
         rolesLoading.textContent = '❌ حدث خطأ أثناء تحميل الأدوار';
@@ -971,6 +969,8 @@
       try {
         const playersData = await getPlayers(roomCode);
         renderPlayers(playersData);
+        // تحديث الأدوار أيضاً عند الضغط على تحديث لضمان ظهور أي دور جديد أضافه الأدمن
+        loadRoles();
         refreshBtn.textContent = '✅ تم التحديث';
       } catch (e) {
         refreshBtn.textContent = '❌ خطأ';
