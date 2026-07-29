@@ -21,7 +21,7 @@
       border-radius: 50%;
       border: 3px solid rgba(212, 160, 23, 0.3);
       overflow: hidden;
-      cursor: pointer;
+      cursor: grab;
       transition: 0.3s;
       background: rgba(13, 8, 5, 0.6);
       display: flex;
@@ -29,7 +29,8 @@
       justify-content: center;
       position: relative;
     }
-    .role-circle img { width: 100%; height: 100%; object-fit: cover; }
+    .role-circle:active { cursor: grabbing; }
+    .role-circle img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
     .role-circle:hover { border-color: #d4a017; transform: scale(1.08); box-shadow: 0 0 15px rgba(212, 160, 23, 0.3); }
     .role-circle .role-name-tooltip {
       position: absolute;
@@ -50,6 +51,27 @@
       z-index: 10;
     }
     .role-circle:hover .role-name-tooltip { opacity: 1; }
+    
+    /* شارة الترتيب */
+    .order-badge {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: rgba(212, 160, 23, 0.85);
+      color: #000;
+      font-size: 9px;
+      font-weight: bold;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      border: 1px solid #000;
+      pointer-events: none;
+    }
+
     .role-circle .delete-btn {
       position: absolute;
       top: -6px;
@@ -69,6 +91,7 @@
       opacity: 0;
       transition: 0.3s;
       font-family: 'Cinzel', serif;
+      z-index: 12;
     }
     .role-circle:hover .delete-btn { opacity: 1; }
     .role-circle .delete-btn:hover { background: #ff0000; transform: scale(1.2); }
@@ -89,6 +112,7 @@
       border: 2px solid #000;
       box-shadow: 0 0 15px rgba(212, 160, 23, 0.5);
       font-family: 'Cinzel', serif;
+      pointer-events: none;
     }
     .role-circle .convertible-badge { display: none; }
     .role-circle.convertible .convertible-badge { display: flex; }
@@ -275,7 +299,7 @@
         </div>
 
         <div class="section">
-          <span class="section-title" id="manageRolesTitle">🃏 إدارة الأدوار</span>
+          <span class="section-title" id="manageRolesTitle">🃏 إدارة الأدوار (اسحب وأفلت لترتيب الأماكن)</span>
           <div class="toolbar">
             <span class="count-badge" id="rolesCounter">عدد الأدوار: 0</span>
             <button class="btn btn-primary" id="addRoleBtn" style="width:auto; padding:8px 18px; background:rgba(212,160,23,0.15); color:#d4a017; border:1px solid rgba(212,160,23,0.3); border-radius:8px; cursor:pointer;">➕ إضافة دور</button>
@@ -716,7 +740,7 @@
       });
     }
 
-    // ===== عرض شبكة الأدوار الدائرية =====
+    // ===== عرض شبكة الأدوار الدائرية مع نظام الإزاحة والترتيب بالـ Drag & Drop =====
     function renderRoles() {
       rolesGrid.innerHTML = '';
       const entries = Object.entries(rolesData);
@@ -724,21 +748,77 @@
         rolesGrid.innerHTML = `<p style="color:rgba(255,255,255,0.2); text-align:center; grid-column:1/-1;">لا توجد أدوار مضافة</p>`;
         return;
       }
-      entries.forEach(([id, role]) => {
+
+      // ترتيب الأدوار تناسقاً بناءً على حقل order (الأصغر يظهر أولاً)
+      entries.sort((a, b) => (Number(a[1].order) || 0) - (Number(b[1].order) || 0));
+
+      entries.forEach(([id, role], index) => {
         const circle = document.createElement('div');
         circle.className = 'role-circle';
         if (role.isConvertible) circle.classList.add('convertible');
         
+        // تفعيل إمكانية السحب والإفلات للدائرة
+        circle.setAttribute('draggable', 'true');
+        circle.dataset.id = id;
+
         const displayName = typeof role.name === 'object' ? (role.name.ar || 'دور مجهول') : role.name;
         const imageUrl = role.imageUrl || 'https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png';
         const wolfBadge = role.isWol ? '🐺' : '';
 
         circle.innerHTML = `
+          <span class="order-badge">${index + 1}</span>
           <img src="${imageUrl}" alt="${displayName}" onerror="this.src='https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png'" />
           <span class="role-name-tooltip">${displayName} ${wolfBadge}</span>
           <span class="delete-btn" data-id="${id}">✕</span>
           ${role.isConvertible ? `<span class="convertible-badge">🔄</span>` : ''}
         `;
+
+        // أحداث السحب والإفلات مع الإزاحة المتسلسلة تماماً مثل تطبيقات الهواتف
+        circle.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', id);
+          setTimeout(() => circle.style.opacity = '0.4', 0);
+        });
+
+        circle.addEventListener('dragend', () => {
+          circle.style.opacity = '1';
+        });
+
+        circle.addEventListener('dragover', (e) => {
+          e.preventDefault();
+        });
+
+        circle.addEventListener('drop', async (e) => {
+          e.preventDefault();
+          const draggedId = e.dataTransfer.getData('text/plain');
+          if (draggedId === id) return;
+
+          // استخراج وترتيب القائمة الحالية لمعرفات الأدوار
+          let currentOrderList = entries.map(([roleId]) => roleId);
+
+          // إزالة العنصر المسحب من مكانه القديم
+          const oldIndex = currentOrderList.indexOf(draggedId);
+          if (oldIndex > -1) currentOrderList.splice(oldIndex, 1);
+
+          // إدراج العنصر المسحب في المكان الجديد فوق الدور المستهدف وإزاحة باقي الأدوار
+          const newIndex = currentOrderList.indexOf(id);
+          if (newIndex > -1) {
+            currentOrderList.splice(newIndex, 0, draggedId);
+          } else {
+            currentOrderList.push(draggedId);
+          }
+
+          try {
+            // تحديث تسلسل الـ order لكل الأدوار المتأثرة دفعة واحدة في قاعدة البيانات
+            const updates = {};
+            currentOrderList.forEach((roleId, newIdx) => {
+              updates[`global_roles/${roleId}/order`] = newIdx;
+            });
+
+            await update(ref(db), updates);
+          } catch (err) {
+            console.error("خطأ أثناء إعادة ترتيب الأدوار:", err);
+          }
+        });
 
         const deleteBtn = circle.querySelector('.delete-btn');
         deleteBtn.addEventListener('click', (e) => {
@@ -831,10 +911,14 @@
         const nameObj = { ar: nameAr, fr: nameAr, en: nameAr };
         const descObj = { ar: descAr, fr: descAr, en: descAr };
 
+        // إعطاء الدور الجديد رقم order تلقائي في النهاية إن لم يكن معدلاً
+        const newOrder = editId !== '' && rolesData[editId]?.order !== undefined ? rolesData[editId].order : Object.keys(rolesData).length;
+
         const roleData = { 
           name: nameObj, 
           imageUrl, 
           description: descObj,
+          order: newOrder,
           isWol: isWolf,
           isConvertible: isConvertible
         };
