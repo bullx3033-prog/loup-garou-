@@ -739,7 +739,7 @@
       }
     }
 
-    // ===== تحميل وعرض الأدوار (فصل الذئب والقروي الصحيحين للأسفل وإظهار باقي الأدوار حصرياً بالأعلى دون تكرار) =====
+    // ===== تحميل وعرض الأدوار (مع تطبيق الترتيب order القادم من الأدمن) =====
     async function loadRoles() {
       try {
         const snap = await get(ref(db, 'global_roles'));
@@ -753,7 +753,7 @@
           return;
         }
 
-        // البحث الدقيق عن دور الذئب ودور القروي للعدادات السفلية بناءً على أسمائهما الصحيحة
+        // البحث عن الذئب والقروي للأسفل
         const wolfEntry = allRoles.find(([id, r]) => {
           const n = typeof r.name === 'object' ? (r.name.ar || r.name.fr || '') : String(r.name || '');
           const clean = n.trim().toLowerCase();
@@ -783,10 +783,13 @@
           }
         }
 
-        // تصفية الشبكة العلوية: إظهار جميع الأدوار *ما عدا* الذئب والقروي المخصصين للأسفل لكي لا تراهما مكررين في الأعلى
-        const formattedRoles = allRoles
+        // تصفية الشبكة العلوية وإضافة خاصية الترتيب order تصاعدياً
+        let formattedRoles = allRoles
           .filter(([id]) => id !== wolfId && id !== villagerId)
           .map(([id, r]) => ({ id, ...r }));
+
+        // ➕ تطبيق الترتيب الذي حدده الأدمن هنا تماماً
+        formattedRoles.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
 
         renderRolesGrid(formattedRoles);
         rolesLoading.classList.add('hidden');
@@ -797,7 +800,6 @@
       }
     }
 
-    // ربط النقر على دائرة الذئب في الأسفل لإظهار اسمه ووصفه
     if (wolfCounterCircle) {
       wolfCounterCircle.addEventListener('click', () => {
         if (cachedWolfRoleData) {
@@ -806,7 +808,6 @@
       });
     }
 
-    // ربط النقر على دائرة القروي في الأسفل لإظهار اسمه ووصفه
     if (villagerCounterCircle) {
       villagerCounterCircle.addEventListener('click', () => {
         if (cachedVillagerRoleData) {
