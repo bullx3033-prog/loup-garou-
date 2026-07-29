@@ -125,9 +125,9 @@
     .counter-group { display: flex; gap: 40px; flex-wrap: wrap; margin: 10px 0; justify-content: center; }
     .counter-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
     .counter-circle { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #555; overflow: hidden;
-      background: #1a1a1a; transition: 0.3s; }
+      background: #1a1a1a; transition: 0.3s; cursor: pointer; }
     .counter-circle img { width: 100%; height: 100%; object-fit: cover; }
-    .counter-circle:hover { border-color: crimson; box-shadow: 0 0 20px rgba(255, 0, 0, 0.3); }
+    .counter-circle:hover { border-color: #d4a017; box-shadow: 0 0 20px rgba(212, 160, 23, 0.4); }
     .counter-item input { width: 60px; text-align: center; background: #111; border: 2px solid #555;
       border-radius: 8px; color: #fff; font-size: 18px; padding: 6px 10px; font-family: 'Cinzel', serif;
       transition: 0.3s; }
@@ -490,13 +490,13 @@
         <span class="section-title">⚙️ إعدادات الغرفة</span>
         <div class="counter-group">
           <div class="counter-item">
-            <div class="counter-circle">
+            <div class="counter-circle" id="wolfCounterCircle" title="انقر لعرض وصف الذئب">
               <img id="wolfCounterImg" src="https://i.postimg.cc/MpdMDrSv/FB-IMG-1751654961583.jpg" alt="ذئب" />
             </div>
             <input type="number" id="wolvesCount" value="2" min="1" max="10" />
           </div>
           <div class="counter-item">
-            <div class="counter-circle">
+            <div class="counter-circle" id="villagerCounterCircle" title="انقر لعرض وصف القروي">
               <img id="villagerCounterImg" src="https://i.postimg.cc/wBjJYYVX/Carte-Simple-Villaegois.png" alt="قروي" />
             </div>
             <input type="number" id="villagersCount" value="3" min="1" max="20" />
@@ -558,6 +558,8 @@
     const saveDiscordBtn = document.getElementById('saveDiscordBtn');
     const wolfCounterImg = document.getElementById('wolfCounterImg');
     const villagerCounterImg = document.getElementById('villagerCounterImg');
+    const wolfCounterCircle = document.getElementById('wolfCounterCircle');
+    const villagerCounterCircle = document.getElementById('villagerCounterCircle');
 
     let selectedPrivacy = 'public';
     let currentRoomCode = '';
@@ -690,6 +692,8 @@
 
     let selectedRoles = {};
     let currentPlayers = [];
+    let cachedWolfRoleData = null;
+    let cachedVillagerRoleData = null;
 
     function showRoleDescription(role) {
       if (!role) {
@@ -735,57 +739,80 @@
       }
     }
 
-    // ===== تحميل وعرض الأدوار (إظهار الكل ما عدا الذئب والقروي الأساسيين للعدادات السفلية) =====
+    // ===== تحميل وعرض الأدوار (فصل الذئب والقروي الصحيحين للأسفل وإظهار باقي الأدوار حصرياً بالأعلى دون تكرار) =====
     async function loadRoles() {
       try {
         const snap = await get(ref(db, 'global_roles'));
         const data = snap.val() || {};
-        const allRoles = Object.values(data);
+        const allRoles = Object.entries(data);
 
-        // البحث الدقيق عن الذئب والقروي الأساسيين بناءً على الاسم والصورة الافتراضية للعدادات السفلية فقط
-        const wolfRole = allRoles.find(r => {
-          const n = typeof r.name === 'object' ? (r.name.ar || r.name.fr || r.name.en || '') : String(r.name || '');
-          const clean = n.trim().toLowerCase();
-          return (clean === "ذئب" || clean === "loup" || clean === "wolf") && !r.isConvertible;
-        });
-        
-        const villagerRole = allRoles.find(r => {
-          const n = typeof r.name === 'object' ? (r.name.ar || r.name.fr || r.name.en || '') : String(r.name || '');
-          const clean = n.trim().toLowerCase();
-          return clean === "قروي" || clean === "villageois" || clean === "villager";
-        });
-
-        if (wolfRole && wolfRole.imageUrl) {
-          wolfCounterImg.src = wolfRole.imageUrl;
-        }
-        if (villagerRole && villagerRole.imageUrl) {
-          villagerCounterImg.src = villagerRole.imageUrl;
-        }
-
-        // استثناء الذئب والقروي الأساسيين فقط لكي يظهرا في الأسفل، وعرض باقي الأدوار الـ 27+ في الشبكة العلوية دون استثناء
-        const filteredRoles = allRoles.filter(role => {
-          const nameStr = typeof role.name === 'object' ? (role.name.ar || role.name.fr || role.name.en || '') : String(role.name || '');
-          const cleanName = nameStr.trim().toLowerCase();
-
-          const isExactWolf = (cleanName === "ذئب" || cleanName === "loup" || cleanName === "wolf") && !role.isConvertible;
-          const isExactVillager = cleanName === "قروي" || cleanName === "villageois" || cleanName === "villager";
-
-          return !isExactWolf && !isExactVillager;
-        });
-
-        if (filteredRoles.length === 0) {
-          rolesLoading.textContent = '📭 لا توجد أدوار إضافية مضافة';
+        if (allRoles.length === 0) {
+          rolesLoading.textContent = '📭 لا توجد أدوار مضافة';
           rolesLoading.classList.remove('hidden');
           rolesGrid.classList.add('hidden');
           return;
         }
-        renderRolesGrid(filteredRoles);
+
+        // البحث الدقيق عن دور الذئب ودور القروي للعدادات السفلية بناءً على أسمائهما الصحيحة
+        const wolfEntry = allRoles.find(([id, r]) => {
+          const n = typeof r.name === 'object' ? (r.name.ar || r.name.fr || '') : String(r.name || '');
+          const clean = n.trim().toLowerCase();
+          return (clean.includes("ذئب") || clean.includes("loup") || clean.includes("wolf")) && !r.isConvertible;
+        });
+
+        const villagerEntry = allRoles.find(([id, r]) => {
+          const n = typeof r.name === 'object' ? (r.name.ar || r.name.fr || '') : String(r.name || '');
+          const clean = n.trim().toLowerCase();
+          return clean.includes("قروي") || clean.includes("villageois") || clean.includes("villager");
+        });
+
+        let wolfId = wolfEntry ? wolfEntry[0] : null;
+        let villagerId = villagerEntry ? villagerEntry[0] : null;
+
+        if (wolfEntry) {
+          cachedWolfRoleData = wolfEntry[1];
+          if (cachedWolfRoleData.imageUrl) {
+            wolfCounterImg.src = cachedWolfRoleData.imageUrl;
+          }
+        }
+
+        if (villagerEntry) {
+          cachedVillagerRoleData = villagerEntry[1];
+          if (cachedVillagerRoleData.imageUrl) {
+            villagerCounterImg.src = cachedVillagerRoleData.imageUrl;
+          }
+        }
+
+        // تصفية الشبكة العلوية: إظهار جميع الأدوار *ما عدا* الذئب والقروي المخصصين للأسفل لكي لا تراهما مكررين في الأعلى
+        const formattedRoles = allRoles
+          .filter(([id]) => id !== wolfId && id !== villagerId)
+          .map(([id, r]) => ({ id, ...r }));
+
+        renderRolesGrid(formattedRoles);
         rolesLoading.classList.add('hidden');
         rolesGrid.classList.remove('hidden');
       } catch (e) {
         console.error(e);
         rolesLoading.textContent = '❌ حدث خطأ أثناء تحميل الأدوار';
       }
+    }
+
+    // ربط النقر على دائرة الذئب في الأسفل لإظهار اسمه ووصفه
+    if (wolfCounterCircle) {
+      wolfCounterCircle.addEventListener('click', () => {
+        if (cachedWolfRoleData) {
+          showRoleDescription(cachedWolfRoleData);
+        }
+      });
+    }
+
+    // ربط النقر على دائرة القروي في الأسفل لإظهار اسمه ووصفه
+    if (villagerCounterCircle) {
+      villagerCounterCircle.addEventListener('click', () => {
+        if (cachedVillagerRoleData) {
+          showRoleDescription(cachedVillagerRoleData);
+        }
+      });
     }
 
     function renderRolesGrid(roles) {
@@ -957,7 +984,7 @@
         window.location.href = 'index.html';
       } catch (err) {
         console.error(err);
-        alert('⚠️ حدث خطأ أثناء إغلاق الغرفة');
+        alert('⚠️ حدث خطأ أثناء الخروج من الغرفة');
       }
     });
 
