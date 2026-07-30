@@ -24,7 +24,7 @@ function getRoomCode() { return localStorage.getItem("roomCode"); }
 function setRoomCode(code) { localStorage.setItem("roomCode", code); }
 function clearRoomCode() { localStorage.removeItem("roomCode"); }
 
-// ===== دالة مسح الغرف التي في الانتظار ومر عليها ساعة كاملة (سواء فيها لاعبين أم لا) =====
+// ===== دالة مسح الغرف المعلقة القديمة جداً (فقط في القائمة الرئيسية للغرف غير النشطة) =====
 async function deleteAllStaleRooms() {
   const roomsRef = ref(db, 'rooms');
   const snapshot = await get(roomsRef);
@@ -32,21 +32,18 @@ async function deleteAllStaleRooms() {
   
   const rooms = snapshot.val();
   const now = Date.now();
-  const oneHour = 60 * 60 * 1000; // ساعة واحدة بالمللي ثانية
+  const oneHour = 60 * 60 * 1000;
   let count = 0;
 
   for (const [code, data] of Object.entries(rooms)) {
     const createdAt = data.createdAt || 0;
     const started = data.started === true;
 
-    // الشرط الصارم: إذا لم تبدأ اللعبة (started === false) ومرت أكثر من ساعة على إنشائها
     if (!started && (now - createdAt > oneHour)) {
       await remove(ref(db, `rooms/${code}`));
       count++;
-      console.log(`🗑️ تم غلق وحذف الغرفة المعلقة (مرت ساعة ولم تبدأ): ${code}`);
     }
   }
-  if (count > 0) console.log(`✅ تم غلق وحذف ${count} غرفة معلقة منتهية الصلاحية`);
   return count;
 }
 
@@ -73,14 +70,6 @@ async function createOrGetRoom() {
     const snap = await get(ref(db, `rooms/${roomCode}`));
     if (snap.exists()) {
       const data = snap.val();
-      const now = Date.now();
-      const oneHour = 60 * 60 * 1000;
-      
-      // التحقق من مرور ساعة ولم تبدأ
-      if (!data.started && data.createdAt && (now - data.createdAt > oneHour)) {
-        await deleteRoom(roomCode);
-        roomCode = await createNewRoom(true);
-      }
       if (data.isPublic === undefined) {
         await update(ref(db, `rooms/${roomCode}`), { isPublic: true });
       }
@@ -96,7 +85,7 @@ async function createOrGetRoom() {
   return await createNewRoom(true);
 }
 
-// ===== حذف الغرفة مع إشعار للاعبين =====
+// ===== حذف الغرفة مع إشعار للاعبين (عند خروج الراوي أو إنهاء الجولة) =====
 async function deleteRoom(roomCode) {
   const players = await getPlayers(roomCode);
   for (const pid of Object.keys(players)) {
@@ -109,9 +98,8 @@ async function deleteRoom(roomCode) {
   clearRoomCode();
 }
 
+// 🛡️ تم تعديل هذه الدالة بالكامل لكي لا تغلق الجولة أبداً بمرور الوقت
 async function checkRoomExpiry(roomCode) {
-  await deleteAllStaleRooms();
-
   if (!roomCode) {
     return await createNewRoom(true);
   }
@@ -121,15 +109,7 @@ async function checkRoomExpiry(roomCode) {
     return await createNewRoom(true);
   }
   
-  const data = snap.val();
-  const now = Date.now();
-  const oneHour = 60 * 60 * 1000;
-
-  if (!data.started && data.createdAt && (now - data.createdAt > oneHour)) {
-    await deleteRoom(roomCode);
-    return await createNewRoom(true);
-  }
-  
+  // الغرفة موجودة وصالحة تماماً، ولن يتم إغلاقها تلقائياً أبداً أثناء الجولة
   return roomCode;
 }
 
@@ -165,7 +145,6 @@ function listenToOpenRooms(callback) {
         if (Object.keys(players).length > 0) hasNarrator = true;
       }
 
-      // تظهر فقط إذا كانت عامة ولم تبدأ بعد ويوجد راوي
       if (isPublic === true && data.started === false && hasNarrator === true) {
         const playersCount = data.players ? Object.keys(data.players).length : 0;
         openRooms.push({ code, players: playersCount });
@@ -179,7 +158,6 @@ function listenToOpenRooms(callback) {
 
 // ===== دوال القتل والتحويل =====
 
-// 1. دالة القتل: تضيف اللاعب إلى قائمة الموتى المعلقين
 async function killPlayer(roomCode, playerId) {
   const player = await getPlayer(roomCode, playerId);
   if (!player) return;
@@ -196,12 +174,10 @@ async function killPlayer(roomCode, playerId) {
   await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isDead: true });
 }
 
-// 2. دالة الاستذئاب
 function infectPlayer(roomCode, playerId) { 
   update(ref(db, `rooms/${roomCode}/players/${playerId}`), { isInfected: true }); 
 }
 
-// 3. دالة التحويل إلى ذئب
 async function convertToWolf(roomCode, playerId) {
   await update(ref(db, `rooms/${roomCode}/players/${playerId}`), { 
     isWolf: true,
@@ -233,7 +209,6 @@ async function convertToWolf(roomCode, playerId) {
   return true;
 }
 
-// 4. دالة إرسال الموتى المعلقين دفعة واحدة
 async function flushPendingDeaths(roomCode) {
   const pendingRef = ref(db, `rooms/${roomCode}/pendingDeaths`);
   const snap = await get(pendingRef);
@@ -255,7 +230,6 @@ async function flushPendingDeaths(roomCode) {
   await remove(pendingRef);
 }
 
-// ===== دالة إضافة لاعب =====
 async function addPlayer(roomCode, name) {
   const newRef = push(ref(db, `rooms/${roomCode}/players`));
   await set(newRef, { 
@@ -270,7 +244,6 @@ async function addPlayer(roomCode, name) {
   return newRef.key;
 }
 
-// ===== دالة خلط عشوائية =====
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -279,7 +252,6 @@ function shuffleArray(array) {
   return array;
 }
 
-// ===== توزيع الأدوار (معدل للبحث المرن عن صور الأدوار المحدثة من الأدمن) =====
 async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRoles) {
   const playersObj = await getPlayers(roomCode);
   const players = Object.keys(playersObj).map(key => ({ id: key, ...playersObj[key] }));
@@ -290,24 +262,20 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
     throw new Error(`عدد الأدوار (${totalRoles}) لا يساوي عدد اللاعبين (${players.length})`);
   }
 
-  // جلب جميع الأدوار من Firebase
   const rolesSnap = await get(ref(db, 'global_roles'));
   const allRoles = Object.values(rolesSnap.val() || {});
   
-  // دالة مساعدة لمطابقة اسم الدور بشكل مرن
   const matchRoleName = (roleObj, targetName) => {
     if (!roleObj || !roleObj.name) return false;
     const nameVal = typeof roleObj.name === 'object' ? (roleObj.name.ar || roleObj.name.fr || '') : roleObj.name;
     return nameVal.trim().includes(targetName);
   };
 
-  // البحث عن دور الذئب والقروي المرفوعين في الأدمن
   const wolfRole = allRoles.find(r => r.isWol === true || matchRoleName(r, "ذئب"));
   const villagerRole = allRoles.find(r => matchRoleName(r, "قروي"));
 
   const roles = [];
   
-  // إضافة الذئاب
   for (let i = 0; i < wolvesCount; i++) {
     roles.push({ 
       name: wolfRole ? (typeof wolfRole.name === 'object' ? wolfRole.name.ar : wolfRole.name) : "ذئب", 
@@ -316,7 +284,6 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
     });
   }
 
-  // إضافة القرويين (مع الصورة المسجلة في الأدمن)
   for (let i = 0; i < villagersCount; i++) {
     roles.push({ 
       name: villagerRole ? (typeof villagerRole.name === 'object' ? villagerRole.name.ar : villagerRole.name) : "قروي", 
@@ -325,7 +292,6 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
     });
   }
 
-  // إضافة بقية الأدوار الخاصة المختارة
   selectedRoles.forEach(r => {
     const found = allRoles.find(role => {
       const name = typeof role.name === 'object' ? role.name.ar : role.name;
@@ -359,7 +325,6 @@ async function distributeRoles(roomCode, wolvesCount, villagersCount, selectedRo
   return shuffledPlayers;
 }
 
-// ===== إدارة الأدوار =====
 function listenToRoles(callback) { onValue(ref(db, "global_roles"), (s) => callback(s.val())); }
 
 async function addRole(nameObj, imageUrl, description, isWolf, isConvertible) { 
@@ -403,7 +368,6 @@ async function uploadImageToImgBB(file) {
   return json.data.url;
 }
 
-// ===== غرفة الذئاب =====
 async function sendWolfMessage(roomCode, playerId, playerName, message) {
   const wolvesRef = ref(db, `rooms/${roomCode}/wolvesChat`);
   await push(wolvesRef, {
@@ -431,7 +395,6 @@ async function isPlayerWolf(roomCode, playerId) {
   if (!player) return false;
   
   if (player.isWolf === true) return true;
-  
   if (!player.role) return false;
   
   const rolesSnap = await get(ref(db, 'global_roles'));
@@ -448,7 +411,6 @@ async function isPlayerWolf(roomCode, playerId) {
   return false;
 }
 
-// ===== نظام الاقتراحات =====
 async function sendSuggestion(playerName, message, roomId) { 
   await push(ref(db, "suggestions"), { 
     playerName: playerName || "لاعب مجهول", 
@@ -467,7 +429,6 @@ async function deleteAllSuggestions() {
   await remove(ref(db, "suggestions")); 
 }
 
-// ===== إحصائيات التحميل =====
 async function incrementDownloadCount() { 
   await runTransaction(ref(db, "stats/downloadCount"), (curr) => curr ? { count: curr.count + 1 } : { count: 1 }); 
 }
@@ -476,7 +437,6 @@ async function getDownloadCount() {
   return s.val()?.count || 0; 
 }
 
-// ===== بيانات الاعتماد =====
 async function getCredentials() { 
   const s = await get(ref(db, "admin_credentials")); 
   return s.val(); 
