@@ -105,22 +105,41 @@
       100% { box-shadow: 0 0 20px #ff1a1a, 0 0 40px rgba(255, 0, 0, 0.2); }
     }
 
+    /* ===== صندوق الوصف المعدل لإضافة الصورة المستطيلة ===== */
     .role-description-box {
       background: #0d0805;
       border: 1px solid #d4a017;
       border-radius: 12px;
-      padding: 12px 15px;
+      padding: 15px;
       margin-top: 15px;
       min-height: 50px;
       color: #f0e0c0;
-      font-size: 14px;
-      line-height: 1.7;
-      text-align: right;
       transition: 0.3s;
       display: none;
+      align-items: center;
+      gap: 15px;
+    }
+    .role-description-box .desc-img-container {
+      width: 100px;
+      height: 145px;
+      border-radius: 10px;
+      border: 2px solid #d4a017;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 0 15px rgba(212, 160, 23, 0.2);
+      display: none;
+    }
+    .role-description-box .desc-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .role-description-box .desc-content {
+      flex: 1;
+      text-align: right;
     }
     .role-description-box .desc-title { color: #d4a017; font-weight: bold; font-size: 16px; display: block; margin-bottom: 5px; }
-    .role-description-box .desc-text { color: #ccc; white-space: pre-line !important; }
+    .role-description-box .desc-text { color: #ccc; font-size: 14px; line-height: 1.7; white-space: pre-line !important; }
 
     .counter-group { display: flex; gap: 40px; flex-wrap: wrap; margin: 10px 0; justify-content: center; }
     .counter-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -407,7 +426,8 @@
       .match-counter { flex-direction: column; align-items: stretch; gap: 8px; }
       .match-counter .info { justify-content: center; }
       .match-counter .status { text-align: center; }
-      .role-description-box { font-size: 13px; }
+      .role-description-box { font-size: 13px; flex-direction: column; text-align: center; }
+      .role-description-box .desc-content { text-align: center; }
       .privacy-options { flex-direction: column; }
       .room-display .room-code { font-size: 32px; letter-spacing: 6px; }
     }
@@ -479,10 +499,18 @@
           <div id="rolesLoading" style="color:#777; text-align:center;">جاري التحميل...</div>
           <div id="rolesGrid" class="role-grid hidden"></div>
         </div>
+        
+        <!-- ===== التحديث الجديد: صندوق الوصف معدّل لإظهار الصورة المستطيلة ===== -->
         <div id="roleDescriptionBox" class="role-description-box">
-          <span class="desc-title" id="descTitle">📖 الوصف:</span>
-          <span class="desc-text" id="descText"></span>
+          <div class="desc-img-container" id="descImageContainer">
+            <img id="descImage" src="" alt="صورة الدور" />
+          </div>
+          <div class="desc-content">
+            <span class="desc-title" id="descTitle">📖 الوصف:</span>
+            <span class="desc-text" id="descText"></span>
+          </div>
         </div>
+        
         <p id="clickHint" style="color:#777; font-size:12px; margin-top:10px; text-align:center;">انقر على الدور لعرض الوصف أو الاختيار</p>
       </div>
 
@@ -689,12 +717,15 @@
     const descBox = document.getElementById('roleDescriptionBox');
     const descTitle = document.getElementById('descTitle');
     const descText = document.getElementById('descText');
+    const descImageContainer = document.getElementById('descImageContainer');
+    const descImage = document.getElementById('descImage');
 
     let selectedRoles = {};
     let currentPlayers = [];
     let cachedWolfRoleData = null;
     let cachedVillagerRoleData = null;
 
+    // ===== دالة إظهار الوصف معدّلة لتعرض الصورة المستطيلة =====
     function showRoleDescription(role) {
       if (!role) {
         descBox.style.display = 'none';
@@ -709,15 +740,23 @@
           description = role.description;
         }
       }
+
+      if (role.imageUrl) {
+        descImage.src = role.imageUrl;
+        descImageContainer.style.display = 'block';
+      } else {
+        descImageContainer.style.display = 'none';
+      }
+
       if (description) {
         descTitle.textContent = `📖 ${displayName}:`;
         descText.textContent = description;
-        descBox.style.display = 'block';
       } else {
         descTitle.textContent = `📖 ${displayName}:`;
         descText.textContent = '⚠️ لا يوجد وصف لهذا الدور.';
-        descBox.style.display = 'block';
       }
+      
+      descBox.style.display = 'flex';
     }
 
     function updateMatchCounter() {
@@ -739,7 +778,7 @@
       }
     }
 
-    // ===== تحميل وعرض الأدوار (مع تطبيق الترتيب order القادم من الأدمن) =====
+    // ===== تحميل وعرض الأدوار =====
     async function loadRoles() {
       try {
         const snap = await get(ref(db, 'global_roles'));
@@ -753,7 +792,6 @@
           return;
         }
 
-        // البحث عن الذئب والقروي للأسفل
         const wolfEntry = allRoles.find(([id, r]) => {
           const n = typeof r.name === 'object' ? (r.name.ar || r.name.fr || '') : String(r.name || '');
           const clean = n.trim().toLowerCase();
@@ -783,12 +821,10 @@
           }
         }
 
-        // تصفية الشبكة العلوية وإضافة خاصية الترتيب order تصاعدياً
         let formattedRoles = allRoles
           .filter(([id]) => id !== wolfId && id !== villagerId)
           .map(([id, r]) => ({ id, ...r }));
 
-        // ➕ تطبيق الترتيب الذي حدده الأدمن هنا تماماً
         formattedRoles.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
 
         renderRolesGrid(formattedRoles);
@@ -902,7 +938,6 @@
       updateMatchCounter();
     }
 
-    // ===== تفعيل الاستماع الفوري لقاعدة البيانات =====
     function initRealtimeListeners(code) {
       if (!code) return;
       listenToPlayers(code, (data) => {
@@ -910,7 +945,6 @@
       });
     }
 
-    // ===== التحقق التلقائي عند فتح الصفحة من وجود غرفة سابقة =====
     const existingRoomCode = getRoomCode();
     if (existingRoomCode) {
       createSection.style.display = 'none';
@@ -933,14 +967,12 @@
       loadRoles();
       updateMatchCounter();
       
-      // تشغيل الاستماع الفوري تلقائياً
       initRealtimeListeners(existingRoomCode);
     }
 
     wolvesInput.addEventListener('input', updateMatchCounter);
     villagersInput.addEventListener('input', updateMatchCounter);
 
-    // ===== بدء اللعبة =====
     startBtn.addEventListener('click', async () => {
       const roomCode = getRoomCode();
       if (!roomCode) return;
@@ -972,7 +1004,6 @@
       }
     });
 
-    // ===== خروج (إغلاق الغرفة بالكامل) =====
     exitBtn.addEventListener('click', async () => {
       const roomCode = getRoomCode();
       if (!roomCode) return;
@@ -989,12 +1020,10 @@
       }
     });
 
-    // ===== رجوع =====
     backBtn.addEventListener('click', () => {
       window.location.href = 'index.html';
     });
 
-    // ===== إصلاح زر التحديث اليدوي ليعمل بكفاءة =====
     refreshBtn.addEventListener('click', async () => {
       const roomCode = getRoomCode();
       if (!roomCode) return;
