@@ -364,6 +364,44 @@
     }
     .infected-notice { color: #2ecc71; text-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
 
+    /* ===== ستايل فريق الذئاب الثابت ===== */
+    #wolfTeamContainer {
+      display: none;
+      margin-top: 15px;
+      background: rgba(13, 8, 5, 0.6);
+      border: 2px solid rgba(255, 0, 0, 0.2);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.1);
+    }
+    #wolfTeamContainer .wolf-team-title {
+      color: #ff6b6b;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-family: 'Cinzel', serif;
+      text-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+    }
+    .wolf-team-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .wolf-tag {
+      background: rgba(139, 0, 0, 0.4);
+      border: 1px solid rgba(255, 26, 26, 0.3);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      font-family: 'Cinzel', serif;
+      white-space: nowrap;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+    }
+
     #wolfChatContainer {
       margin-top: 15px;
       background: rgba(13, 8, 5, 0.6);
@@ -816,7 +854,7 @@
   <div id="kickedNotification">
     <span class="kick-icon">🚫</span>
     <div class="kick-title">تم طردك من الغرفة</div>
-    <div class="kick-text">لقد غادر الراوي الغرفة، تم إغلاقها.</div>
+    <div class="kick-text">لقد غادر الراوي أو انتهت الجولة، تم إغلاق الغرفة.</div>
     <button class="kick-btn" id="kickedOkBtn">حسناً</button>
   </div>
 
@@ -874,6 +912,12 @@
       <div id="deadPlayersContainer">
         <div class="dead-title">💀 اللاعبون الذين ماتوا</div>
         <div id="deadPlayersGrid" class="dead-players-grid"></div>
+      </div>
+
+      <!-- ===== قائمة أسماء الذئاب الثابتة ===== -->
+      <div id="wolfTeamContainer">
+        <div class="wolf-team-title">🐺 أسماء الذئاب الذين يلعبون معك</div>
+        <div id="wolfTeamList" class="wolf-team-list"></div>
       </div>
 
       <div id="wolfChatContainer">
@@ -969,6 +1013,8 @@
     const deadPlayersGrid = document.getElementById('deadPlayersGrid');
     const kickedNotification = document.getElementById('kickedNotification');
     const kickedOkBtn = document.getElementById('kickedOkBtn');
+    const wolfTeamContainer = document.getElementById('wolfTeamContainer');
+    const wolfTeamList = document.getElementById('wolfTeamList');
 
     let playerId = localStorage.getItem("playerId");
     let roomCode = localStorage.getItem('roomCode') || getRoomCode();
@@ -981,12 +1027,86 @@
     let roomListener = null;
     let cardRenderedOnce = false;
     let displayedDeathsMap = new Set();
+    let cachedGlobalRoles = null;
 
     const hasRoomCode = roomCode ? true : false;
 
     if (hasRoomCode) {
       roomCodeGroup.classList.add('room-code-field-hidden');
       codeInput.value = roomCode;
+    }
+
+    async function getGlobalRoles() {
+      if (cachedGlobalRoles) return cachedGlobalRoles;
+      const snap = await get(ref(db, 'global_roles'));
+      cachedGlobalRoles = snap.val() || {};
+      return cachedGlobalRoles;
+    }
+
+    // ===== دالة تحديث وعرض أسماء الذئاب وتحديثها فوراً =====
+    async function updateWolfTeamUI(playersData) {
+      if (!playersData) return;
+      const globalRoles = await getGlobalRoles();
+      const wolfNames = [];
+
+      for (const pid in playersData) {
+        if (pid === playerId) continue; // استثناء نفسك
+
+        const p = playersData[pid];
+        let isThisWolf = false;
+
+        if (p.isWolf === true || p.isInfected === true) {
+          isThisWolf = true;
+        } else if (p.role) {
+          const pRoleName = typeof p.role === 'object' ? p.role.ar : p.role;
+          for (const key in globalRoles) {
+            const r = globalRoles[key];
+            const rName = typeof r.name === 'object' ? r.name.ar : r.name;
+            if (rName === pRoleName && r.isWol === true) {
+              isThisWolf = true;
+              break;
+            }
+          }
+        }
+
+        if (isThisWolf) {
+          let displayName = p.name;
+          if (p.isDead) displayName += ' 💀';
+          wolfNames.push(displayName);
+        }
+      }
+
+      // التحقق مما إذا كان اللاعب الحالي ذئباً أساساً لكي نُظهر له الصندوق
+      const currentPlayer = playersData[playerId];
+      if (currentPlayer) {
+        const isMeWolf = await checkIsCurrentPlayerWolf(currentPlayer);
+        if (isMeWolf) {
+          if (wolfNames.length > 0) {
+            wolfTeamList.innerHTML = wolfNames.map(n => `<span class="wolf-tag">${n}</span>`).join('');
+          } else {
+            wolfTeamList.innerHTML = `<span style="color:rgba(255,255,255,0.4); font-size:12px;">أنت الذئب الوحيد حالياً</span>`;
+          }
+          wolfTeamContainer.style.display = 'block';
+        } else {
+          wolfTeamContainer.style.display = 'none';
+        }
+      }
+    }
+
+    async function checkIsCurrentPlayerWolf(currentData) {
+        if (currentData.isWolf || currentData.isInfected) return true;
+        if (!currentData.role) return false;
+        
+        const globalRoles = await getGlobalRoles();
+        const myRoleName = typeof currentData.role === 'object' ? currentData.role.ar : currentData.role;
+        for (const key in globalRoles) {
+            const r = globalRoles[key];
+            const rName = typeof r.name === 'object' ? r.name.ar : r.name;
+            if (rName === myRoleName && r.isWol === true) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function formatTime(timestamp) {
@@ -1198,8 +1318,7 @@
           targetName = roleNameInput.ar || roleNameInput.fr || roleNameInput.en || '';
         }
         if (!targetName) return '';
-        const snap = await get(ref(db, 'global_roles'));
-        const roles = snap.val() || {};
+        const roles = await getGlobalRoles();
         for (const key in roles) {
           const role = roles[key];
           const nameObj = role.name;
@@ -1540,20 +1659,19 @@
           window.location.href = "index.html";
           return;
         }
+        
         if (player.kicked === true) {
           showKickedNotification();
           return;
         }
+        
         updateDiscordLink(roomCode);
         listenToDeathNotifications(roomCode);
         listenToGameState(roomCode, playerId);
         listenToRoomDeletion(roomCode);
 
-        const deathsSnap = await get(ref(db, `rooms/${roomCode}/deathNotifications`));
-        const deathsData = deathsSnap.val() || {};
-        const isDeclaredDead = Object.values(deathsData).some(d => d.playerName === player.name);
-
-        if (player.isDead && isDeclaredDead) {
+        // ===== شاشة الموت الفورية عند موت اللاعب =====
+        if (player.isDead) {
           statusDiv.classList.add("hidden");
           roleBox.classList.remove("hidden");
           roleBox.innerHTML = '';
@@ -1563,11 +1681,11 @@
           roleBox.appendChild(skull);
           const deathText = document.createElement('p');
           deathText.id = 'death-text';
-          deathText.textContent = 'لقد مت، يمكنك مغادرة الغرفة.';
+          deathText.textContent = 'لقد مت، يمكنك البقاء للمشاهدة أو المغادرة.';
           roleBox.appendChild(deathText);
           const exitBtn = document.createElement('button');
           exitBtn.className = 'btn btn-danger';
-          exitBtn.textContent = '🚪 مغادرة';
+          exitBtn.textContent = '🚪 مغادرة الغرفة';
           exitBtn.style.marginTop = '10px';
           exitBtn.addEventListener('click', async function() {
             if (roomCode && playerId) {
@@ -1582,6 +1700,9 @@
         }
 
         if (cardRenderedOnce || roleBox.querySelector('.btn-show-card')) {
+          // حتى لو كانت البطاقة مخفية، نضمن تحديث قائمة الذئاب المستمر في الخلفية
+          const allPlayers = await getPlayers(roomCode);
+          await updateWolfTeamUI(allPlayers);
           return;
         }
 
@@ -1608,12 +1729,21 @@
 
         statusDiv.classList.remove("hidden");
         waitingText.textContent = `⏳ في انتظار بدء اللعبة... (رمز الغرفة: ${roomCode})`;
+        
         if (playersListener) playersListener();
+        
+        // ===== الاستماع الفوري للاعبين وتحديث قائمة الذئاب وحالة الموت فوراً =====
         playersListener = listenToPlayers(roomCode, async (data) => {
           if (!data) return;
           const current = data[playerId];
-          if (current && (current.role || current.isDead || current.isInfected || current.isWolf || current.kicked === true)) {
-            checkPlayerStatus();
+          
+          if (current) {
+            // تحديث قائمة الذئاب دائماً للذئاب
+            await updateWolfTeamUI(data);
+
+            if (current.role || current.isDead || current.isInfected || current.isWolf || current.kicked === true) {
+              checkPlayerStatus();
+            }
           }
         });
       } catch (err) {
@@ -1778,8 +1908,6 @@
         console.error('خطأ في التحقق من الجلسة:', err);
       }
     }
-
-    // تم حذف دورة الـ setInterval بالكامل من هنا لضمان سلاسة التطبيق واستقراره الفوري عبر الاستماع اللحظي.
 
     console.log('🚀 تم تحميل صفحة اللاعب المحدثة بالكامل');
   </script>
